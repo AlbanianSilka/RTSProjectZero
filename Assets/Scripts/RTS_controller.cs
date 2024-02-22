@@ -7,7 +7,12 @@ public class RTS_controller : MonoBehaviour
     [SerializeField] private Transform selectionAreaTransform;
 
     private Vector3 startPosition;
-    private List<UnitRTS> selectedUnitRTSList;
+    public List<UnitRTS> selectedUnitRTSList { get; private set; }
+
+    private void Start()
+    {
+        HideSpellButtons();
+    }
 
     private void Awake()
     {
@@ -15,13 +20,13 @@ public class RTS_controller : MonoBehaviour
         selectionAreaTransform.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
             selectionAreaTransform.gameObject.SetActive(true);
             startPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            
         }
 
         if (Input.GetMouseButton(0))
@@ -43,8 +48,10 @@ public class RTS_controller : MonoBehaviour
         {
             selectionAreaTransform.gameObject.SetActive(false);
             Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-
             selectedUnitRTSList.Clear();
+            HideSpellButtons();
+
+
 
             foreach (Collider2D obj in collArray)
             {
@@ -55,6 +62,8 @@ public class RTS_controller : MonoBehaviour
                 }
                
             }
+
+            UI_controller.showSpellButtons(selectedUnitRTSList);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -105,5 +114,14 @@ public class RTS_controller : MonoBehaviour
     private Vector3 ApplyRotationToVector(Vector3 vec, float angle)
     {
         return Quaternion.Euler(0, 0, angle) * vec;
+    }
+
+    private void HideSpellButtons()
+    {
+        GameObject[] spellButtons = GameObject.FindGameObjectsWithTag("SpellBtn");
+        foreach (GameObject spellButton in spellButtons)
+        {
+            spellButton.SetActive(false);
+        }
     }
 }

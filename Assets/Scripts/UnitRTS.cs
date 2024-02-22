@@ -5,9 +5,11 @@ using UnityEngine;
 public class UnitRTS : MonoBehaviour
 {
     private Vector2 destination;
-    public float moveSpeed = 5f;
+    protected virtual float moveSpeed => 5f; // default move speed for units
+    internal virtual int selectionPriority => 0; // default selection priority for units
+    public List<GameObject> spellButtons = new List<GameObject>();
 
-    void Start()
+    public void Start()
     {
         destination = transform.position;
     }
