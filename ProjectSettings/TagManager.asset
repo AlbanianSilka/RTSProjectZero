@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Unit
   - SpellBtn
+  - SpellBox
   layers:
   - Default
   - TransparentFX

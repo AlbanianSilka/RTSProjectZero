@@ -9,13 +9,17 @@ public class RTS_controller : MonoBehaviour
     private Vector3 startPosition;
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
 
+    private void Start()
+    {
+        HideSpellButtons();
+    }
+
     private void Awake()
     {
         selectedUnitRTSList = new List<UnitRTS>();
         selectionAreaTransform.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -44,7 +48,6 @@ public class RTS_controller : MonoBehaviour
         {
             selectionAreaTransform.gameObject.SetActive(false);
             Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-
             selectedUnitRTSList.Clear();
             HideSpellButtons();
 
@@ -56,10 +59,11 @@ public class RTS_controller : MonoBehaviour
                 if (unitRTS != null)
                 {
                     selectedUnitRTSList.Add(unitRTS);
-                    unitRTS.showAllSpellButtons();
                 }
                
             }
+
+            UI_controller.showSpellButtons(selectedUnitRTSList);
         }
 
         if (Input.GetMouseButtonDown(1))

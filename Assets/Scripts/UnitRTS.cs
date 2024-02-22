@@ -6,6 +6,7 @@ public class UnitRTS : MonoBehaviour
 {
     private Vector2 destination;
     protected virtual float moveSpeed => 5f; // default move speed for units
+    internal virtual int selectionPriority => 0; // default selection priority for units
     public List<GameObject> spellButtons = new List<GameObject>();
 
     public void Start()
@@ -21,13 +22,5 @@ public class UnitRTS : MonoBehaviour
     public void MoveTo(Vector2 targetPosition)
     {
         destination = targetPosition;
-    }
-
-    public void showAllSpellButtons()
-    {
-        foreach (GameObject spellButton in spellButtons)
-        {
-            spellButton.SetActive(true);
-        }
     }
 }
