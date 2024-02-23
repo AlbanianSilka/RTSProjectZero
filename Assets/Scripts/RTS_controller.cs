@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class RTS_controller : MonoBehaviour
 {
@@ -44,14 +45,13 @@ public class RTS_controller : MonoBehaviour
             selectionAreaTransform.localScale = upperRight - lowerLeft;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        // Check if user unpressed left mouse button and if clicked object was not a UI element
+        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
         {
             selectionAreaTransform.gameObject.SetActive(false);
             Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
             selectedUnitRTSList.Clear();
             HideSpellButtons();
-
-
 
             foreach (Collider2D obj in collArray)
             {

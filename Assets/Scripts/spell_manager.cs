@@ -36,4 +36,17 @@ public class spell_manager : MonoBehaviour
             }
         }
     }
+
+    public void ThumbUpSpell()
+    {
+        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
+
+        foreach (UnitRTS unit in selectedUnits)
+        {
+            if (unit is Footman)
+            {
+                Debug.Log($"{unit.gameObject.name} says: 'Нє, ну тут чисто лойк, лайкос, так би мовити.'");
+            }
+        }
+    }
 }
