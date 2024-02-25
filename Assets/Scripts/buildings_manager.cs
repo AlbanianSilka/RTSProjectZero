@@ -14,7 +14,7 @@ public class buildings_manager : MonoBehaviour
 
         SpriteRenderer buildingSpriteRenderer = buildingPrefab.GetComponent<SpriteRenderer>();
         Texture2D buildingTexture = buildingSpriteRenderer.sprite.texture;
-        Cursor.SetCursor(buildingTexture, Vector2.zero, CursorMode.Auto);
+        Cursor.SetCursor(buildingSpriteRenderer.sprite.texture, Vector2.zero, CursorMode.Auto);
     }
 
     private void Update()
