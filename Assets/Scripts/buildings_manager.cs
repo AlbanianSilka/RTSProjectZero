@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class buildings_manager : MonoBehaviour
 {
@@ -12,9 +13,18 @@ public class buildings_manager : MonoBehaviour
     {
         isPlacingBuilding = true;
 
-        SpriteRenderer buildingSpriteRenderer = buildingPrefab.GetComponent<SpriteRenderer>();
-        Texture2D buildingTexture = buildingSpriteRenderer.sprite.texture;
-        Cursor.SetCursor(buildingSpriteRenderer.sprite.texture, Vector2.zero, CursorMode.Auto);
+        RTS_building buildingScript = buildingPrefab.GetComponent<RTS_building>();
+        if (buildingScript != null && buildingScript.canBuild != null)
+        {
+            Texture2D buildTexture = buildingScript.canBuild.texture;
+            float xspot = buildTexture.width / 3;
+            float yspot = buildTexture.height / 3;
+            Vector2 hotSpot = new Vector2(xspot, yspot);
+            Cursor.SetCursor(buildTexture, hotSpot, CursorMode.ForceSoftware);
+        } else
+        {
+            Debug.Log("You probably forgot to add red and green sprites to the building.");
+        }
     }
 
     private void Update()
