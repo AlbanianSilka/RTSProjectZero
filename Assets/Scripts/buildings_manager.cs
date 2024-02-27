@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System;
 
 public class buildings_manager : MonoBehaviour
 {
@@ -12,16 +14,30 @@ public class buildings_manager : MonoBehaviour
     {
         isPlacingBuilding = true;
 
-        SpriteRenderer buildingSpriteRenderer = buildingPrefab.GetComponent<SpriteRenderer>();
-        Texture2D buildingTexture = buildingSpriteRenderer.sprite.texture;
-        Cursor.SetCursor(buildingSpriteRenderer.sprite.texture, Vector2.zero, CursorMode.Auto);
+        RTS_building buildingScript = buildingPrefab.GetComponent<RTS_building>();
+        if (buildingScript != null && buildingScript.canBuild != null)
+        {
+            changeCursorSprite("canBuild", buildingScript);
+        } else
+        {
+            Debug.Log("You probably forgot to add red and green sprites to the building.");
+        }
     }
 
     private void Update()
     {
         if (isPlacingBuilding)
         {
-            if (Input.GetMouseButtonDown(0))
+            RTS_building buildingScript = buildingPrefab.GetComponent<RTS_building>();
+            if (CheckCollisions())
+            {
+                changeCursorSprite("cannotBuild", buildingScript);
+            } else if (buildingScript != null && buildingScript.canBuild != null)
+            {
+                changeCursorSprite("canBuild", buildingScript);
+            }
+
+            if (Input.GetMouseButtonDown(0) && !(CheckCollisions()))
             {
                 PlaceBuilding();
             }
@@ -30,6 +46,19 @@ public class buildings_manager : MonoBehaviour
                 CancelBuilding();
             }
         }
+    }
+
+    private bool CheckCollisions()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+
+        if (hit.collider != null && !hit.collider.CompareTag("Ground"))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void PlaceBuilding()
@@ -47,5 +76,26 @@ public class buildings_manager : MonoBehaviour
     {
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         isPlacingBuilding = false;
+    }
+
+    private void changeCursorSprite(string spriteType, RTS_building buildingScript)
+    {
+        Texture2D buildTexture = null;
+        if (spriteType == "canBuild")
+        {
+            buildTexture = buildingScript.canBuild.texture;
+        }
+        else if (spriteType == "cannotBuild")
+        {
+            buildTexture = buildingScript.cannotBuild.texture;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid spriteType: " + spriteType);
+        }
+        float xspot = buildTexture.width / 3;
+        float yspot = buildTexture.height / 3;
+        Vector2 hotSpot = new Vector2(xspot, yspot);
+        Cursor.SetCursor(buildTexture, hotSpot, CursorMode.ForceSoftware);
     }
 }
