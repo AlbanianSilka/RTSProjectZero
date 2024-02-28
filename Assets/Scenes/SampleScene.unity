@@ -9314,7 +9314,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 762957210}
         m_TargetAssemblyTypeName: buildings_manager, Assembly-CSharp
-        m_MethodName: StartBuilding
+        m_MethodName: startBuilding
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
