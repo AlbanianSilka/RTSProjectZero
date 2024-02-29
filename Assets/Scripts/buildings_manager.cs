@@ -29,6 +29,7 @@ public class buildings_manager : MonoBehaviour
         SpriteRenderer spriteRenderer = ghostBuildingInstance.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = buildingPrefab.GetComponent<SpriteRenderer>().sprite;
         spriteRenderer.sortingLayerName = buildingPrefab.GetComponent<SpriteRenderer>().sortingLayerName;
+        ghostBuildingInstance.transform.localScale = buildingPrefab.transform.localScale;
     }
 
     private void destroyGhostBuilding()
@@ -44,6 +45,15 @@ public class buildings_manager : MonoBehaviour
         if (isPlacingBuilding)
         {
             updateGhostBuildingPosition();
+
+            if(Input.GetMouseButtonDown(0))
+            {
+                GameObject newBuilding = Instantiate(buildingPrefab, ghostBuildingInstance.transform.position, Quaternion.identity);
+                CancelBuilding();
+            } else if (Input.GetMouseButtonDown(1))
+            {
+                CancelBuilding();
+            }
         }
     }
 
