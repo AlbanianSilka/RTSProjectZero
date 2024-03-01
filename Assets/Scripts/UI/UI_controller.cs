@@ -45,7 +45,9 @@ public class UI_controller : MonoBehaviour
         {
             foreach (GameObject spellBox in spellBoxes)
             {
+                
                 spell_box spellBoxComponent = spellBox.GetComponent<spell_box>();
+                Debug.Log("sassa");
                 if (spellBoxComponent != null && spellBoxComponent.index == buttonIndex)
                 {
                     spellButton.transform.position = spellBox.transform.position;

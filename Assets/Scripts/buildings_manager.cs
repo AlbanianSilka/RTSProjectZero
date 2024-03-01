@@ -10,20 +10,21 @@ public class buildings_manager : MonoBehaviour
 
     private bool isPlacingBuilding = false;
     private GameObject ghostBuildingInstance;
+    private bool canPlaceBuilding = false; 
 
     public void startBuilding()
     {
         isPlacingBuilding = true;
-        CreateeGhostBuilding();
+        CreateGhostBuilding();
     }
 
     private void CancelBuilding()
     {
         isPlacingBuilding = false;
-        destroyGhostBuilding();
+        DestroyGhostBuilding();
     }
 
-    private void CreateeGhostBuilding()
+    private void CreateGhostBuilding()
     {
         ghostBuildingInstance = new GameObject("GhostBuilding");
         SpriteRenderer spriteRenderer = ghostBuildingInstance.AddComponent<SpriteRenderer>();
@@ -32,7 +33,7 @@ public class buildings_manager : MonoBehaviour
         ghostBuildingInstance.transform.localScale = buildingPrefab.transform.localScale;
     }
 
-    private void destroyGhostBuilding()
+    private void DestroyGhostBuilding()
     {
         if (ghostBuildingInstance != null)
         {
@@ -44,20 +45,21 @@ public class buildings_manager : MonoBehaviour
     {
         if (isPlacingBuilding)
         {
-            updateGhostBuildingPosition();
+            UpdateGhostBuildingPosition();
+            CheckBuildingPlacementValidity();
 
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && canPlaceBuilding) 
             {
-                GameObject newBuilding = Instantiate(buildingPrefab, ghostBuildingInstance.transform.position, Quaternion.identity);
-                CancelBuilding();
-            } else if (Input.GetMouseButtonDown(1))
+                PlaceBuilding();
+            }
+            else if (Input.GetMouseButtonDown(1))
             {
                 CancelBuilding();
             }
         }
     }
 
-    private void updateGhostBuildingPosition()
+    private void UpdateGhostBuildingPosition()
     {
         if (ghostBuildingInstance == null)
         {
@@ -70,98 +72,57 @@ public class buildings_manager : MonoBehaviour
         ghostBuildingInstance.transform.position = mousePosition;
     }
 
-    // ####################################################################################
+    private void CheckBuildingPlacementValidity()
+    {
+        if (ghostBuildingInstance == null)
+        {
+            return;
+        }
 
-    //public GameObject buildingPrefab;
+        // Check if the ghost building overlaps with any collider
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(ghostBuildingInstance.transform.position,
+                                                          ghostBuildingInstance.GetComponent<SpriteRenderer>().bounds.size,
+                                                          0f);
 
-    //private bool isPlacingBuilding = false;
+        canPlaceBuilding = true; // TODO: later need to be changed so the builder would start a building process
 
-    //public void StartBuilding()
-    //{
-    //    isPlacingBuilding = true;
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.tag != "Ground")
+            {
+                canPlaceBuilding = false; 
+                break;
+            }
+        }
 
-    //    RTS_building buildingScript = buildingPrefab.GetComponent<RTS_building>();
-    //    if (buildingScript != null && buildingScript.canBuild != null)
-    //    {
-    //        changeCursorSprite("canBuild", buildingScript);
-    //    } else
-    //    {
-    //        Debug.Log("You probably forgot to add red and green sprites to the building.");
-    //    }
-    //}
+        ChangeGhostBuildingSprite(canPlaceBuilding);
+    }
 
-    //private void Update()
-    //{
-    //    if (isPlacingBuilding)
-    //    {
-    //        RTS_building buildingScript = buildingPrefab.GetComponent<RTS_building>();
-    //        if (CheckCollisions())
-    //        {
-    //            changeCursorSprite("cannotBuild", buildingScript);
-    //        } else if (buildingScript != null && buildingScript.canBuild != null)
-    //        {
-    //            changeCursorSprite("canBuild", buildingScript);
-    //        }
+    private void ChangeGhostBuildingSprite(bool canPlaceBuilding)
+    {
+        if (ghostBuildingInstance == null)
+        {
+            return;
+        }
 
-    //        if (Input.GetMouseButtonDown(0) && !(CheckCollisions()))
-    //        {
-    //            PlaceBuilding();
-    //        }
-    //        else if (Input.GetMouseButtonDown(1))
-    //        {
-    //            CancelBuilding();
-    //        }
-    //    }
-    //}
+        SpriteRenderer spriteRenderer = ghostBuildingInstance.GetComponent<SpriteRenderer>();
 
-    //private bool CheckCollisions()
-    //{
-    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //    RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+        if (canPlaceBuilding)
+        {
+            spriteRenderer.sprite = buildingPrefab.GetComponent<RTS_building>().canBuild;
+        }
+        else
+        {
+            spriteRenderer.sprite = buildingPrefab.GetComponent<RTS_building>().cannotBuild;
+        }
+    }
 
-    //    if (hit.collider != null && !hit.collider.CompareTag("Ground"))
-    //    {
-    //        return true;
-    //    }
+    private void PlaceBuilding()
+    {
+        GameObject newBuilding = Instantiate(buildingPrefab, ghostBuildingInstance.transform.position, Quaternion.identity);
 
-    //    return false;
-    //}
+        DestroyGhostBuilding();
 
-    //private void PlaceBuilding()
-    //{
-    //    Vector3 buildPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    //    buildPosition.z = 0f;
-
-    //    GameObject newBuilding = Instantiate(buildingPrefab, buildPosition, Quaternion.identity);
-
-    //    Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-    //    isPlacingBuilding = false;
-    //}
-
-    //private void CancelBuilding()
-    //{
-    //    Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-    //    isPlacingBuilding = false;
-    //}
-
-    //private void changeCursorSprite(string spriteType, RTS_building buildingScript)
-    //{
-    //    Texture2D buildTexture = null;
-    //    if (spriteType == "canBuild")
-    //    {
-    //        buildTexture = buildingScript.canBuild.texture;
-    //    }
-    //    else if (spriteType == "cannotBuild")
-    //    {
-    //        buildTexture = buildingScript.cannotBuild.texture;
-    //    }
-    //    else
-    //    {
-    //        throw new ArgumentException("Invalid spriteType: " + spriteType);
-    //    }
-    //    float xspot = buildTexture.width / 3;
-    //    float yspot = buildTexture.height / 3;
-    //    Vector2 hotSpot = new Vector2(xspot, yspot);
-    //    Cursor.SetCursor(buildTexture, hotSpot, CursorMode.ForceSoftware);
-    //}
+        isPlacingBuilding = false;
+    }
 }
