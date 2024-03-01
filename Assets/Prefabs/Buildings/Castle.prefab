@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4084177337481033808}
   - component: {fileID: 6282741594314831927}
   - component: {fileID: 541499988027842694}
+  - component: {fileID: 3403197871221968237}
   m_Layer: 0
   m_Name: Castle
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.77, y: -0.44, z: -0.22322711}
-  m_LocalScale: {x: 0.1911, y: 0.2189, z: 1}
+  m_LocalScale: {x: 0.85, y: 0.85, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 1911428863
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 1999c8f78ece64966b693bfa527b2278, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 296e175b8179b4fc78534ed203c6976a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -117,16 +118,30 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.0088864565, y: 0.0036723614}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 25.6, y: 15.2}
+    oldSize: {x: 5.6, y: 3.31}
     newSize: {x: 25.6, y: 15.15}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 25.6, y: 15.15}
+  m_Size: {x: 5.6728888, y: 3.4017162}
   m_EdgeRadius: 0
+--- !u!114 &3403197871221968237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491780485271085513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbce18e1ee6254ec4a974cf707024272, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canBuild: {fileID: 21300000, guid: 3e716d6b05e83447ab11a9e2f165402b, type: 3}
+  cannotBuild: {fileID: 21300000, guid: fdb21c4daaa074159b2e4e3ed782418a, type: 3}
