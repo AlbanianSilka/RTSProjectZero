@@ -8,6 +8,8 @@ public class RTS_controller : MonoBehaviour
     [SerializeField] private Transform selectionAreaTransform;
 
     private Vector3 startPosition;
+    private buildings_manager building_manager;
+
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
 
     private void Start()
@@ -48,39 +50,42 @@ public class RTS_controller : MonoBehaviour
         // Check if user unpressed left mouse button and if clicked object was not a UI element
         if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
         {
-            selectionAreaTransform.gameObject.SetActive(false);
-            Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            selectedUnitRTSList.Clear();
-            HideSpellButtons();
-
-            foreach (Collider2D obj in collArray)
+            if (!buildings_manager.isPlacingBuilding)
             {
-                UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
-                if (unitRTS != null)
-                {
-                    selectedUnitRTSList.Add(unitRTS);
-                }
-               
-            }
+                selectionAreaTransform.gameObject.SetActive(false);
+                Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                selectedUnitRTSList.Clear();
+                HideSpellButtons();
 
-            UI_controller.showSpellButtons(selectedUnitRTSList);
+                foreach (Collider2D obj in collArray)
+                {
+                    UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
+                    if (unitRTS != null)
+                    {
+                        selectedUnitRTSList.Add(unitRTS);
+                    }
+
+                }
+
+                UI_controller.showSpellButtons(selectedUnitRTSList);
+            }
         }
 
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            MoveSelectedUnits(clickPosition);
+            MoveSelectedUnits(clickPosition, selectedUnitRTSList);
         }
     }
 
-    private void MoveSelectedUnits(Vector3 clickPosition)
+    public void MoveSelectedUnits(Vector3 clickPosition, List<UnitRTS> selectedUnits)
     {
         clickPosition.z = 0f;
         List<Vector3> targetPositionList = GetPositionListAround(clickPosition, new float[] { 1f, 2f, 3f}, new int[] {5, 10, 20});
         int targetPositionListIndex = 0;
 
-        foreach (UnitRTS unitRTS in selectedUnitRTSList)
+        foreach (UnitRTS unitRTS in selectedUnits)
         {
             unitRTS.MoveTo(targetPositionList[targetPositionListIndex]);
             targetPositionListIndex = (targetPositionListIndex + 1) % targetPositionList.Count;

@@ -7,15 +7,21 @@ using System;
 public class buildings_manager : MonoBehaviour
 {
     public GameObject buildingPrefab;
+    public static bool isPlacingBuilding = false;
 
-    private bool isPlacingBuilding = false;
     private GameObject ghostBuildingInstance;
-    private bool canPlaceBuilding = false; 
+    private bool canPlaceBuilding = false;
+    private RTS_controller rtsController;
 
     public void startBuilding()
     {
         isPlacingBuilding = true;
         CreateGhostBuilding();
+    }
+
+    private void Awake()
+    {
+        rtsController = FindObjectOfType<RTS_controller>();
     }
 
     private void CancelBuilding()
@@ -50,7 +56,7 @@ public class buildings_manager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0) && canPlaceBuilding) 
             {
-                PlaceBuilding();
+                moveBuilders();
             }
             else if (Input.GetMouseButtonDown(1))
             {
@@ -117,12 +123,30 @@ public class buildings_manager : MonoBehaviour
         }
     }
 
-    private void PlaceBuilding()
+    private void moveBuilders()
     {
-        GameObject newBuilding = Instantiate(buildingPrefab, ghostBuildingInstance.transform.position, Quaternion.identity);
+        Vector3 buildingPosition = ghostBuildingInstance.transform.position;
+        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
+        List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
+        rtsController.MoveSelectedUnits(buildingPosition, peasantUnits);
+        StartCoroutine(startBuilding(buildingPosition, peasantUnits));
+        //GameObject newBuilding = Instantiate(buildingPrefab, ghostBuildingInstance.transform.position, Quaternion.identity);
 
+        //DestroyGhostBuilding();
+
+        //isPlacingBuilding = false;
+    }
+
+    private IEnumerator startBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
+    {
+        while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
+        {
+            yield return null; // Wait for the next frame
+        }
+
+        GameObject newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
         DestroyGhostBuilding();
-
         isPlacingBuilding = false;
     }
+
 }

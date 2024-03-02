@@ -47,8 +47,7 @@ public class UI_controller : MonoBehaviour
             {
                 
                 spell_box spellBoxComponent = spellBox.GetComponent<spell_box>();
-                Debug.Log("sassa");
-                if (spellBoxComponent != null && spellBoxComponent.index == buttonIndex)
+                if (spellBoxComponent != null && spellBoxComponent.boxIndex == buttonIndex)
                 {
                     spellButton.transform.position = spellBox.transform.position;
                     spellButton.transform.localScale = spellBox.transform.localScale;
