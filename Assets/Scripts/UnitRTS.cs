@@ -23,4 +23,10 @@ public class UnitRTS : MonoBehaviour
     {
         destination = targetPosition;
     }
+
+    public bool HasReachedDestination()
+    {
+        // Check if the distance between the current position and the destination is very small
+        return Vector2.Distance(transform.position, destination) < 0.1f;
+    }
 }

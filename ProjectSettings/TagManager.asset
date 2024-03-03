@@ -8,6 +8,7 @@ TagManager:
   - SpellBtn
   - SpellBox
   - Ground
+  - Ghost
   layers:
   - Default
   - TransparentFX
