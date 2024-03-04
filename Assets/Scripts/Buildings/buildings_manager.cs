@@ -158,6 +158,12 @@ private void CreateGhostBuilding()
         GameObject newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
         DestroyGhostBuilding();
         isPlacingBuilding = false;
+
+        // Starting builders "constructing" process
+        foreach (Peasant unit in peasantUnits)
+        {
+            unit.StartBuildingProcess(newBuilding);
+        }
     }
 
     private Vector3 CalculateTargetPosition(Vector3 peasantPosition, Vector3 buildingPosition)
