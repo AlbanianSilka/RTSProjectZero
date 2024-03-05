@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5507726373135811667}
   m_Layer: 0
   m_Name: Castle
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -145,6 +145,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canBuild: {fileID: 21300000, guid: 3e716d6b05e83447ab11a9e2f165402b, type: 3}
   cannotBuild: {fileID: 21300000, guid: fdb21c4daaa074159b2e4e3ed782418a, type: 3}
-  maxHealth: 50
+  maxHealth: 25
   health: 1
   finished: 0

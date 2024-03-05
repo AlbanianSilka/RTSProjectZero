@@ -9,6 +9,7 @@ TagManager:
   - SpellBox
   - Ground
   - Ghost
+  - Building
   layers:
   - Default
   - TransparentFX
