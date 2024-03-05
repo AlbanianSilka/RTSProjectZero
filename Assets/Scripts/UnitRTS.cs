@@ -9,12 +9,12 @@ public class UnitRTS : MonoBehaviour
     internal virtual int selectionPriority => 0; // default selection priority for units
     public List<GameObject> spellButtons = new List<GameObject>();
 
-    public void Start()
+    protected virtual void Start()
     {
         destination = transform.position;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
     }

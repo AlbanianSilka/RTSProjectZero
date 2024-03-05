@@ -6,4 +6,7 @@ public class RTS_building : MonoBehaviour
 {
     public Sprite canBuild;
     public Sprite cannotBuild;
+    public float maxHealth;
+    public float health;
+    public bool finished;
 }
