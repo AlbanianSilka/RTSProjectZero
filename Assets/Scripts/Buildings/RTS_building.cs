@@ -9,4 +9,10 @@ public class RTS_building : MonoBehaviour
     public float maxHealth;
     public float health;
     public bool finished;
+    public healthbar_manager healthBar;
+
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<healthbar_manager>();
+    }
 }
