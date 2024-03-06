@@ -100,7 +100,7 @@ private void CreateGhostBuilding()
                                                           ghostBuildingInstance.GetComponent<SpriteRenderer>().bounds.size,
                                                           0f);
 
-        canPlaceBuilding = true; // TODO: later need to be changed so the builder would start a building process
+        canPlaceBuilding = true;
 
         foreach (Collider2D collider in colliders)
         {

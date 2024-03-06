@@ -51,6 +51,7 @@ public class Peasant : UnitRTS
         while (building.health < building.maxHealth)
         {
             building.health += Time.deltaTime;
+            building.healthBar.updateHealthBar(building.health, building.maxHealth);
             yield return null;
         }
 
