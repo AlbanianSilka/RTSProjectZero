@@ -138,6 +138,7 @@ private void CreateGhostBuilding()
         Vector3 buildingPosition = ghostBuildingInstance.transform.position;
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
         List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
+
         int unitCount = peasantUnits.Count;
         for (int i = 0; i < unitCount; i++)
         {
@@ -150,6 +151,7 @@ private void CreateGhostBuilding()
 
     private IEnumerator startBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
     {
+
         while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
         {
             yield return null; // Wait for the next frame

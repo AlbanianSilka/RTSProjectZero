@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4944993848508529766}
   - component: {fileID: 6855942053243411978}
   - component: {fileID: 6445871236783404664}
-  - component: {fileID: 1019398427170529975}
   m_Layer: 0
   m_Name: Footman
   m_TagString: Unit
@@ -172,19 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68bcaaa00dffc4036abb4280777bb39c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  team: A
   spellButtons:
   - {fileID: 0}
   - {fileID: 0}
---- !u!114 &1019398427170529975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7991125324847638175}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d42c31aedb996498ca5ffe54ea3b76e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectionAreaTransform: {fileID: 0}

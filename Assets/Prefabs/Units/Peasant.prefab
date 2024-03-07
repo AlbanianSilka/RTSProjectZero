@@ -13,10 +13,9 @@ GameObject:
   - component: {fileID: 4683638446049877815}
   - component: {fileID: 5342732947368100148}
   - component: {fileID: 4352249834916183926}
-  - component: {fileID: 302453174104115548}
   m_Layer: 0
   m_Name: Peasant
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,7 +74,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 483684667
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a6af1b8b6c0c245238dab26d40e71d1e, type: 3}
   m_Color: {r: 1, g: 0.19215685, b: 0.31417933, a: 1}
@@ -172,16 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d722978e54d3444e28e7aa2bbce645e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &302453174104115548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6889906512761982694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d42c31aedb996498ca5ffe54ea3b76e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectionAreaTransform: {fileID: 0}
+  team: A
+  spellButtons:
+  - {fileID: 0}
+  - {fileID: 0}
