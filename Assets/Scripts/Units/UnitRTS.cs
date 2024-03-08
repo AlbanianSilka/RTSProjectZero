@@ -5,10 +5,12 @@ using UnityEngine;
 public class UnitRTS : MonoBehaviour
 {
     private Vector2 destination;
-    protected virtual float moveSpeed => 5f; // default move speed for units
+    private bool isAttacking;
+
+    protected virtual float moveSpeed => 5f; 
     protected virtual float maxHp => 10f;
-    protected virtual float health => 10f;
-    protected virtual float attackSpeed => 1f;
+    protected virtual float health { get; set; } = 10f;
+    protected virtual float attackSpeed { get; set; } = 1f;
     protected RTS_controller rtsController;
     [SerializeField] string team;
 
@@ -71,16 +73,42 @@ public class UnitRTS : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            StopAllCoroutines();
+            isAttacking = false;
+        }
     }
 
-    // TODO: need to create an attack functionality
-    private IEnumerator attackPath(UnitRTS attackedUnut)
+    private IEnumerator attackPath(UnitRTS attackedUnit)
     {
-        while (!HasReachedDestination())
+        if (isAttacking)
+            yield break;
+
+        isAttacking = true;
+
+        while (attackedUnit.health > 0)
         {
-            yield return null;
+            // TODO: Need to create working following system
+            // TODO #2: attack if have been attacked system need to be imply
+            MoveTo(attackedUnit.transform.position);
+
+            while (!HasReachedDestination())
+            {
+                yield return null;
+            }
+
+            float attackDelay = 1 / attackSpeed;
+            yield return new WaitForSeconds(attackDelay);
+
+            if (attackedUnit.health > 0)
+            {
+                Debug.Log($"{this.name} attacked {attackedUnit.name}");
+                attackedUnit.health -= 1; 
+            }
         }
 
-        Debug.Log($"{this.name} reached the enemy");
+        isAttacking = false; 
     }
+
 }
