@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class UnitRTS : MonoBehaviour
     internal virtual int selectionPriority => 0; // default selection priority for units
 
     public List<GameObject> spellButtons = new List<GameObject>();
+    public event Action<UnitRTS> OnDeath;
 
     protected virtual void Awake()
     {
@@ -52,6 +54,17 @@ public class UnitRTS : MonoBehaviour
     {
         // Check if the distance between the current position and the destination is very small
         return Vector2.Distance(transform.position, destination) < 0.1f;
+    }
+
+    public void takeDamage(float damage)
+    {
+        health -= damage;
+        Debug.Log("Ouch!");
+
+        if(health <= 0)
+        {
+            Die();
+        }
     }
 
     private void HandleRightClick(Vector3 clickPosition)
@@ -101,14 +114,17 @@ public class UnitRTS : MonoBehaviour
             float attackDelay = 1 / attackSpeed;
             yield return new WaitForSeconds(attackDelay);
 
-            if (attackedUnit.health > 0)
-            {
-                Debug.Log($"{this.name} attacked {attackedUnit.name}");
-                attackedUnit.health -= 1; 
-            }
+            attackedUnit.takeDamage(1);
         }
 
         isAttacking = false; 
+    }
+
+    protected virtual void Die()
+    {
+        OnDeath?.Invoke(this);
+
+        Destroy(gameObject);
     }
 
 }
