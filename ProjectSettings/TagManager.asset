@@ -10,6 +10,7 @@ TagManager:
   - Ground
   - Ghost
   - Building
+  - Environment
   layers:
   - Default
   - TransparentFX
