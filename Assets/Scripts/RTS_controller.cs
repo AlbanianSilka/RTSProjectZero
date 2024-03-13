@@ -82,7 +82,7 @@ public class RTS_controller : MonoBehaviour
     public void MoveSelectedUnits(Vector3 clickPosition, List<UnitRTS> selectedUnits)
     {
         clickPosition.z = 0f;
-        List<Vector3> targetPositionList = GetPositionListAround(clickPosition, new float[] { 1f, 2f, 3f}, new int[] {5, 10, 20});
+        List<Vector3> targetPositionList = GetPositionListAround(clickPosition, new float[] { 1f, 2f, 3f }, new int[] { 5, 10, 20 });
         int targetPositionListIndex = 0;
 
         int unitCount = selectedUnits.Count;

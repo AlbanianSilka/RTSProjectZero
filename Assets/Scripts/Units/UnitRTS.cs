@@ -7,16 +7,19 @@ public class UnitRTS : MonoBehaviour
 {
     private Vector2 destination;
     private bool isAttacking;
+    private UnitRTS followTarget;
 
     protected virtual float moveSpeed => 5f; 
     protected virtual float maxHp => 10f;
-    protected virtual float health { get; set; } = 10f;
+    protected virtual float health { get; set; } = 30f;
     protected virtual float attackSpeed { get; set; } = 1f;
+    protected virtual float attackDamage { get; set; } = 1f;
     protected RTS_controller rtsController;
     [SerializeField] string team;
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
+    public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public event Action<UnitRTS> OnDeath;
 
@@ -32,6 +35,29 @@ public class UnitRTS : MonoBehaviour
 
     protected virtual void Update()
     {
+        if(followTarget != null)
+        {
+            Vector2 direction = (followTarget.transform.position - transform.position).normalized;
+
+            float distanceToTarget = Vector2.Distance(transform.position, followTarget.transform.position);
+
+            if(distanceToTarget <= 0.5f)
+            {
+                destination = transform.position;
+            }
+            else
+            {
+                Collider2D followTargetCollider = followTarget.GetComponent<Collider2D>();
+
+                float targetColliderSize = Mathf.Max(followTargetCollider.bounds.size.x, followTargetCollider.bounds.size.y);
+
+                // Calculate dynamic offset distance based on the collider size
+                float dynamicOffsetDistance = targetColliderSize * 0.5f;
+
+                destination = (Vector2)followTarget.transform.position - (direction * dynamicOffsetDistance);
+            }
+        }
+
         transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
 
         if (Input.GetMouseButton(1))
@@ -45,6 +71,13 @@ public class UnitRTS : MonoBehaviour
         }
     }
 
+    protected virtual void Die()
+    {
+        OnDeath?.Invoke(this);
+
+        Destroy(gameObject);
+    }
+
     public void MoveTo(Vector2 targetPosition)
     {
         destination = targetPosition;
@@ -56,10 +89,18 @@ public class UnitRTS : MonoBehaviour
         return Vector2.Distance(transform.position, destination) < 0.1f;
     }
 
-    public void takeDamage(float damage)
+    public void takeDamage(float damage, UnitRTS attacker)
     {
+        // TODO: Need to think about making a following system when counter attack
         health -= damage;
-        Debug.Log("Ouch!");
+        this.healthBar.updateHealthBar(this.health, this.maxHp);
+        Debug.Log($"{this.name} was hit by {attacker.name}");
+
+        // if not moving - counter attack
+        if (HasReachedDestination())
+        {
+            StartCoroutine(attackPath(attacker));
+        }
 
         if(health <= 0)
         {
@@ -78,19 +119,46 @@ public class UnitRTS : MonoBehaviour
             if (clickedObject.CompareTag("Unit"))
             {
                 UnitRTS clickedUnit = clickedObject.GetComponent<UnitRTS>();
-
-                if(clickedUnit != null && clickedUnit.team != this.team)
+                if (clickedUnit != null && clickedUnit.team != this.team)
                 {
-                    MoveTo(clickPosition);
+                    followUnit(clickedUnit);
+                    clickedUnit = this.followTarget;
                     StartCoroutine(attackPath(clickedUnit));
                 }
+            }
+            else
+            {
+                followTarget = null;
             }
         }
         else
         {
+            followTarget = null;
             StopAllCoroutines();
             isAttacking = false;
         }
+    }
+
+    public void followUnit(UnitRTS leader)
+    {
+        Vector3 direction = (leader.transform.position - transform.position).normalized;
+        transform.position += direction * Time.deltaTime * moveSpeed;
+        setFollowTarget(leader);
+
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject != gameObject && collider.gameObject.GetComponent<UnitRTS>() != null)
+            {
+                Vector3 avoidDirection = (transform.position - collider.transform.position).normalized;
+                transform.position += avoidDirection * Time.deltaTime * moveSpeed;
+            }
+        }
+    }
+
+    public void setFollowTarget(UnitRTS newTarget)
+    {
+        followTarget = newTarget;
     }
 
     private IEnumerator attackPath(UnitRTS attackedUnit)
@@ -102,9 +170,6 @@ public class UnitRTS : MonoBehaviour
 
         while (attackedUnit.health > 0)
         {
-            // TODO: Need to create working following system
-            // TODO #2: attack if have been attacked system need to be imply
-            MoveTo(attackedUnit.transform.position);
 
             while (!HasReachedDestination())
             {
@@ -114,17 +179,24 @@ public class UnitRTS : MonoBehaviour
             float attackDelay = 1 / attackSpeed;
             yield return new WaitForSeconds(attackDelay);
 
-            attackedUnit.takeDamage(1);
+            if (attackedUnit.health > 0)
+            {
+                attackedUnit.takeDamage(attackDamage, this);
+            }
+            else
+            {
+                break;
+            }
         }
 
         isAttacking = false; 
     }
 
-    protected virtual void Die()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        OnDeath?.Invoke(this);
-
-        Destroy(gameObject);
+        if (collision.gameObject.CompareTag("Environment"))
+        {
+            destination = transform.position;
+        }
     }
-
 }
