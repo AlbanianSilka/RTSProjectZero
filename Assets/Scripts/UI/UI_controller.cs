@@ -36,6 +36,14 @@ public class UI_controller : MonoBehaviour
         }
     }
 
+    public static void showBuildingButtons(RTS_building building)
+    {
+        foreach (GameObject spellButton in building.spellButtons)
+        {
+            SpellButtonInBox(spellButton, spellBoxes);
+        }
+    }
+
     private static void SpellButtonInBox(GameObject spellButton, List<GameObject> spellBoxes)
     {
         spell_button spellButtonComponent = spellButton.GetComponent<spell_button>();

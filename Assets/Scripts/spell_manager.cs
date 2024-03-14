@@ -49,4 +49,9 @@ public class spell_manager : MonoBehaviour
             }
         }
     }
+
+    public void SpawnPeasant()
+    {
+        Debug.Log("I will spawn a peasant");
+    }
 }
