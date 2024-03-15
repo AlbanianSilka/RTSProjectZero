@@ -8,54 +8,9 @@ public class buildings_manager : MonoBehaviour
 {
     public GameObject buildingPrefab;
     public static bool isPlacingBuilding = false;
-
-    private GameObject ghostBuildingInstance;
-    private bool canPlaceBuilding = false;
-    private RTS_controller rtsController;
-
-    public void startBuilding()
-    {
-        isPlacingBuilding = true;
-        CreateGhostBuilding();
-    }
-
-    private void Awake()
-    {
-        rtsController = FindObjectOfType<RTS_controller>();
-    }
-
-    private void CancelBuilding()
-    {
-        isPlacingBuilding = false;
-        DestroyGhostBuilding();
-    }
-
-private void CreateGhostBuilding()
-{
-    ghostBuildingInstance = new GameObject("GhostBuilding");
-    SpriteRenderer spriteRenderer = ghostBuildingInstance.AddComponent<SpriteRenderer>();
-    spriteRenderer.sprite = buildingPrefab.GetComponent<SpriteRenderer>().sprite;
-    spriteRenderer.sortingLayerName = buildingPrefab.GetComponent<SpriteRenderer>().sortingLayerName;
-    ghostBuildingInstance.transform.localScale = buildingPrefab.transform.localScale;
-
-    // Add a BoxCollider2D component to the ghostBuildingInstance
-    BoxCollider2D boxCollider = ghostBuildingInstance.AddComponent<BoxCollider2D>();
-
-    // Get the size of the sprite rendered by the SpriteRenderer
-    Vector2 spriteSize = spriteRenderer.bounds.size;
-
-    // Set the size of the BoxCollider2D to match the size of the sprite
-    boxCollider.size = spriteSize;
-    boxCollider.tag = "Ghost";
-    }
-
-    private void DestroyGhostBuilding()
-    {
-        if (ghostBuildingInstance != null)
-        {
-            Destroy(ghostBuildingInstance);
-        }
-    }
+    public static GameObject ghostBuildingInstance;
+    public static bool canPlaceBuilding = false;
+    public static RTS_controller rtsController;
 
     private void Update()
     {
@@ -64,7 +19,7 @@ private void CreateGhostBuilding()
             UpdateGhostBuildingPosition();
             CheckBuildingPlacementValidity();
 
-            if (Input.GetMouseButtonDown(0) && canPlaceBuilding) 
+            if (Input.GetMouseButtonDown(0) && canPlaceBuilding)
             {
                 moveBuilders();
             }
@@ -72,6 +27,46 @@ private void CreateGhostBuilding()
             {
                 CancelBuilding();
             }
+        }
+    }
+
+    public void startBuilding()
+    {
+        rtsController = FindObjectOfType<RTS_controller>();
+        isPlacingBuilding = true;
+        CreateGhostBuilding();
+    }
+
+    private void CancelBuilding()
+    {
+        isPlacingBuilding = false;
+        DestroyGhostBuilding();
+    }
+
+    private void CreateGhostBuilding()
+    {
+        ghostBuildingInstance = new GameObject("GhostBuilding");
+        SpriteRenderer spriteRenderer = ghostBuildingInstance.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = buildingPrefab.GetComponent<SpriteRenderer>().sprite;
+        spriteRenderer.sortingLayerName = buildingPrefab.GetComponent<SpriteRenderer>().sortingLayerName;
+        ghostBuildingInstance.transform.localScale = buildingPrefab.transform.localScale;
+
+        // Add a BoxCollider2D component to the ghostBuildingInstance
+        BoxCollider2D boxCollider = ghostBuildingInstance.AddComponent<BoxCollider2D>();
+
+        // Get the size of the sprite rendered by the SpriteRenderer
+        Vector2 spriteSize = spriteRenderer.bounds.size;
+
+        // Set the size of the BoxCollider2D to match the size of the sprite
+        boxCollider.size = spriteSize;
+        boxCollider.tag = "Ghost";
+    }
+
+    private void DestroyGhostBuilding()
+    {
+        if (ghostBuildingInstance != null)
+        {
+            Destroy(ghostBuildingInstance);
         }
     }
 
@@ -106,7 +101,7 @@ private void CreateGhostBuilding()
         {
             if (collider.tag != "Ground" && collider.tag != "Ghost")
             {
-                canPlaceBuilding = false; 
+                canPlaceBuilding = false;
                 break;
             }
         }
@@ -194,5 +189,4 @@ private void CreateGhostBuilding()
 
         return nearestCorner;
     }
-
 }

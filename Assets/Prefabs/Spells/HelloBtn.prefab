@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4819202271434246904
+--- !u!1 &5628786965462785495
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1351083984087260131}
-  - component: {fileID: 7989623115073117962}
-  - component: {fileID: 9034718509104020049}
-  - component: {fileID: 6700517162549921473}
-  - component: {fileID: 3928326170851744613}
+  - component: {fileID: 2277081955871971993}
+  - component: {fileID: 6175808810483999392}
+  - component: {fileID: 4388582966589788771}
+  - component: {fileID: 2641209566061962573}
+  - component: {fileID: 5592217529279117036}
   m_Layer: 5
-  m_Name: FuckYouBtn
+  m_Name: HelloBtn
   m_TagString: SpellBtn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1351083984087260131
+--- !u!224 &2277081955871971993
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4819202271434246904}
+  m_GameObject: {fileID: 5628786965462785495}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -36,24 +36,24 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 1430.3589, y: 51.24121}
+  m_AnchoredPosition: {x: 1430.6, y: 320.9}
   m_SizeDelta: {x: 110, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &7989623115073117962
+--- !u!222 &6175808810483999392
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4819202271434246904}
+  m_GameObject: {fileID: 5628786965462785495}
   m_CullTransparentMesh: 1
---- !u!114 &9034718509104020049
+--- !u!114 &4388582966589788771
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4819202271434246904}
+  m_GameObject: {fileID: 5628786965462785495}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 954cceb481b0346b489c99364dac8c0a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cb48f1c09d1434cf29bf3dfb9aa89e41, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -77,13 +77,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6700517162549921473
+--- !u!114 &2641209566061962573
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4819202271434246904}
+  m_GameObject: {fileID: 5628786965462785495}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
@@ -117,13 +117,13 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 9034718509104020049}
+  m_TargetGraphic: {fileID: 4388582966589788771}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3831467481260168968, guid: c9fe48608faff48e5bbf806574e95208, type: 3}
         m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
-        m_MethodName: FuckYouSpell
+        m_MethodName: HelloSpell
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -133,13 +133,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &3928326170851744613
+--- !u!114 &5592217529279117036
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4819202271434246904}
+  m_GameObject: {fileID: 5628786965462785495}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41e5ee1d7a17c49eca78cdde39a65f9f, type: 3}

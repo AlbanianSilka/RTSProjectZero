@@ -179,7 +179,7 @@ MonoBehaviour:
   finished: 0
   healthBar: {fileID: 6000223040772193758}
   spellButtons:
-  - {fileID: 0}
+  - {fileID: 7709632872444937829, guid: f67e1b848670e4422a24fad19dc9fc19, type: 3}
 --- !u!1 &2620352148868916904
 GameObject:
   m_ObjectHideFlags: 0

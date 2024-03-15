@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 6851551244696682248}
   - component: {fileID: 7714097321639357280}
   - component: {fileID: 7507791279445886421}
+  - component: {fileID: -4025406827444036859}
   m_Layer: 0
   m_Name: RTSController
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -58,3 +59,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098aee7bcebb84a6ba1392ba26907a9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-4025406827444036859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738421475551658655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f61a5b7311eb4d669f71ae70c0f23b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingPrefab: {fileID: 491780485271085513, guid: 3efde2f6efca74141a1ab09d11de4224, type: 3}

@@ -141,7 +141,7 @@ public class RTS_controller : MonoBehaviour
         GameObject[] spellButtons = GameObject.FindGameObjectsWithTag("SpellBtn");
         foreach (GameObject spellButton in spellButtons)
         {
-            spellButton.SetActive(false);
+            Destroy(spellButton);
         }
     }
 }
