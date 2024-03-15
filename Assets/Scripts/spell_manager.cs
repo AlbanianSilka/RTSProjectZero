@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class spell_manager : MonoBehaviour
 {
+    // !!! TODO: IMPORTANT, NEED TO FIX THIS PROBLEM WITH CALLING RTS_CONTROLLER BEFORE EVERY FUNCTION, IT BREAKS DRY!!!
     private RTS_controller rtsController;
 
     private void Awake()
     {
-        rtsController = FindObjectOfType<RTS_controller>();
+        GameObject controllerComponent = GameObject.FindWithTag("GameController");
+        rtsController = controllerComponent.GetComponent<RTS_controller>();
     }
 
     public void HelloSpell()
     {
+        GameObject controllerComponent = GameObject.FindWithTag("GameController");
+        rtsController = controllerComponent.GetComponent<RTS_controller>();
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
 
         foreach (UnitRTS unit in selectedUnits)
@@ -26,6 +30,9 @@ public class spell_manager : MonoBehaviour
 
     public void FuckYouSpell()
     {
+        GameObject controllerComponent = GameObject.FindWithTag("GameController");
+        rtsController = controllerComponent.GetComponent<RTS_controller>();
+
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
 
         foreach (UnitRTS unit in selectedUnits)
@@ -39,6 +46,8 @@ public class spell_manager : MonoBehaviour
 
     public void ThumbUpSpell()
     {
+        GameObject controllerComponent = GameObject.FindWithTag("GameController");
+        rtsController = controllerComponent.GetComponent<RTS_controller>();
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
 
         foreach (UnitRTS unit in selectedUnits)
@@ -48,5 +57,12 @@ public class spell_manager : MonoBehaviour
                 Debug.Log($"{unit.gameObject.name} says: 'Нє, ну тут чисто лойк, лайкос, так би мовити.'");
             }
         }
+    }
+
+    public void SpawnPeasant()
+    {
+        GameObject controllerComponent = GameObject.FindWithTag("GameController");
+        rtsController = controllerComponent.GetComponent<RTS_controller>();
+        Debug.Log("I will spawn a peasant");
     }
 }

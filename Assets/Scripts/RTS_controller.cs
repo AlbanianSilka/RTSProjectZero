@@ -57,17 +57,30 @@ public class RTS_controller : MonoBehaviour
                 selectedUnitRTSList.Clear();
                 HideSpellButtons();
 
+                bool noUnits = true;
+                RTS_building buildingObject = null; 
+
                 foreach (Collider2D obj in collArray)
                 {
                     UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
                     if (unitRTS != null)
                     {
+                        noUnits = false;
                         selectedUnitRTSList.Add(unitRTS);
+                    } else if (obj.CompareTag("Building"))
+                    {
+                        buildingObject = obj.GetComponent<RTS_building>();
                     }
-
                 }
 
-                UI_controller.showSpellButtons(selectedUnitRTSList);
+                if(noUnits && buildingObject != null)
+                {
+                    UI_controller.showBuildingButtons(buildingObject);
+                }
+                else
+                {
+                    UI_controller.showSpellButtons(selectedUnitRTSList);
+                }
             }
         }
 
@@ -128,7 +141,7 @@ public class RTS_controller : MonoBehaviour
         GameObject[] spellButtons = GameObject.FindGameObjectsWithTag("SpellBtn");
         foreach (GameObject spellButton in spellButtons)
         {
-            spellButton.SetActive(false);
+            Destroy(spellButton);
         }
     }
 }

@@ -10,6 +10,7 @@ public class RTS_building : MonoBehaviour
     public float health;
     public bool finished;
     public healthbar_manager healthBar;
+    public List<GameObject> spellButtons = new List<GameObject>();
 
     private void Awake()
     {

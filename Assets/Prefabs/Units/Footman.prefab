@@ -569,5 +569,5 @@ MonoBehaviour:
   team: A
   healthBar: {fileID: 1885988619391164155}
   spellButtons:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 4819202271434246904, guid: 4140ad4bd7a2a4236ae9de0574434b2d, type: 3}
+  - {fileID: 2588720660443658898, guid: aba929f732552425e8841587f194bfd2, type: 3}

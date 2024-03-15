@@ -194,7 +194,7 @@ public class UnitRTS : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Environment"))
+        if (collision.gameObject.CompareTag("Environment") || collision.gameObject.CompareTag("Building"))
         {
             destination = transform.position;
         }

@@ -35,9 +35,11 @@ public class Peasant : UnitRTS
     {
         if (buildCouroutine == null)
         {
-            isBuilding = true;
             RTS_building buildingComponent = building.GetComponent<RTS_building>();
-            buildCouroutine = StartCoroutine(Build(buildingComponent));
+            if (buildingComponent.health < buildingComponent.maxHealth) {
+                isBuilding = true;
+                buildCouroutine = StartCoroutine(Build(buildingComponent));
+            }
         }
     }
 
@@ -51,7 +53,10 @@ public class Peasant : UnitRTS
         }
 
         building.finished = true;
-        StopBuildingProcess();
+        if(buildCouroutine != null)
+        {
+            StopBuildingProcess();
+        }
     }
 
     private void StopBuildingProcess()
