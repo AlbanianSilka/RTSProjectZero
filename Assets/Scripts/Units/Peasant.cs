@@ -10,6 +10,8 @@ public class Peasant : UnitRTS
     private Coroutine buildCouroutine;
     private bool isBuilding;
 
+    public override float spawnTime => 6f;
+
     protected override void Start()
     {
         base.Start();

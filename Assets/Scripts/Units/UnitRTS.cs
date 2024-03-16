@@ -15,10 +15,11 @@ public class UnitRTS : MonoBehaviour
     protected virtual float attackSpeed { get; set; } = 1f;
     protected virtual float attackDamage { get; set; } = 1f;
     protected RTS_controller rtsController;
-    [SerializeField] string team;
+    [SerializeField] public string team;
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
+    public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
     public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public event Action<UnitRTS> OnDeath;
