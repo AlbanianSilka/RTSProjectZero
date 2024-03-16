@@ -11,6 +11,7 @@ public class RTS_controller : MonoBehaviour
     private buildings_manager building_manager;
 
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
+    public RTS_building selectedBuilding { get; private set; }
 
     private void Start()
     {
@@ -55,10 +56,10 @@ public class RTS_controller : MonoBehaviour
                 selectionAreaTransform.gameObject.SetActive(false);
                 Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 selectedUnitRTSList.Clear();
+                selectedBuilding = null;
                 HideSpellButtons();
 
                 bool noUnits = true;
-                RTS_building buildingObject = null; 
 
                 foreach (Collider2D obj in collArray)
                 {
@@ -69,16 +70,17 @@ public class RTS_controller : MonoBehaviour
                         selectedUnitRTSList.Add(unitRTS);
                     } else if (obj.CompareTag("Building"))
                     {
-                        buildingObject = obj.GetComponent<RTS_building>();
+                        selectedBuilding = obj.GetComponent<RTS_building>();
                     }
                 }
 
-                if(noUnits && buildingObject != null)
+                if(noUnits && selectedBuilding != null)
                 {
-                    UI_controller.showBuildingButtons(buildingObject);
+                    UI_controller.showBuildingButtons(selectedBuilding);
                 }
                 else
                 {
+                    selectedBuilding = null;
                     UI_controller.showSpellButtons(selectedUnitRTSList);
                 }
             }
