@@ -59,10 +59,17 @@ public class spell_manager : MonoBehaviour
         }
     }
 
-    public void SpawnPeasant()
+    public void SpawnUnit(UnitRTS unit)
     {
         GameObject controllerComponent = GameObject.FindWithTag("GameController");
         rtsController = controllerComponent.GetComponent<RTS_controller>();
-        Debug.Log("I will spawn a peasant");
+        if(rtsController.selectedBuilding != null)
+        {
+            rtsController.selectedBuilding.AddUnitToQueue(unit);
+        }
+        else
+        {
+            Debug.LogError("No building selected but SpawnUnit spell called.");
+        }
     }
 }

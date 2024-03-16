@@ -67,6 +67,9 @@ public class buildings_manager : MonoBehaviour
         if (ghostBuildingInstance != null)
         {
             Destroy(ghostBuildingInstance);
+        } else
+        {
+            Debug.LogError("Ghost building is missing, cannot destroy it");
         }
     }
 
@@ -153,6 +156,10 @@ public class buildings_manager : MonoBehaviour
         }
 
         GameObject newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+
+        RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
+        buildingObject.team = peasantUnits.First().team;
+
         DestroyGhostBuilding();
         isPlacingBuilding = false;
 
