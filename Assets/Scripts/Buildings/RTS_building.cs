@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class RTS_building : MonoBehaviour
@@ -13,6 +15,7 @@ public class RTS_building : MonoBehaviour
     public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
+    public event Action<RTS_building> OnDeath;
 
     private bool makingUnit;
 
@@ -21,6 +24,18 @@ public class RTS_building : MonoBehaviour
         healthBar = GetComponentInChildren<healthbar_manager>();
         makingUnit = false;
         InvokeRepeating("CheckAndSpawnUnits", 0f, 1f);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        this.healthBar.updateHealthBar(this.health, this.maxHealth);
+        Debug.Log($"{this.name} was hit");
+
+        if (health <= 0)
+        {
+            Die();
+        }
     }
 
     public void AddUnitToQueue(UnitRTS unit)
@@ -63,4 +78,10 @@ public class RTS_building : MonoBehaviour
         }
     }
 
+    protected virtual void Die()
+    {
+        OnDeath?.Invoke(this);
+
+        Destroy(gameObject);
+    }
 }

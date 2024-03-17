@@ -76,8 +76,12 @@ public class Peasant : UnitRTS
             GameObject clickedObject = hit.collider.gameObject;
             if (clickedObject.CompareTag("Building"))
             {
-                MoveTo(clickPosition);
-                StartCoroutine(constructionPath(clickedObject));
+                RTS_building clickedBuilding = clickedObject.GetComponent<RTS_building>();
+                if(clickedBuilding.team == this.team)
+                {
+                    MoveTo(clickPosition);
+                    StartCoroutine(constructionPath(clickedObject));
+                }
             }
         } else
         {
