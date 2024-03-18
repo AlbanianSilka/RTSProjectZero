@@ -76,7 +76,10 @@ public class RTS_controller : MonoBehaviour
 
                 if(noUnits && selectedBuilding != null)
                 {
-                    UI_controller.showBuildingButtons(selectedBuilding);
+                    if (selectedBuilding.finished)
+                    {
+                        UI_controller.showBuildingButtons(selectedBuilding);
+                    }
                 }
                 else
                 {

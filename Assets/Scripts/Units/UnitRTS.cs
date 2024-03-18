@@ -9,7 +9,7 @@ public class UnitRTS : MonoBehaviour
     private bool isAttacking;
     private UnitRTS followTarget;
 
-    protected virtual float moveSpeed => 5f; 
+    protected virtual float moveSpeed { get; set; } = 5f; 
     protected virtual float maxHp => 10f;
     protected virtual float health { get; set; } = 30f;
     protected virtual float attackSpeed { get; set; } = 1f;
@@ -93,14 +93,14 @@ public class UnitRTS : MonoBehaviour
     public void takeDamage(float damage, UnitRTS attacker)
     {
         // TODO: Need to think about making a following system when counter attack
-        health -= damage;
+        this.health -= damage;
         this.healthBar.updateHealthBar(this.health, this.maxHp);
-        Debug.Log($"{this.name} was hit by {attacker.name}");
+        Debug.Log($"{this.name} was hit by {attacker.name} on {damage} dmg and has {this.health} hp");
 
         // if not moving - counter attack
         if (HasReachedDestination())
         {
-            GameObject counterAttackTarget = attacker.GetComponent<GameObject>();
+            GameObject counterAttackTarget = attacker.gameObject;
             StartCoroutine(attackPath(counterAttackTarget));
         }
 

@@ -111,8 +111,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 49.43, y: 20.24}
-  m_SizeDelta: {x: 69.761, y: 101.495}
+  m_AnchoredPosition: {x: 0.14, y: 1.7}
+  m_SizeDelta: {x: 31, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2079116464437451036
 Canvas:
@@ -315,7 +315,7 @@ RectTransform:
   m_GameObject: {fileID: 6382494660413927476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.16, y: 0.19, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8586765551216666604}
@@ -424,7 +424,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.11, y: -3.39, z: -0.006271995}
-  m_LocalScale: {x: 0.13929678, y: 0.14009242, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3387888045501290306}
@@ -471,8 +471,8 @@ SpriteRenderer:
   m_SortingLayerID: 483684667
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a6af1b8b6c0c245238dab26d40e71d1e, type: 3}
-  m_Color: {r: 1, g: 0.19215685, b: 0.31417933, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e5ad5d51081ad45fba638ab586553544, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -541,18 +541,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.50574684, y: 0.038681984}
+  m_Offset: {x: -0.14008975, y: 0.038681865}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 18.9, y: 14.17}
+    oldSize: {x: 2.91, y: 2.96}
     newSize: {x: 18.9, y: 14.17}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 13.220043, y: 10.688538}
+  m_Size: {x: 2.8146744, y: 3.1391346}
   m_EdgeRadius: 0
 --- !u!114 &4352249834916183926
 MonoBehaviour:

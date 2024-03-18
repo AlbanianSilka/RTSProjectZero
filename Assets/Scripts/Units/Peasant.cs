@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Peasant : UnitRTS
 {
-    protected override float moveSpeed => 9f;
+    protected override float moveSpeed { get; set; } = 9f;
+    protected override float health { get; set; } = 7f;
     protected override float maxHp => 5f;
 
     private Coroutine buildCouroutine;
