@@ -12,6 +12,8 @@ TagManager:
   - Building
   - Environment
   - SpellsCanvas
+  - MiddleSection
+  - ProgressBox
   layers:
   - Default
   - TransparentFX

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Peasant : UnitRTS
 {
-    protected override float moveSpeed => 9f;
+    protected override float moveSpeed { get; set; } = 9f;
+    protected override float health { get; set; } = 7f;
     protected override float maxHp => 5f;
 
     private Coroutine buildCouroutine;
@@ -76,8 +77,12 @@ public class Peasant : UnitRTS
             GameObject clickedObject = hit.collider.gameObject;
             if (clickedObject.CompareTag("Building"))
             {
-                MoveTo(clickPosition);
-                StartCoroutine(constructionPath(clickedObject));
+                RTS_building clickedBuilding = clickedObject.GetComponent<RTS_building>();
+                if(clickedBuilding.team == this.team)
+                {
+                    MoveTo(clickPosition);
+                    StartCoroutine(constructionPath(clickedObject));
+                }
             }
         } else
         {

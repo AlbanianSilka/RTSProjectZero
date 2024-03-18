@@ -9,7 +9,7 @@ public class UnitRTS : MonoBehaviour
     private bool isAttacking;
     private UnitRTS followTarget;
 
-    protected virtual float moveSpeed => 5f; 
+    protected virtual float moveSpeed { get; set; } = 5f; 
     protected virtual float maxHp => 10f;
     protected virtual float health { get; set; } = 30f;
     protected virtual float attackSpeed { get; set; } = 1f;
@@ -93,14 +93,15 @@ public class UnitRTS : MonoBehaviour
     public void takeDamage(float damage, UnitRTS attacker)
     {
         // TODO: Need to think about making a following system when counter attack
-        health -= damage;
+        this.health -= damage;
         this.healthBar.updateHealthBar(this.health, this.maxHp);
-        Debug.Log($"{this.name} was hit by {attacker.name}");
+        Debug.Log($"{this.name} was hit by {attacker.name} on {damage} dmg and has {this.health} hp");
 
         // if not moving - counter attack
         if (HasReachedDestination())
         {
-            StartCoroutine(attackPath(attacker));
+            GameObject counterAttackTarget = attacker.gameObject;
+            StartCoroutine(attackPath(counterAttackTarget));
         }
 
         if(health <= 0)
@@ -124,10 +125,16 @@ public class UnitRTS : MonoBehaviour
                 {
                     followUnit(clickedUnit);
                     clickedUnit = this.followTarget;
-                    StartCoroutine(attackPath(clickedUnit));
+                    StartCoroutine(attackPath(clickedObject));
                 }
-            }
-            else
+            } else if (clickedObject.CompareTag("Building"))
+            {
+                RTS_building clickedBuilding = clickedObject.GetComponent<RTS_building>();
+                if(clickedBuilding != null && clickedBuilding.team != this.team)
+                {
+                    StartCoroutine(attackPath(clickedObject));
+                }
+            } else
             {
                 followTarget = null;
             }
@@ -162,31 +169,58 @@ public class UnitRTS : MonoBehaviour
         followTarget = newTarget;
     }
 
-    private IEnumerator attackPath(UnitRTS attackedUnit)
+    private IEnumerator attackPath(GameObject target)
     {
         if (isAttacking)
             yield break;
 
         isAttacking = true;
 
-        while (attackedUnit.health > 0)
+        if(target.CompareTag("Unit"))
         {
-
-            while (!HasReachedDestination())
+            UnitRTS attackedUnit = target.GetComponent<UnitRTS>();
+            while (attackedUnit.health > 0)
             {
-                yield return null;
+
+                while (!HasReachedDestination())
+                {
+                    yield return null;
+                }
+
+                float attackDelay = 1 / attackSpeed;
+                yield return new WaitForSeconds(attackDelay);
+
+                if (attackedUnit.health > 0)
+                {
+                    attackedUnit.takeDamage(attackDamage, this);
+                }
+                else
+                {
+                    break;
+                }
             }
+        } else if (target.CompareTag("Building"))
+        {
+            RTS_building attackedBuilding = target.GetComponent<RTS_building>();
 
-            float attackDelay = 1 / attackSpeed;
-            yield return new WaitForSeconds(attackDelay);
+            while(attackedBuilding.health > 0)
+            {
+                while (!HasReachedDestination())
+                {
+                    yield return null;
+                }
 
-            if (attackedUnit.health > 0)
-            {
-                attackedUnit.takeDamage(attackDamage, this);
-            }
-            else
-            {
-                break;
+                float attackDelay = 1 / attackSpeed;
+                yield return new WaitForSeconds(attackDelay);
+
+                if (attackedBuilding.health > 0)
+                {
+                    attackedBuilding.TakeDamage(attackDamage);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -200,4 +234,5 @@ public class UnitRTS : MonoBehaviour
             destination = transform.position;
         }
     }
+
 }
