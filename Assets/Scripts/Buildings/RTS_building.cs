@@ -15,6 +15,7 @@ public class RTS_building : MonoBehaviour
     public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
+    public Canvas buildingCanvas;
     public event Action<RTS_building> OnDeath;
 
     private bool makingUnit;
