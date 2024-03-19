@@ -12,6 +12,7 @@ public class RTS_controller : MonoBehaviour
 
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
     public RTS_building selectedBuilding { get; private set; }
+    public Canvas middleSection;
 
     private void Start()
     {
@@ -79,7 +80,7 @@ public class RTS_controller : MonoBehaviour
                     if (selectedBuilding.finished)
                     {
                         UI_controller.showBuildingButtons(selectedBuilding);
-                        selectedBuilding.buildingCanvas.gameObject.SetActive(true);
+                        middleSection.gameObject.SetActive(true);
                     }
                 }
                 else
@@ -150,11 +151,7 @@ public class RTS_controller : MonoBehaviour
             Destroy(spellButton);
         }
 
-        // In case if some of the middle section UI element is set tot active at the beggining
-        GameObject[] middleSections = GameObject.FindGameObjectsWithTag("MiddleSection");
-        foreach (GameObject section in middleSections)
-        {
-            section.SetActive(false);
-        }
+        // In case if middle section is active at the start of the game
+        middleSection.gameObject.SetActive(false);
     }
 }

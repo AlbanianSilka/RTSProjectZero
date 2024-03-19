@@ -23,6 +23,7 @@ public class UnitRTS : MonoBehaviour
     public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public event Action<UnitRTS> OnDeath;
+    public Sprite unitIcon;
 
     protected virtual void Awake()
     {

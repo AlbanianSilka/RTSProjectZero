@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class RTS_building : MonoBehaviour
 {
@@ -15,13 +16,23 @@ public class RTS_building : MonoBehaviour
     public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
-    public Canvas buildingCanvas;
     public event Action<RTS_building> OnDeath;
+    public GameObject progressButtonPrefab;
+
+    protected RTS_controller rtsController;
 
     private bool makingUnit;
+    private static List<GameObject> progressBoxes = new List<GameObject>();
+
+    private void Start()
+    {
+        GameObject[] progressBoxObjects = GameObject.FindGameObjectsWithTag("ProgressBox");
+        progressBoxes.AddRange(progressBoxObjects);
+    }
 
     private void Awake()
     {
+        rtsController = FindObjectOfType<RTS_controller>();
         healthBar = GetComponentInChildren<healthbar_manager>();
         makingUnit = false;
         InvokeRepeating("CheckAndSpawnUnits", 0f, 1f);
@@ -44,6 +55,7 @@ public class RTS_building : MonoBehaviour
         if(unitsQueue.Count < 10)
         {
             unitsQueue.Add(unit);
+            addNewProgessButton(unit);
         }
     }
 
@@ -84,5 +96,48 @@ public class RTS_building : MonoBehaviour
         OnDeath?.Invoke(this);
 
         Destroy(gameObject);
+    }
+
+
+    // TODO: having troubles with getting an image changed
+    private void addNewProgessButton(UnitRTS addedUnit)
+    {
+        GameObject middleCanvas = rtsController.middleSection.gameObject;
+
+        if(middleCanvas != null)
+        {
+            int queueIndex = unitsQueue.Count - 1;
+            GameObject progressButton = Instantiate(progressButtonPrefab);
+            progressButton.transform.SetParent(middleCanvas.transform, false);
+            progress_button buttonComponent = progressButton.GetComponent<progress_button>();
+            if(buttonComponent != null)
+            {
+                buttonComponent.buttonIndex = queueIndex;
+                Sprite unitIcon = addedUnit.unitIcon;
+                // !!! currently stucked here !!!
+                Image newBtnImg = progressButton.GetComponent<Image>();
+                newBtnImg.sprite = unitIcon;
+                foreach (GameObject progressBox in progressBoxes)
+                {
+                    progress_box progressBoxComponent = progressBox.GetComponent<progress_box>();
+                    if (progressBoxComponent != null && progressBoxComponent.boxIndex == buttonComponent.buttonIndex)
+                    {
+                        progressButton.transform.position = progressBox.transform.position;
+                        progressButton.transform.localScale = progressBox.transform.localScale;
+                        progressButton.SetActive(true);
+
+                        // Exit the loop after finding the matching spell box
+                        return;
+                    }
+                }
+            } else
+            {
+                Debug.LogError("You forgot to attach 'spell_button' component to prefab");
+            }
+        }
+        else
+        {
+            Debug.LogError("You probably forgot to add middle canvas to the scene");
+        }
     }
 }
