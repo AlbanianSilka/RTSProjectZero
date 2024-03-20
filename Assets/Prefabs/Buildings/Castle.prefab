@@ -215,6 +215,8 @@ MonoBehaviour:
   - {fileID: 7709632872444937829, guid: f67e1b848670e4422a24fad19dc9fc19, type: 3}
   - {fileID: 4234927341760420990, guid: 7ea692b0c4fa54288a0a791879e3848c, type: 3}
   unitsQueue: []
+  buildingCanvas: {fileID: 3672935750692102961, guid: f45c0d7011cba40e49cd80b82035b71b, type: 3}
+  progressButtonPrefab: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
 --- !u!1 &2620352148868916904
 GameObject:
   m_ObjectHideFlags: 0
