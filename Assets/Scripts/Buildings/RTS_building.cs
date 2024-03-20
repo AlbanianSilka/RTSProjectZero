@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
+//using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class RTS_building : MonoBehaviour
 {
@@ -52,7 +53,9 @@ public class RTS_building : MonoBehaviour
 
     public void AddUnitToQueue(UnitRTS unit)
     {
-        if(unitsQueue.Count < 10)
+        // currently max queue is 7 unuts (or 7 upgrades but that's for future)
+
+        if(unitsQueue.Count < 7)
         {
             unitsQueue.Add(unit);
             addNewProgessButton(unit);
@@ -67,8 +70,6 @@ public class RTS_building : MonoBehaviour
 
             makingUnit = true;
             StartCoroutine(SpawnUnitAfterDelay(unit));
-
-            unitsQueue.RemoveAt(0);
         }
     }
 
@@ -82,6 +83,7 @@ public class RTS_building : MonoBehaviour
         {
             Vector2 spawnPosition = spawnMarker.transform.position;
             UnitRTS newUnit = Instantiate(unit, spawnPosition, Quaternion.identity);
+            unitsQueue.RemoveAt(0);
             newUnit.team = this.team;
             makingUnit = false;
         }
@@ -98,8 +100,10 @@ public class RTS_building : MonoBehaviour
         Destroy(gameObject);
     }
 
-
-    // TODO: having troubles with getting an image changed
+    // TODO: refactor this shit, I'll need to move this to UI_controller
+    // TODO: 1) create method display all buttons according unitQueue
+    // TODO: 2) create method to add new progress button if new unit added to queue
+    // !!! all in UI_controller !!!
     private void addNewProgessButton(UnitRTS addedUnit)
     {
         GameObject middleCanvas = rtsController.middleSection.gameObject;
@@ -114,7 +118,6 @@ public class RTS_building : MonoBehaviour
             {
                 buttonComponent.buttonIndex = queueIndex;
                 Sprite unitIcon = addedUnit.unitIcon;
-                // !!! currently stucked here !!!
                 Image newBtnImg = progressButton.GetComponent<Image>();
                 newBtnImg.sprite = unitIcon;
                 foreach (GameObject progressBox in progressBoxes)
@@ -126,7 +129,7 @@ public class RTS_building : MonoBehaviour
                         progressButton.transform.localScale = progressBox.transform.localScale;
                         progressButton.SetActive(true);
 
-                        // Exit the loop after finding the matching spell box
+                        // Exit the loop after finding the matching progress box
                         return;
                     }
                 }
@@ -139,5 +142,12 @@ public class RTS_building : MonoBehaviour
         {
             Debug.LogError("You probably forgot to add middle canvas to the scene");
         }
+    }
+
+    public void changeProgressButtonsOrder(int buttonIndex)
+    {
+        GameObject[] progressButtons = GameObject.FindGameObjectsWithTag("ProgressBtn");
+
+
     }
 }

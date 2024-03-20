@@ -571,3 +571,4 @@ MonoBehaviour:
   spellButtons:
   - {fileID: 4819202271434246904, guid: 4140ad4bd7a2a4236ae9de0574434b2d, type: 3}
   - {fileID: 2588720660443658898, guid: aba929f732552425e8841587f194bfd2, type: 3}
+  unitIcon: {fileID: 21300000, guid: 41d898ac05eea40e0a9809debbc8db29, type: 3}
