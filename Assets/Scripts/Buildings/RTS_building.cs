@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-//using UnityEngine.UIElements;
-using UnityEngine.UI;
 
 public class RTS_building : MonoBehaviour
 {
@@ -18,18 +16,10 @@ public class RTS_building : MonoBehaviour
     public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
-    public GameObject progressButtonPrefab;
 
     protected RTS_controller rtsController;
 
     private bool makingUnit;
-    private static List<GameObject> progressBoxes = new List<GameObject>();
-
-    private void Start()
-    {
-        GameObject[] progressBoxObjects = GameObject.FindGameObjectsWithTag("ProgressBox");
-        progressBoxes.AddRange(progressBoxObjects);
-    }
 
     private void Awake()
     {
@@ -58,7 +48,7 @@ public class RTS_building : MonoBehaviour
         if(unitsQueue.Count < 7)
         {
             unitsQueue.Add(unit);
-            addNewProgessButton(unit);
+            UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
         }
     }
 
@@ -98,56 +88,5 @@ public class RTS_building : MonoBehaviour
         OnDeath?.Invoke(this);
 
         Destroy(gameObject);
-    }
-
-    // TODO: refactor this shit, I'll need to move this to UI_controller
-    // TODO: 1) create method display all buttons according unitQueue
-    // TODO: 2) create method to add new progress button if new unit added to queue
-    // !!! all in UI_controller !!!
-    private void addNewProgessButton(UnitRTS addedUnit)
-    {
-        GameObject middleCanvas = rtsController.middleSection.gameObject;
-
-        if(middleCanvas != null)
-        {
-            int queueIndex = unitsQueue.Count - 1;
-            GameObject progressButton = Instantiate(progressButtonPrefab);
-            progressButton.transform.SetParent(middleCanvas.transform, false);
-            progress_button buttonComponent = progressButton.GetComponent<progress_button>();
-            if(buttonComponent != null)
-            {
-                buttonComponent.buttonIndex = queueIndex;
-                Sprite unitIcon = addedUnit.unitIcon;
-                Image newBtnImg = progressButton.GetComponent<Image>();
-                newBtnImg.sprite = unitIcon;
-                foreach (GameObject progressBox in progressBoxes)
-                {
-                    progress_box progressBoxComponent = progressBox.GetComponent<progress_box>();
-                    if (progressBoxComponent != null && progressBoxComponent.boxIndex == buttonComponent.buttonIndex)
-                    {
-                        progressButton.transform.position = progressBox.transform.position;
-                        progressButton.transform.localScale = progressBox.transform.localScale;
-                        progressButton.SetActive(true);
-
-                        // Exit the loop after finding the matching progress box
-                        return;
-                    }
-                }
-            } else
-            {
-                Debug.LogError("You forgot to attach 'spell_button' component to prefab");
-            }
-        }
-        else
-        {
-            Debug.LogError("You probably forgot to add middle canvas to the scene");
-        }
-    }
-
-    public void changeProgressButtonsOrder(int buttonIndex)
-    {
-        GameObject[] progressButtons = GameObject.FindGameObjectsWithTag("ProgressBtn");
-
-
     }
 }

@@ -2,15 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_controller : MonoBehaviour
 {
     private static List<GameObject> spellBoxes = new List<GameObject>();
+    private static List<GameObject> progressBoxes = new List<GameObject>();
 
     private void Start()
     {
         GameObject[] spellBoxObjects = GameObject.FindGameObjectsWithTag("SpellBox");
         spellBoxes.AddRange(spellBoxObjects);
+        GameObject[] progressBoxObjects = GameObject.FindGameObjectsWithTag("ProgressBox");
+        progressBoxes.AddRange(progressBoxObjects);
     }
 
     public static void showSpellButtons(List<UnitRTS> selectedUnits)
@@ -84,6 +88,66 @@ public class UI_controller : MonoBehaviour
         else
         {
             Debug.LogError("Canvas for spells not found, don't forget to add it");
+        }
+    }
+
+    public static void handleMiddleSection(List<UnitRTS> unitsQueue, GameObject progressButtonPrefab)
+    {
+        if(unitsQueue.Count > 0)
+        {
+            GameObject middleCanvas = GameObject.FindGameObjectWithTag("MiddleSection");
+
+            // Need to 'restart' canvas so we won't clone buttons each time
+            middleCanvas.SetActive(false);
+            middleCanvas.SetActive(true);
+
+            if (middleCanvas != null)
+            {
+                GameObject progressButton;
+                progress_button buttonComponent;
+
+                for( int i = 0; i < unitsQueue.Count; i++)
+                {
+                    UnitRTS unit = unitsQueue[i];
+                    progressButton = Instantiate(progressButtonPrefab);
+                    buttonComponent = progressButton.GetComponent<progress_button>();
+                    progressButton.transform.SetParent(middleCanvas.transform, false);
+
+                    if (buttonComponent != null)
+                    {
+                        changeProgressIcon(unit, buttonComponent, i, progressButton);
+                    }
+                    else
+                    {
+                        Debug.LogError("You forgot to attach 'spell_button' component to prefab");
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("You forgot to add middle canvas to the scene");
+            };
+        }
+    }
+
+    private static void changeProgressIcon(UnitRTS unit, progress_button buttonComponent, int queueIndex, GameObject progressButton)
+    {
+        buttonComponent.buttonIndex = queueIndex;
+        Sprite unitIcon = unit.unitIcon;
+        Image newBtnImg = progressButton.GetComponent<Image>();
+        newBtnImg.sprite = unitIcon;
+        foreach (GameObject progressBox in progressBoxes)
+        {
+            progress_box progressBoxComponent = progressBox.GetComponent<progress_box>();
+            if (progressBoxComponent != null && progressBoxComponent.boxIndex == buttonComponent.buttonIndex)
+            {
+                progressButton.transform.position = progressBox.transform.position;
+                progressButton.transform.localScale = progressBox.transform.localScale;
+                progressButton.SetActive(true);
+
+                // Exit the loop after finding the matching progress box
+                return;
+            }
         }
     }
 }
