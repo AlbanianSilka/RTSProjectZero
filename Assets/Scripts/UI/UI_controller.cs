@@ -106,16 +106,18 @@ public class UI_controller : MonoBehaviour
                 GameObject progressButton;
                 progress_button buttonComponent;
 
-                for( int i = 0; i < unitsQueue.Count; i++)
+                for( int index = 0; index < unitsQueue.Count; index++)
                 {
-                    UnitRTS unit = unitsQueue[i];
+                    UnitRTS unit = unitsQueue[index];
                     progressButton = Instantiate(progressButtonPrefab);
                     buttonComponent = progressButton.GetComponent<progress_button>();
                     progressButton.transform.SetParent(middleCanvas.transform, false);
 
                     if (buttonComponent != null)
                     {
-                        changeProgressIcon(unit, buttonComponent, i, progressButton);
+                        buttonComponent.buttonIndex = index;
+                        buttonComponent.maxTrainingTime = unit.spawnTime;
+                        changeProgressIcon(unit, index, progressButton);
                     }
                     else
                     {
@@ -130,16 +132,15 @@ public class UI_controller : MonoBehaviour
         }
     }
 
-    private static void changeProgressIcon(UnitRTS unit, progress_button buttonComponent, int queueIndex, GameObject progressButton)
+    private static void changeProgressIcon(UnitRTS unit, int buttonIndex, GameObject progressButton)
     {
-        buttonComponent.buttonIndex = queueIndex;
         Sprite unitIcon = unit.unitIcon;
         Image newBtnImg = progressButton.GetComponent<Image>();
         newBtnImg.sprite = unitIcon;
         foreach (GameObject progressBox in progressBoxes)
         {
             progress_box progressBoxComponent = progressBox.GetComponent<progress_box>();
-            if (progressBoxComponent != null && progressBoxComponent.boxIndex == buttonComponent.buttonIndex)
+            if (progressBoxComponent != null && progressBoxComponent.boxIndex == buttonIndex)
             {
                 progressButton.transform.position = progressBox.transform.position;
                 progressButton.transform.localScale = progressBox.transform.localScale;
