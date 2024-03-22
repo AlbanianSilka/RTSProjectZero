@@ -16,6 +16,7 @@ public class RTS_building : MonoBehaviour
     public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
+    public float remainingSpawnTime = 0f;
 
     protected RTS_controller rtsController;
 
@@ -52,6 +53,23 @@ public class RTS_building : MonoBehaviour
         }
     }
 
+    public void restartSpawnCoroutine()
+    {
+        if (makingUnit)
+        {
+            StopAllCoroutines();
+
+            if(unitsQueue.Count > 0)
+            {
+                UnitRTS unit = unitsQueue[0];
+                StartCoroutine(SpawnUnitAfterDelay(unit));
+            } else
+            {
+                makingUnit = false;
+            }
+        }
+    }
+
     private void CheckAndSpawnUnits()
     {
         if (unitsQueue.Count > 0 && !makingUnit)
@@ -65,19 +83,28 @@ public class RTS_building : MonoBehaviour
 
     private IEnumerator SpawnUnitAfterDelay(UnitRTS unit)
     {
-        yield return new WaitForSeconds(unit.spawnTime);
+        remainingSpawnTime = unit.spawnTime;
+
+        while (remainingSpawnTime > 0)
+        {
+            remainingSpawnTime -= Time.deltaTime;
+            yield return null;
+        }
 
         Transform spawnMarker = this.transform.Find("SpawnMarker");
-
-        if (spawnMarker != null)
+        if(spawnMarker != null)
         {
             Vector2 spawnPosition = spawnMarker.transform.position;
             UnitRTS newUnit = Instantiate(unit, spawnPosition, Quaternion.identity);
             unitsQueue.RemoveAt(0);
             newUnit.team = this.team;
             makingUnit = false;
-        }
-        else
+
+            if (rtsController.selectedBuilding == this)
+            {
+                UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
+            }
+        } else
         {
             Debug.LogError("SpawnMarker not found!");
         }
