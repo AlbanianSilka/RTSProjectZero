@@ -17,6 +17,7 @@ public class RTS_building : MonoBehaviour
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
     public float remainingSpawnTime = 0f;
+    public player owner;
 
     protected RTS_controller rtsController;
 
