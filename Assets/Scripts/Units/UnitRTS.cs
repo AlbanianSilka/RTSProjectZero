@@ -24,6 +24,7 @@ public class UnitRTS : MonoBehaviour
     public List<GameObject> spellButtons = new List<GameObject>();
     public event Action<UnitRTS> OnDeath;
     public Sprite unitIcon;
+    public Player owner;
 
     protected virtual void Awake()
     {

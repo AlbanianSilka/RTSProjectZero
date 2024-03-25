@@ -30,9 +30,31 @@ public class buildings_manager : MonoBehaviour
         }
     }
 
+    private void CheckBuildingCost(Player owner)
+    {
+        RTS_building building = buildingPrefab.GetComponent<RTS_building>();
+        if (building != null)
+        {
+            bool canBuild = building.CanBuild(owner);
+            Debug.Log("Can build: " + canBuild);
+        }
+        else
+        {
+            Debug.LogError("The provided prefab does not have a building component.");
+        }
+    }
+
+    // BUG report: I can click a lot of times on button of buidling and it will clone lots of red ghost buildings
     public void startBuilding()
     {
         rtsController = FindObjectOfType<RTS_controller>();
+        // ####################
+        // TODO: move this to another method
+        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
+        List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
+        Player owner = peasantUnits.First().owner;
+        CheckBuildingCost(owner);
+        // ####################
         isPlacingBuilding = true;
         CreateGhostBuilding();
     }
@@ -159,6 +181,7 @@ public class buildings_manager : MonoBehaviour
 
         RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
         buildingObject.team = peasantUnits.First().team;
+        buildingObject.owner = peasantUnits.First().owner;
 
         DestroyGhostBuilding();
         isPlacingBuilding = false;
