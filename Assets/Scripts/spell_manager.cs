@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class spell_manager : MonoBehaviour
 {
-    // !!! TODO: IMPORTANT, NEED TO FIX THIS PROBLEM WITH CALLING RTS_CONTROLLER BEFORE EVERY FUNCTION, IT BREAKS DRY!!!
     private RTS_controller rtsController;
 
-    private void Awake()
+    private void InitializeController()
     {
         GameObject controllerComponent = GameObject.FindWithTag("GameController");
         rtsController = controllerComponent.GetComponent<RTS_controller>();
@@ -15,11 +14,9 @@ public class spell_manager : MonoBehaviour
 
     public void HelloSpell()
     {
-        GameObject controllerComponent = GameObject.FindWithTag("GameController");
-        rtsController = controllerComponent.GetComponent<RTS_controller>();
-        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
+        InitializeController();
 
-        foreach (UnitRTS unit in selectedUnits)
+        foreach (UnitRTS unit in rtsController.selectedUnitRTSList)
         {
             if (unit is Peasant)
             {
@@ -30,12 +27,9 @@ public class spell_manager : MonoBehaviour
 
     public void FuckYouSpell()
     {
-        GameObject controllerComponent = GameObject.FindWithTag("GameController");
-        rtsController = controllerComponent.GetComponent<RTS_controller>();
+        InitializeController();
 
-        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
-
-        foreach (UnitRTS unit in selectedUnits)
+        foreach (UnitRTS unit in rtsController.selectedUnitRTSList)
         {
             if (unit is Footman)
             {
@@ -46,11 +40,9 @@ public class spell_manager : MonoBehaviour
 
     public void ThumbUpSpell()
     {
-        GameObject controllerComponent = GameObject.FindWithTag("GameController");
-        rtsController = controllerComponent.GetComponent<RTS_controller>();
-        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
+        InitializeController();
 
-        foreach (UnitRTS unit in selectedUnits)
+        foreach (UnitRTS unit in rtsController.selectedUnitRTSList)
         {
             if (unit is Footman)
             {
@@ -61,9 +53,9 @@ public class spell_manager : MonoBehaviour
 
     public void SpawnUnit(UnitRTS unit)
     {
-        GameObject controllerComponent = GameObject.FindWithTag("GameController");
-        rtsController = controllerComponent.GetComponent<RTS_controller>();
-        if(rtsController.selectedBuilding != null)
+        InitializeController();
+
+        if (rtsController.selectedBuilding != null)
         {
             rtsController.selectedBuilding.AddUnitToQueue(unit);
         }

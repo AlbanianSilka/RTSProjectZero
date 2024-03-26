@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static Resource;
 
 public class RTS_building : MonoBehaviour
 {
@@ -17,11 +18,26 @@ public class RTS_building : MonoBehaviour
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
     public float remainingSpawnTime = 0f;
-    public player owner;
+    public Player owner;
 
+    protected Dictionary<ResourceType, int> RequiredResources { get; set; }
     protected RTS_controller rtsController;
 
     private bool makingUnit;
+
+    public RTS_building()
+    {
+        RequiredResources = new Dictionary<ResourceType, int>
+        {
+            { ResourceType.Gold, 0 },
+            { ResourceType.Wood, 0 }
+        };
+    }
+
+    public Dictionary<ResourceType, int> GetRequiredResources()
+    {
+        return RequiredResources;
+    }
 
     private void Awake()
     {
@@ -29,6 +45,18 @@ public class RTS_building : MonoBehaviour
         healthBar = GetComponentInChildren<healthbar_manager>();
         makingUnit = false;
         InvokeRepeating("CheckAndSpawnUnits", 0f, 1f);
+    }
+
+    public bool CanBuild(Player owner)
+    {
+        foreach (var kvp in RequiredResources)
+        {
+            if (!owner.HasEnoughResources(kvp.Key, kvp.Value))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void TakeDamage(float damage)

@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 6282741594314831927}
   - component: {fileID: 541499988027842694}
   - component: {fileID: -6581428460710037941}
-  - component: {fileID: 5507726373135811667}
+  - component: {fileID: 2539985366466830533}
   m_Layer: 0
   m_Name: Castle
   m_TagString: Building
@@ -192,7 +192,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &5507726373135811667
+--- !u!114 &2539985366466830533
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 491780485271085513}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbce18e1ee6254ec4a974cf707024272, type: 3}
+  m_Script: {fileID: 11500000, guid: 070462db873914f3183a5351bcfb74b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   canBuild: {fileID: 21300000, guid: 3e716d6b05e83447ab11a9e2f165402b, type: 3}
@@ -215,8 +215,8 @@ MonoBehaviour:
   - {fileID: 7709632872444937829, guid: f67e1b848670e4422a24fad19dc9fc19, type: 3}
   - {fileID: 4234927341760420990, guid: 7ea692b0c4fa54288a0a791879e3848c, type: 3}
   unitsQueue: []
-  buildingCanvas: {fileID: 3672935750692102961, guid: f45c0d7011cba40e49cd80b82035b71b, type: 3}
-  progressButtonPrefab: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
+  remainingSpawnTime: 0
+  owner: {fileID: 0}
 --- !u!1 &2620352148868916904
 GameObject:
   m_ObjectHideFlags: 0

@@ -267,7 +267,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3831467481260168968}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
         m_MethodName: ThumbUpSpell
         m_Mode: 1
@@ -413,7 +413,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3831467481260168968}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
         m_MethodName: SpawnPeasant
         m_Mode: 1
@@ -559,7 +559,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3831467481260168968}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
         m_MethodName: HelloSpell
         m_Mode: 1
@@ -705,7 +705,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3831467481260168968}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
         m_MethodName: FuckYouSpell
         m_Mode: 1
@@ -742,7 +742,6 @@ GameObject:
   - component: {fileID: 734024251188648033}
   - component: {fileID: 4489742886809274068}
   - component: {fileID: 6446905935284684180}
-  - component: {fileID: 3831467481260168968}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: SpellsCanvas
@@ -838,18 +837,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3831467481260168968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9007639445102594230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84cbd63e9c5d648a8a88a8100e145e76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &841448154787868607
 PrefabInstance:
   m_ObjectHideFlags: 0
