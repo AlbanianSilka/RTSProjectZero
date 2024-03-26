@@ -9,16 +9,43 @@ public class Player : MonoBehaviour
 
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
 
-    // Method to add resources to the player
-    public void AddResource(ResourceType type, int amount)
+    // starting resources for players
+    public Player()
     {
-        if (resources.ContainsKey(type))
+        resources.Add(Resource.ResourceType.Gold, 150); 
+        resources.Add(Resource.ResourceType.Wood, 150); 
+    }
+
+    public void ChangePlayerResources(Dictionary<ResourceType, int> resourceChanges, string sign)
+    {
+        foreach (var kvp in resourceChanges)
         {
-            resources[type] += amount;
+            ResourceType type = kvp.Key;
+            int amount = kvp.Value;
+
+            if (resources.ContainsKey(type))
+            {
+                if(sign == "-")
+                {
+                    resources[type] -= amount;
+                } else if (sign == "+")
+                {
+                    resources[type] += amount;
+                } else
+                {
+                    Debug.LogError("Wrong sign used");
+                }
+            }
+            else
+            {
+                Debug.LogError($"There is no such resource as {type}");
+            }
         }
-        else
+
+        // I'll delete it a bit later, now it just for detecting changes in player resources
+        foreach (var kvp in resources)
         {
-            resources.Add(type, amount);
+            Debug.Log("Resource: " + kvp.Key + ", Amount: " + kvp.Value);
         }
     }
 

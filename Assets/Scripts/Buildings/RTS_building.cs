@@ -34,6 +34,11 @@ public class RTS_building : MonoBehaviour
         };
     }
 
+    public Dictionary<ResourceType, int> GetRequiredResources()
+    {
+        return RequiredResources;
+    }
+
     private void Awake()
     {
         rtsController = FindObjectOfType<RTS_controller>();

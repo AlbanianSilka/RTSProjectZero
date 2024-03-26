@@ -11453,22 +11453,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7507791279445886421, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
-      propertyPath: middleSection
-      value: 
-      objectReference: {fileID: 1166224835}
-    - target: {fileID: 7507791279445886421, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
-      propertyPath: progressButtonPrefab
-      value: 
-      objectReference: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
     - target: {fileID: 7714097321639357280, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
       propertyPath: middleSection
       value: 
       objectReference: {fileID: 1166224835}
-    - target: {fileID: 7714097321639357280, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
-      propertyPath: progressButtonPrefab
-      value: 
-      objectReference: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
     - target: {fileID: 7714097321639357280, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
       propertyPath: selectionAreaTransform
       value: 

@@ -121,7 +121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3831467481260168968, guid: c9fe48608faff48e5bbf806574e95208, type: 3}
+      - m_Target: {fileID: 5137653825387941975, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
         m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
         m_MethodName: FuckYouSpell
         m_Mode: 1

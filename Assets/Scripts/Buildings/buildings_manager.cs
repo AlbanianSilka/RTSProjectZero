@@ -30,33 +30,37 @@ public class buildings_manager : MonoBehaviour
         }
     }
 
-    private void CheckBuildingCost(Player owner)
+    private bool CheckBuildingCost(Player owner)
     {
         RTS_building building = buildingPrefab.GetComponent<RTS_building>();
+
         if (building != null)
         {
-            bool canBuild = building.CanBuild(owner);
-            Debug.Log("Can build: " + canBuild);
+            return building.CanBuild(owner);
         }
         else
         {
-            Debug.LogError("The provided prefab does not have a building component.");
+            Debug.LogError("You forgot to add a building prefab");
+            return false; 
         }
     }
 
-    // BUG report: I can click a lot of times on button of buidling and it will clone lots of red ghost buildings
     public void startBuilding()
     {
         rtsController = FindObjectOfType<RTS_controller>();
-        // ####################
-        // TODO: move this to another method
+
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
         List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
         Player owner = peasantUnits.First().owner;
-        CheckBuildingCost(owner);
-        // ####################
-        isPlacingBuilding = true;
-        CreateGhostBuilding();
+
+        if (CheckBuildingCost(owner))
+        {
+            isPlacingBuilding = true;
+            CreateGhostBuilding();
+        } else
+        {
+            Debug.Log("Not enough resources");
+        }
     }
 
     private void CancelBuilding()
@@ -67,6 +71,8 @@ public class buildings_manager : MonoBehaviour
 
     private void CreateGhostBuilding()
     {
+        DestroyGhostBuilding();
+
         ghostBuildingInstance = new GameObject("GhostBuilding");
         SpriteRenderer spriteRenderer = ghostBuildingInstance.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = buildingPrefab.GetComponent<SpriteRenderer>().sprite;
@@ -91,7 +97,7 @@ public class buildings_manager : MonoBehaviour
             Destroy(ghostBuildingInstance);
         } else
         {
-            Debug.LogError("Ghost building is missing, cannot destroy it");
+            Debug.LogWarning("Ghost building is missing, nothing to destroy");
         }
     }
 
@@ -174,7 +180,7 @@ public class buildings_manager : MonoBehaviour
 
         while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
         {
-            yield return null; // Wait for the next frame
+            yield return null; 
         }
 
         GameObject newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
@@ -182,6 +188,7 @@ public class buildings_manager : MonoBehaviour
         RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
         buildingObject.team = peasantUnits.First().team;
         buildingObject.owner = peasantUnits.First().owner;
+        buildingObject.owner.ChangePlayerResources(buildingObject.GetRequiredResources(), "-");
 
         DestroyGhostBuilding();
         isPlacingBuilding = false;

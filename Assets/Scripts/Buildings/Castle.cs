@@ -9,8 +9,8 @@ public class Castle : RTS_building
     {
         RequiredResources = new Dictionary<ResourceType, int>
         {
-            { ResourceType.Gold, 150 },
-            { ResourceType.Wood, 150 }
+            { ResourceType.Gold, 50 },
+            { ResourceType.Wood, 50 }
         };
     }
 }
