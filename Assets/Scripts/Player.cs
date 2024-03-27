@@ -6,6 +6,7 @@ using static Resource;
 public class Player : MonoBehaviour
 {
     [SerializeField] public string team;
+    public RTS_controller rtsController;
 
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
 
@@ -14,6 +15,12 @@ public class Player : MonoBehaviour
     {
         resources.Add(Resource.ResourceType.Gold, 150); 
         resources.Add(Resource.ResourceType.Wood, 150); 
+    }
+
+    private void Awake()
+    {
+        RTS_controller newController = Instantiate(rtsController, transform.position, Quaternion.identity);
+        newController.owner = this;
     }
 
     public void ChangePlayerResources(Dictionary<ResourceType, int> resourceChanges, string sign)

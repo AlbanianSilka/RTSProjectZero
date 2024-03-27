@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Resource;
 
 public class Peasant : UnitRTS
 {
@@ -12,6 +13,15 @@ public class Peasant : UnitRTS
     private bool isBuilding;
 
     public override float spawnTime => 6f;
+
+    public Peasant()
+    {
+        RequiredResources = new Dictionary<ResourceType, int>
+        {
+            { ResourceType.Gold, 15 },
+            { ResourceType.Wood, 0 }
+        };
+    }
 
     protected override void Start()
     {

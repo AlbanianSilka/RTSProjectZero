@@ -9,7 +9,7 @@ public class UI_controller : MonoBehaviour
     private static List<GameObject> spellBoxes = new List<GameObject>();
     private static List<GameObject> progressBoxes = new List<GameObject>();
 
-    private void Start()
+    private void Awake()
     {
         GameObject[] spellBoxObjects = GameObject.FindGameObjectsWithTag("SpellBox");
         spellBoxes.AddRange(spellBoxObjects);

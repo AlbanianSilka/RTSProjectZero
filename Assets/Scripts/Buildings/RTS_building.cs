@@ -77,6 +77,7 @@ public class RTS_building : MonoBehaviour
 
         if(unitsQueue.Count < 7)
         {
+            this.owner.ChangePlayerResources(unit.GetRequiredResources(), "-");
             unitsQueue.Add(unit);
             UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
         }
@@ -127,6 +128,7 @@ public class RTS_building : MonoBehaviour
             UnitRTS newUnit = Instantiate(unit, spawnPosition, Quaternion.identity);
             unitsQueue.RemoveAt(0);
             newUnit.team = this.team;
+            newUnit.owner = this.owner;
             makingUnit = false;
 
             if (rtsController.selectedBuilding == this)

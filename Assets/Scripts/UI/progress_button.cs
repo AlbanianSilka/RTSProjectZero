@@ -42,6 +42,10 @@ public class progress_button : MonoBehaviour
 
     public void cancelTraining()
     {
+        // changing player's resources when training canceled
+        UnitRTS selectedUnit = rtsController.selectedBuilding.unitsQueue[buttonIndex];
+        rtsController.owner.ChangePlayerResources(selectedUnit.GetRequiredResources(), "+");
+
         rtsController.selectedBuilding.unitsQueue.RemoveAt(buttonIndex);
 
         if(buttonIndex == 0)
