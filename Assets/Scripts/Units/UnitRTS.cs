@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Resource;
 
 public class UnitRTS : MonoBehaviour
 {
@@ -15,16 +16,43 @@ public class UnitRTS : MonoBehaviour
     protected virtual float attackSpeed { get; set; } = 1f;
     protected virtual float attackDamage { get; set; } = 1f;
     protected RTS_controller rtsController;
-    [SerializeField] public string team;
+    protected Dictionary<ResourceType, int> RequiredResources { get; set; }
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
+    [SerializeField] public string team;
     public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
     public healthbar_manager healthBar;
     public List<GameObject> spellButtons = new List<GameObject>();
     public event Action<UnitRTS> OnDeath;
     public Sprite unitIcon;
     public Player owner;
+
+    public UnitRTS()
+    {
+        RequiredResources = new Dictionary<ResourceType, int>
+        {
+            { ResourceType.Gold, 0 },
+            { ResourceType.Wood, 0 }
+        };
+    }
+
+    public Dictionary<ResourceType, int> GetRequiredResources()
+    {
+        return RequiredResources;
+    }
+
+    public bool CanBeTrained(Player owner)
+    {
+        foreach (var kvp in RequiredResources)
+        {
+            if (!owner.HasEnoughResources(kvp.Key, kvp.Value))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     protected virtual void Awake()
     {
