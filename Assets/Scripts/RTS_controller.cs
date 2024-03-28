@@ -14,6 +14,7 @@ public class RTS_controller : MonoBehaviour
     public RTS_building selectedBuilding { get; private set; }
     public Canvas middleSection;
     public GameObject progressButtonPrefab;
+    public Player owner;
 
     private void Start()
     {
@@ -22,6 +23,7 @@ public class RTS_controller : MonoBehaviour
 
     private void Awake()
     {
+        middleSection = Instantiate(middleSection);
         selectedUnitRTSList = new List<UnitRTS>();
         selectionAreaTransform.gameObject.SetActive(false);
     }

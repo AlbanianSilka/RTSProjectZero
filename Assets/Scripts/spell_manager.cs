@@ -55,13 +55,19 @@ public class spell_manager : MonoBehaviour
     {
         InitializeController();
 
-        if (rtsController.selectedBuilding != null)
+        if (unit.CanBeTrained(rtsController.owner))
         {
-            rtsController.selectedBuilding.AddUnitToQueue(unit);
-        }
-        else
+            if (rtsController.selectedBuilding != null)
+            {
+                rtsController.selectedBuilding.AddUnitToQueue(unit);
+            }
+            else
+            {
+                Debug.LogError("No building selected but SpawnUnit spell called.");
+            }
+        } else
         {
-            Debug.LogError("No building selected but SpawnUnit spell called.");
+            Debug.Log("Not enough resources");
         }
     }
 }
