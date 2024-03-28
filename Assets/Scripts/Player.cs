@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static Resource;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] public string team;
     public RTS_controller rtsController;
+    public Text goldText;
+    public Text woodText;
 
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
 
@@ -21,6 +24,7 @@ public class Player : MonoBehaviour
     {
         RTS_controller newController = Instantiate(rtsController, transform.position, Quaternion.identity);
         newController.owner = this;
+        UpdateResourceUIText();
     }
 
     public void ChangePlayerResources(Dictionary<ResourceType, int> resourceChanges, string sign)
@@ -42,6 +46,8 @@ public class Player : MonoBehaviour
                 {
                     Debug.LogError("Wrong sign used");
                 }
+
+                UpdateResourceUIText();
             }
             else
             {
@@ -63,5 +69,11 @@ public class Player : MonoBehaviour
             return resources[type] >= amount;
         }
         return false;
+    }
+
+    private void UpdateResourceUIText()
+    {
+        goldText.text = "Gold: " + resources[Resource.ResourceType.Gold];
+        woodText.text = "Wood: " + resources[Resource.ResourceType.Wood];
     }
 }
