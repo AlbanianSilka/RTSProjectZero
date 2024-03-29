@@ -7,9 +7,9 @@ using static Resource;
 public class UnitRTS : MonoBehaviour
 {
     private Vector2 destination;
-    private bool isAttacking;
     private UnitRTS followTarget;
 
+    protected virtual bool isAttacking { get; set; }
     protected virtual float moveSpeed { get; set; } = 5f; 
     protected virtual float maxHp => 10f;
     protected virtual float health { get; set; } = 30f;

@@ -15,6 +15,7 @@ TagManager:
   - MiddleSection
   - ProgressBox
   - ProgressBtn
+  - EnvironmentResource
   layers:
   - Default
   - TransparentFX
