@@ -54,13 +54,9 @@ public class UnitRTS : MonoBehaviour
         return true;
     }
 
-    protected virtual void Awake()
-    {
-        rtsController = FindObjectOfType<RTS_controller>();
-    }
-
     protected virtual void Start()
     {
+        rtsController = owner.rtsController;
         destination = transform.position;
     }
 
