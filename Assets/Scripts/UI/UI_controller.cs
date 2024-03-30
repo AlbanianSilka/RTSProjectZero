@@ -43,6 +43,14 @@ public class UI_controller : MonoBehaviour
         }
     }
 
+    public static void showBuildingButtons(Peasant selectedUnit)
+    {
+        foreach (GameObject spellButton in selectedUnit.buildingButtons)
+        {
+            SpellButtonInBox(spellButton, spellBoxes);
+        }
+    }
+
     public static void showBuildingButtons(RTS_building building)
     {
         foreach (GameObject spellButton in building.spellButtons)

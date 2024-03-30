@@ -147,7 +147,7 @@ public class RTS_controller : MonoBehaviour
         return Quaternion.Euler(0, 0, angle) * vec;
     }
 
-    private void HideSpellButtons()
+    public void HideSpellButtons()
     {
         GameObject[] spellButtons = GameObject.FindGameObjectsWithTag("SpellBtn");
         foreach (GameObject spellButton in spellButtons)

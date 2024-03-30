@@ -16,6 +16,7 @@ public class Peasant : UnitRTS
 
     public override float spawnTime => 6f;
     public Resource carriedResource;
+    public List<GameObject> buildingButtons = new List<GameObject>();
 
     public Peasant()
     {

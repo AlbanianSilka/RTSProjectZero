@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 779972868818766132}
   - component: {fileID: 4115355755868904114}
   m_Layer: 5
-  m_Name: BuildBtn
+  m_Name: BuildCastle
   m_TagString: SpellBtn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3436f2a9a25994d9dbae05ccb0541d64, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 04cc2fe688ac04a7da58d5662aafa0d7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -121,9 +121,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5137653825387941975, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
-        m_TargetAssemblyTypeName: spell_manager, Assembly-CSharp
-        m_MethodName: ShowBuildingsButtons
+      - m_Target: {fileID: -4025406827444036859, guid: 1a0b3c1f672ff4f7ab0c3378e926ba58, type: 3}
+        m_TargetAssemblyTypeName: buildings_manager, Assembly-CSharp
+        m_MethodName: startBuilding
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e5ee1d7a17c49eca78cdde39a65f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spellBoxIndex: 1
+  spellBoxIndex: 0
