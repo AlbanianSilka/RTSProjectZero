@@ -5,6 +5,8 @@ using static Resource;
 
 public class Peasant : UnitRTS
 {
+    protected virtual int maxCarryCapacity { get; set; } = 10;
+
     protected override float moveSpeed { get; set; } = 9f;
     protected override float health { get; set; } = 7f;
     protected override float maxHp => 5f;
@@ -13,6 +15,8 @@ public class Peasant : UnitRTS
     private bool isBuilding;
 
     public override float spawnTime => 6f;
+    public Resource carriedResource;
+    public List<GameObject> buildingButtons = new List<GameObject>();
 
     public Peasant()
     {
@@ -49,11 +53,31 @@ public class Peasant : UnitRTS
         if (buildCouroutine == null)
         {
             RTS_building buildingComponent = building.GetComponent<RTS_building>();
+
             if (buildingComponent.health < buildingComponent.maxHealth) {
                 isBuilding = true;
                 buildCouroutine = StartCoroutine(Build(buildingComponent));
             }
         }
+    }
+
+    public void SetCarriedResource(Resource.ResourceType type, int amount)
+    {
+        if (carriedResource == null)
+        {
+            carriedResource = new Resource(type, amount);
+        }
+        else
+        {
+            carriedResource.amount += amount;
+        }
+
+        carriedResource.amount = Mathf.Min(carriedResource.amount, maxCarryCapacity);
+    }
+
+    public void ClearCarriedResource()
+    {
+        carriedResource = null;
     }
 
     private IEnumerator Build(RTS_building building)
@@ -85,15 +109,21 @@ public class Peasant : UnitRTS
         if (hit.collider != null)
         {
             GameObject clickedObject = hit.collider.gameObject;
+            MoveTo(clickPosition);
+
             if (clickedObject.CompareTag("Building"))
             {
                 RTS_building clickedBuilding = clickedObject.GetComponent<RTS_building>();
                 if(clickedBuilding.team == this.team)
                 {
-                    MoveTo(clickPosition);
                     StartCoroutine(constructionPath(clickedObject));
                 }
+            } else if (clickedObject.CompareTag("EnvironmentResource"))
+            {
+                EnvironmentResource clickedResource = clickedObject.GetComponent<EnvironmentResource>();
+                StartCoroutine(gatherResource(clickedResource, clickedResource.GetProvidedResourceType()));
             }
+
         } else
         {
             if (isBuilding)
@@ -110,6 +140,59 @@ public class Peasant : UnitRTS
             yield return null;
         }
 
+
+        if (buildingObject.GetComponent<Castle>() != null && carriedResource != null)
+        {
+            Dictionary<Resource.ResourceType, int> transferredResource = new Dictionary<Resource.ResourceType, int>
+            {
+                { carriedResource.type, carriedResource.amount }
+            };
+
+            this.owner.ChangePlayerResources(transferredResource, "+");
+            ClearCarriedResource();
+        }
         StartBuildingProcess(buildingObject);
+    }
+
+    private IEnumerator gatherResource(EnvironmentResource target, Resource.ResourceType gatheredResource)
+    {
+        if (isAttacking)
+            yield break;
+
+        isAttacking = true;
+        while (target.health > 0)
+        {
+            while (!HasReachedDestination())
+            {
+                yield return null;
+            }
+
+            if (IsAtMaxCarryCapacity())
+            {
+                Debug.Log("Reached max carrying capacity");
+                break; 
+            }
+
+            float attackDelay = 1 / attackSpeed;
+            yield return new WaitForSeconds(attackDelay);
+
+            if (target.health > 0)
+            {
+                target.takeDamage(attackDamage, this);
+                SetCarriedResource(gatheredResource, 1);
+                Debug.Log($"I am carrying {carriedResource.type} + {carriedResource.amount}");
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        isAttacking = false;
+    }
+
+    private bool IsAtMaxCarryCapacity()
+    {
+        return carriedResource != null && carriedResource.amount >= maxCarryCapacity;
     }
 }

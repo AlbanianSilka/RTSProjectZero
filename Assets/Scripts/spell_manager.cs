@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class spell_manager : MonoBehaviour
@@ -69,5 +70,26 @@ public class spell_manager : MonoBehaviour
         {
             Debug.Log("Not enough resources");
         }
+    }
+
+    public void ShowBuildingsButtons()
+    {
+        InitializeController();
+
+        rtsController.HideSpellButtons();
+
+        UnitRTS selectedUnit = rtsController.selectedUnitRTSList[0];
+        Peasant selectedPeasant = selectedUnit.GetComponent<Peasant>();
+
+        UI_controller.showBuildingButtons(selectedPeasant);
+    }
+
+    public void ShowMainButtons()
+    {
+        InitializeController();
+
+        rtsController.HideSpellButtons();
+
+        UI_controller.showSpellButtons(rtsController.selectedUnitRTSList);
     }
 }

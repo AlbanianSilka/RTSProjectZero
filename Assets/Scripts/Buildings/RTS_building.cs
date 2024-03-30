@@ -41,10 +41,14 @@ public class RTS_building : MonoBehaviour
 
     private void Awake()
     {
-        rtsController = FindObjectOfType<RTS_controller>();
         healthBar = GetComponentInChildren<healthbar_manager>();
         makingUnit = false;
         InvokeRepeating("CheckAndSpawnUnits", 0f, 1f);
+    }
+
+    private void Start()
+    {
+        rtsController = owner.rtsController;
     }
 
     public bool CanBuild(Player owner)

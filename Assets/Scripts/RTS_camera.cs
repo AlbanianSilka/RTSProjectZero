@@ -5,12 +5,12 @@ using UnityEngine;
 public class RTS_Camera : MonoBehaviour
 {
     public float scrollSpeed = 5f;
-    public float scrollZoneSize = 35f;
+    public float scrollZoneSize = 70f;
 
     // Borders for the camera
     public float mapLeftBorder = 0f;
-    public float mapRightBorder = 50f;
-    public float mapTopBorder = 50f;
+    public float mapRightBorder = 100f;
+    public float mapTopBorder = 100f;
     public float mapBottomBorder = 0f;
 
     void Update()

@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         RTS_controller newController = Instantiate(rtsController, transform.position, Quaternion.identity);
+        rtsController = newController.GetComponent<RTS_controller>();
         newController.owner = this;
         UpdateResourceUIText();
     }
