@@ -7,10 +7,17 @@ using System;
 public class buildings_manager : MonoBehaviour
 {
     public GameObject buildingPrefab;
-    public static bool isPlacingBuilding = false;
-    public static GameObject ghostBuildingInstance;
-    public static bool canPlaceBuilding = false;
-    public static RTS_controller rtsController;
+
+    protected internal bool isPlacingBuilding { get; set; } = false;
+
+    private RTS_controller rtsController;
+    private static GameObject ghostBuildingInstance;
+    private static bool canPlaceBuilding = false;
+
+    private void Start()
+    {
+        rtsController = GetComponentInParent<RTS_controller>();
+    }
 
     private void Update()
     {
@@ -47,8 +54,6 @@ public class buildings_manager : MonoBehaviour
 
     public void startBuilding()
     {
-        rtsController = FindObjectOfType<RTS_controller>();
-
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
         List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
         Player owner = peasantUnits.First().owner;
@@ -192,6 +197,7 @@ public class buildings_manager : MonoBehaviour
 
         DestroyGhostBuilding();
         isPlacingBuilding = false;
+        buildingPrefab = null;
 
         // Starting builders "constructing" process
         foreach (Peasant unit in peasantUnits)
