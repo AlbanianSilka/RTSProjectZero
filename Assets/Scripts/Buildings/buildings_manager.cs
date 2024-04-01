@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.UIElements;
 
 public class buildings_manager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class buildings_manager : MonoBehaviour
     private RTS_controller rtsController;
     private static GameObject ghostBuildingInstance;
     private static bool canPlaceBuilding = false;
+    private Deposit selectedDeposit;
 
     private void Start()
     {
@@ -133,12 +135,28 @@ public class buildings_manager : MonoBehaviour
 
         canPlaceBuilding = true;
 
-        foreach (Collider2D collider in colliders)
+        if(buildingPrefab.GetComponent<GoldenMine>() != null)
         {
-            if (collider.tag != "Ground" && collider.tag != "Ghost")
+            foreach (Collider2D collider in colliders)
             {
-                canPlaceBuilding = false;
-                break;
+                if(collider.GetComponent<Deposit>() == null)
+                {
+                    selectedDeposit = null;
+                    canPlaceBuilding = false;
+                } else
+                {
+                    selectedDeposit = collider.GetComponent<Deposit>();
+                    canPlaceBuilding = true;
+                }
+            }
+        } else
+        {
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.tag != "Ground" && collider.tag != "Ghost")
+                {
+                    canPlaceBuilding = false;
+                }
             }
         }
 
@@ -182,13 +200,24 @@ public class buildings_manager : MonoBehaviour
 
     private IEnumerator startBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
     {
+        GameObject newBuilding;
 
         while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
         {
             yield return null; 
         }
 
-        GameObject newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+        if (buildingPrefab.GetComponent<GoldenMine>() != null && selectedDeposit != null)
+        {
+            buildingPosition = selectedDeposit.transform.position;
+            newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+            newBuilding.GetComponent<GoldenMine>().attachedDeposit = selectedDeposit;
+            selectedDeposit.gameObject.SetActive(false);
+            selectedDeposit = null;
+        } else
+        {
+            newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+        }
 
         RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
         buildingObject.team = peasantUnits.First().team;
