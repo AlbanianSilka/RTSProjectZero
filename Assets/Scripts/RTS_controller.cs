@@ -8,13 +8,13 @@ public class RTS_controller : MonoBehaviour
     [SerializeField] private Transform selectionAreaTransform;
 
     private Vector3 startPosition;
-    private buildings_manager building_manager;
 
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
     public RTS_building selectedBuilding { get; private set; }
     public Canvas middleSection;
     public GameObject progressButtonPrefab;
     public Player owner;
+    public buildings_manager BuildingManager;
 
     private void Start()
     {
@@ -55,7 +55,7 @@ public class RTS_controller : MonoBehaviour
         // Check if user unpressed left mouse button and if clicked object was not a UI element
         if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
         {
-            if (!buildings_manager.isPlacingBuilding)
+            if (!BuildingManager.isPlacingBuilding)
             {
                 selectionAreaTransform.gameObject.SetActive(false);
                 Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));

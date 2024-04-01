@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 779972868818766132}
   - component: {fileID: 4115355755868904114}
   m_Layer: 5
-  m_Name: BuildCastle
+  m_Name: BuildGoldenMine
   m_TagString: SpellBtn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 04cc2fe688ac04a7da58d5662aafa0d7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bcf4f23326582456ba865867dc815215, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -126,7 +126,7 @@ MonoBehaviour:
         m_MethodName: StartBuilding
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 491780485271085513, guid: 3efde2f6efca74141a1ab09d11de4224, type: 3}
+          m_ObjectArgument: {fileID: 4913503776023470425, guid: 804724040d08941eeab01ec4581cf1ca, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -145,4 +145,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e5ee1d7a17c49eca78cdde39a65f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spellBoxIndex: 0
+  spellBoxIndex: 1

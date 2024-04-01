@@ -92,4 +92,12 @@ public class spell_manager : MonoBehaviour
 
         UI_controller.showSpellButtons(rtsController.selectedUnitRTSList);
     }
+
+    public void StartBuilding(GameObject buildingPrefab)
+    {
+        InitializeController();
+
+        rtsController.BuildingManager.buildingPrefab = buildingPrefab;
+        rtsController.BuildingManager.startBuilding();
+    }
 }

@@ -3,14 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.UIElements;
 
 public class buildings_manager : MonoBehaviour
 {
     public GameObject buildingPrefab;
-    public static bool isPlacingBuilding = false;
-    public static GameObject ghostBuildingInstance;
-    public static bool canPlaceBuilding = false;
-    public static RTS_controller rtsController;
+
+    protected internal bool isPlacingBuilding { get; set; } = false;
+
+    private RTS_controller rtsController;
+    private static GameObject ghostBuildingInstance;
+    private static bool canPlaceBuilding = false;
+    private Deposit selectedDeposit;
+
+    private void Start()
+    {
+        rtsController = GetComponentInParent<RTS_controller>();
+    }
 
     private void Update()
     {
@@ -47,8 +56,6 @@ public class buildings_manager : MonoBehaviour
 
     public void startBuilding()
     {
-        rtsController = FindObjectOfType<RTS_controller>();
-
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
         List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
         Player owner = peasantUnits.First().owner;
@@ -128,12 +135,28 @@ public class buildings_manager : MonoBehaviour
 
         canPlaceBuilding = true;
 
-        foreach (Collider2D collider in colliders)
+        if(buildingPrefab.GetComponent<GoldenMine>() != null)
         {
-            if (collider.tag != "Ground" && collider.tag != "Ghost")
+            foreach (Collider2D collider in colliders)
             {
-                canPlaceBuilding = false;
-                break;
+                if(collider.GetComponent<Deposit>() == null)
+                {
+                    selectedDeposit = null;
+                    canPlaceBuilding = false;
+                } else
+                {
+                    selectedDeposit = collider.GetComponent<Deposit>();
+                    canPlaceBuilding = true;
+                }
+            }
+        } else
+        {
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.tag != "Ground" && collider.tag != "Ghost")
+                {
+                    canPlaceBuilding = false;
+                }
             }
         }
 
@@ -177,13 +200,24 @@ public class buildings_manager : MonoBehaviour
 
     private IEnumerator startBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
     {
+        GameObject newBuilding;
 
         while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
         {
             yield return null; 
         }
 
-        GameObject newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+        if (buildingPrefab.GetComponent<GoldenMine>() != null && selectedDeposit != null)
+        {
+            buildingPosition = selectedDeposit.transform.position;
+            newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+            newBuilding.GetComponent<GoldenMine>().attachedDeposit = selectedDeposit;
+            selectedDeposit.gameObject.SetActive(false);
+            selectedDeposit = null;
+        } else
+        {
+            newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+        }
 
         RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
         buildingObject.team = peasantUnits.First().team;
@@ -192,6 +226,7 @@ public class buildings_manager : MonoBehaviour
 
         DestroyGhostBuilding();
         isPlacingBuilding = false;
+        buildingPrefab = null;
 
         // Starting builders "constructing" process
         foreach (Peasant unit in peasantUnits)
