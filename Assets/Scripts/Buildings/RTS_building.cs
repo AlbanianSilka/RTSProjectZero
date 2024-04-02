@@ -137,7 +137,13 @@ public class RTS_building : MonoBehaviour
 
             if (rtsController.selectedBuilding == this)
             {
-                UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
+                if(this.GetComponent<GoldenMine>() != null)
+                {
+                    UI_controller.handleMiddleSection(unitsQueue, rtsController.workerButtonPrefab);
+                }
+                else {
+                    UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
+                }
             }
         } else
         {

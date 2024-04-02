@@ -6,6 +6,7 @@ using static Resource;
 public class GoldenMine : RTS_building
 {
     public Deposit attachedDeposit;
+    public List<Peasant> workers;
 
     public GoldenMine()
     {
@@ -14,6 +15,15 @@ public class GoldenMine : RTS_building
             { ResourceType.Gold, 25 },
             { ResourceType.Wood, 25 }
         };
+    }
+
+    public void AddWorkerToMine(Peasant addedWorker)
+    {
+        // max number of workers in one mine is currently 5
+        if(workers.Count < 5)
+        {
+            workers.Add(addedWorker);
+        }
     }
 
     protected override void Die()

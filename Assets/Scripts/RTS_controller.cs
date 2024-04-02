@@ -13,6 +13,7 @@ public class RTS_controller : MonoBehaviour
     public RTS_building selectedBuilding { get; private set; }
     public Canvas middleSection;
     public GameObject progressButtonPrefab;
+    public GameObject workerButtonPrefab;
     public Player owner;
     public buildings_manager BuildingManager;
 
@@ -84,7 +85,14 @@ public class RTS_controller : MonoBehaviour
                     {
                         UI_controller.showBuildingButtons(selectedBuilding);
                         middleSection.gameObject.SetActive(true);
-                        UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, progressButtonPrefab);
+                        if(selectedBuilding.GetComponent<GoldenMine>() != null)
+                        {
+                            UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, workerButtonPrefab);
+                        }
+                        else
+                        {
+                            UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, progressButtonPrefab);
+                        }
                     }
                 }
                 else

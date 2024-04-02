@@ -51,6 +51,7 @@ MonoBehaviour:
   selectionAreaTransform: {fileID: 7692951975196701808}
   middleSection: {fileID: 3672935750692102961, guid: f45c0d7011cba40e49cd80b82035b71b, type: 3}
   progressButtonPrefab: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
+  workerButtonPrefab: {fileID: 3683051047648132817, guid: edbfc248fdd7248ce81c8decfe7d9867, type: 3}
   owner: {fileID: 0}
   BuildingManager: {fileID: 7874259877501850749}
 --- !u!114 &7507791279445886421

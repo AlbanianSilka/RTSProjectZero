@@ -150,7 +150,12 @@ public class Peasant : UnitRTS
 
             this.owner.ChangePlayerResources(transferredResource, "+");
             ClearCarriedResource();
+        } else if(buildingObject.GetComponent<GoldenMine>() != null && buildingObject.GetComponent<RTS_building>().finished)
+        {
+            buildingObject.GetComponent<GoldenMine>().AddWorkerToMine(this);
+            this.gameObject.SetActive(false);
         }
+
         StartBuildingProcess(buildingObject);
     }
 

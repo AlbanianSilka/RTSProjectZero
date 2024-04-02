@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -113,6 +114,7 @@ public class UI_controller : MonoBehaviour
             {
                 GameObject progressButton;
                 progress_button buttonComponent;
+                worker_button workerComponent;
 
                 for( int index = 0; index < unitsQueue.Count; index++)
                 {
@@ -126,10 +128,15 @@ public class UI_controller : MonoBehaviour
                         buttonComponent.buttonIndex = index;
                         buttonComponent.maxTrainingTime = unit.spawnTime;
                         changeProgressIcon(unit, index, progressButton);
+                    } else if (progressButton.GetComponent<worker_button>() != null)
+                    {
+                        workerComponent = progressButton.GetComponent<worker_button>();
+                        workerComponent.buttonIndex = index;
+                        changeProgressIcon(unit, index, progressButton);
                     }
                     else
                     {
-                        Debug.LogError("You forgot to attach 'spell_button' component to prefab");
+                        Debug.LogError("You forgot to attach 'spell_button'/'worker_button' component to prefab");
                     }
                 }
             }
