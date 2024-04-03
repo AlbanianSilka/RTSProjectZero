@@ -100,6 +100,7 @@ public class UI_controller : MonoBehaviour
         }
     }
 
+    // TODO: figure out how to unite with function #2
     public static void handleMiddleSection(List<UnitRTS> unitsQueue, GameObject progressButtonPrefab)
     {
         if(unitsQueue.Count > 0)
@@ -114,7 +115,6 @@ public class UI_controller : MonoBehaviour
             {
                 GameObject progressButton;
                 progress_button buttonComponent;
-                worker_button workerComponent;
 
                 for( int index = 0; index < unitsQueue.Count; index++)
                 {
@@ -128,15 +128,10 @@ public class UI_controller : MonoBehaviour
                         buttonComponent.buttonIndex = index;
                         buttonComponent.maxTrainingTime = unit.spawnTime;
                         changeProgressIcon(unit, index, progressButton);
-                    } else if (progressButton.GetComponent<worker_button>() != null)
-                    {
-                        workerComponent = progressButton.GetComponent<worker_button>();
-                        workerComponent.buttonIndex = index;
-                        changeProgressIcon(unit, index, progressButton);
                     }
                     else
                     {
-                        Debug.LogError("You forgot to attach 'spell_button'/'worker_button' component to prefab");
+                        Debug.LogError("You forgot to attach 'spell_button' component to prefab");
                     }
                 }
             }
@@ -145,6 +140,45 @@ public class UI_controller : MonoBehaviour
                 Debug.LogError("You forgot to add middle canvas to the scene");
             };
         }
+    }
+
+    // TODO: figure out how to unite with function #1
+    public static void handleMineMiddle(List<Peasant> unitsQueue, GameObject progressButtonPrefab)
+    {
+        GameObject middleCanvas = GameObject.FindGameObjectWithTag("MiddleSection");
+
+        if (middleCanvas != null)
+        {
+            middleCanvas.SetActive(false);
+            middleCanvas.SetActive(true);
+
+            GameObject progressButton;
+            progress_button buttonComponent;
+            worker_button workerComponent;
+
+            for (int index = 0; index < unitsQueue.Count; index++)
+            {
+                UnitRTS unit = unitsQueue[index];
+                progressButton = Instantiate(progressButtonPrefab);
+                buttonComponent = progressButton.GetComponent<progress_button>();
+                progressButton.transform.SetParent(middleCanvas.transform, false);
+
+                if (progressButton.GetComponent<worker_button>() != null)
+                {
+                    workerComponent = progressButton.GetComponent<worker_button>();
+                    workerComponent.buttonIndex = index;
+                    changeProgressIcon(unit, index, progressButton);
+                }
+                else
+                {
+                    Debug.LogError("You forgot to attach 'worker_button' component to prefab");
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("You forgot to add middle canvas to the scene");
+        };
     }
 
     private static void changeProgressIcon(UnitRTS unit, int buttonIndex, GameObject progressButton)

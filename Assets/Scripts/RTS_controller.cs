@@ -87,7 +87,7 @@ public class RTS_controller : MonoBehaviour
                         middleSection.gameObject.SetActive(true);
                         if(selectedBuilding.GetComponent<GoldenMine>() != null)
                         {
-                            UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, workerButtonPrefab);
+                            UI_controller.handleMineMiddle(selectedBuilding.GetComponent<GoldenMine>().workers, workerButtonPrefab);
                         }
                         else
                         {
