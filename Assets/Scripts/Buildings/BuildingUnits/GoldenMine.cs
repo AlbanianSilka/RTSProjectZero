@@ -8,6 +8,8 @@ public class GoldenMine : RTS_building
     public Deposit attachedDeposit;
     public List<Peasant> workers;
 
+    private Dictionary<Peasant, Coroutine> workTimers = new Dictionary<Peasant, Coroutine>();
+
     public GoldenMine()
     {
         RequiredResources = new Dictionary<ResourceType, int>
@@ -23,6 +25,46 @@ public class GoldenMine : RTS_building
         if(workers.Count < 5)
         {
             workers.Add(addedWorker);
+            StartWorkTimer(addedWorker);
+        }
+    }
+
+    public void RemoveWorker(Peasant peasant)
+    {
+        workers.Remove(peasant);
+        StopWorkTimer(peasant);
+    }
+
+    private void StartWorkTimer(Peasant peasant)
+    {
+        Coroutine timerCoroutine = StartCoroutine(WorkTimer(peasant));
+        workTimers.Add(peasant, timerCoroutine);
+    }
+
+    private void StopWorkTimer(Peasant peasant)
+    {
+        if (workTimers.ContainsKey(peasant))
+        {
+            Coroutine timerCoroutine = workTimers[peasant];
+            StopCoroutine(timerCoroutine);
+            workTimers.Remove(peasant);
+            peasant.gameObject.SetActive(true);
+            workers.Remove(peasant);
+        }
+    }
+
+    private IEnumerator WorkTimer(Peasant peasant)
+    {
+        while (peasant.carriedResource.amount < peasant.maxCarryCapacity)
+        {
+            yield return new WaitForSeconds(5f);
+            peasant.carriedResource.amount += 5;
+
+            if (peasant.carriedResource.amount >= peasant.maxCarryCapacity)
+            {
+                RemoveWorker(peasant);
+                yield break; 
+            }
         }
     }
 

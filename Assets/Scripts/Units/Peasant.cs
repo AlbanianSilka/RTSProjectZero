@@ -5,8 +5,6 @@ using static Resource;
 
 public class Peasant : UnitRTS
 {
-    protected virtual int maxCarryCapacity { get; set; } = 10;
-
     protected override float moveSpeed { get; set; } = 9f;
     protected override float health { get; set; } = 7f;
     protected override float maxHp => 5f;
@@ -14,6 +12,7 @@ public class Peasant : UnitRTS
     private Coroutine buildCouroutine;
     private bool isBuilding;
 
+    public virtual int maxCarryCapacity => 10;
     public override float spawnTime => 6f;
     public Resource carriedResource;
     public List<GameObject> buildingButtons = new List<GameObject>();
@@ -152,8 +151,12 @@ public class Peasant : UnitRTS
             ClearCarriedResource();
         } else if(buildingObject.GetComponent<GoldenMine>() != null && buildingObject.GetComponent<RTS_building>().finished)
         {
-            buildingObject.GetComponent<GoldenMine>().AddWorkerToMine(this);
-            this.gameObject.SetActive(false);
+            if(carriedResource == null || carriedResource.amount < maxCarryCapacity)
+            {
+                SetCarriedResource(ResourceType.Gold, 0);
+                buildingObject.GetComponent<GoldenMine>().AddWorkerToMine(this);
+                this.gameObject.SetActive(false);
+            }
         }
 
         StartBuildingProcess(buildingObject);
