@@ -22,10 +22,7 @@ public class worker_button : MonoBehaviour
 
     public void freeWorker()
     {
-        GameObject selectedUnit = selectedMine.workers[buttonIndex].gameObject;
-        selectedMine.workers.RemoveAt(buttonIndex);
-
-        selectedUnit.gameObject.SetActive(true);
+        selectedMine.removeWorkerByIndex(buttonIndex);
 
         UI_controller.handleMineMiddle(rtsController.selectedBuilding.GetComponent<GoldenMine>().workers, rtsController.workerButtonPrefab);
     }

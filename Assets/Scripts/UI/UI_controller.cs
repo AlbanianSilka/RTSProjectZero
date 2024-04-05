@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
+// TODO: need to think about rewriting it a bit, because looking for -->
+// an RTScontroller via FindGameObjectsWithTag is a bad approach
 public class UI_controller : MonoBehaviour
 {
     private static List<GameObject> spellBoxes = new List<GameObject>();
@@ -143,7 +145,7 @@ public class UI_controller : MonoBehaviour
     }
 
     // TODO: figure out how to unite with function #1
-    public static void handleMineMiddle(List<Peasant> unitsQueue, GameObject progressButtonPrefab)
+    public static void handleMineMiddle(List<Peasant> unitsQueue, GameObject workerButtonPrefab)
     {
         GameObject middleCanvas = GameObject.FindGameObjectWithTag("MiddleSection");
 
@@ -152,22 +154,20 @@ public class UI_controller : MonoBehaviour
             middleCanvas.SetActive(false);
             middleCanvas.SetActive(true);
 
-            GameObject progressButton;
-            progress_button buttonComponent;
+            GameObject workerButton;
             worker_button workerComponent;
 
             for (int index = 0; index < unitsQueue.Count; index++)
             {
                 UnitRTS unit = unitsQueue[index];
-                progressButton = Instantiate(progressButtonPrefab);
-                buttonComponent = progressButton.GetComponent<progress_button>();
-                progressButton.transform.SetParent(middleCanvas.transform, false);
+                workerButton = Instantiate(workerButtonPrefab);
+                workerButton.transform.SetParent(middleCanvas.transform, false);
 
-                if (progressButton.GetComponent<worker_button>() != null)
+                if (workerButton.GetComponent<worker_button>() != null)
                 {
-                    workerComponent = progressButton.GetComponent<worker_button>();
+                    workerComponent = workerButton.GetComponent<worker_button>();
                     workerComponent.buttonIndex = index;
-                    changeProgressIcon(unit, index, progressButton);
+                    changeProgressIcon(unit, index, workerButton);
                 }
                 else
                 {

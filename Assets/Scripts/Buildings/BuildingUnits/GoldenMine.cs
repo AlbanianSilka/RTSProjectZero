@@ -29,7 +29,13 @@ public class GoldenMine : RTS_building
         }
     }
 
-    public void RemoveWorker(Peasant peasant)
+    public void removeWorkerByIndex(int workerIndex)
+    {
+        Peasant worker = workers[workerIndex];
+        StopWorkTimer(worker);
+    }
+
+    private void RemoveWorker(Peasant peasant)
     {
         workers.Remove(peasant);
         StopWorkTimer(peasant);
@@ -50,6 +56,7 @@ public class GoldenMine : RTS_building
             workTimers.Remove(peasant);
             peasant.gameObject.SetActive(true);
             workers.Remove(peasant);
+            UI_controller.handleMineMiddle(workers, rtsController.workerButtonPrefab);
         }
     }
 
