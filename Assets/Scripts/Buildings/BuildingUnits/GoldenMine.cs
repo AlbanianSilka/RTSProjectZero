@@ -56,7 +56,11 @@ public class GoldenMine : RTS_building
             workTimers.Remove(peasant);
             peasant.gameObject.SetActive(true);
             workers.Remove(peasant);
-            UI_controller.handleMineMiddle(workers, rtsController.workerButtonPrefab);
+
+            if(owner.rtsController.selectedBuilding == this)
+            {
+                UI_controller.handleMineMiddle(workers, rtsController.workerButtonPrefab);
+            }
         }
     }
 

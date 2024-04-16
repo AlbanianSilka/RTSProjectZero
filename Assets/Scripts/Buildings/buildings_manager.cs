@@ -207,8 +207,15 @@ public class buildings_manager : MonoBehaviour
             yield return null; 
         }
 
-        if (buildingPrefab.GetComponent<GoldenMine>() != null && selectedDeposit != null)
+        if (buildingPrefab.GetComponent<GoldenMine>() != null)
         {
+            // probably not the best way to handle it
+            // need to rethink handling this coroutine in case if it got a weong building position
+            if (selectedDeposit == null)
+            {
+                yield break;
+            }
+
             buildingPosition = selectedDeposit.transform.position;
             newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
             newBuilding.GetComponent<GoldenMine>().attachedDeposit = selectedDeposit;
