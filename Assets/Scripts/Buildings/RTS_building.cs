@@ -5,12 +5,12 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static Resource;
 
-public class RTS_building : MonoBehaviour
+public class RTS_building : MonoBehaviour, IAttackable
 {
     public Sprite canBuild;
     public Sprite cannotBuild;
     public float maxHealth;
-    public float health;
+    public virtual float health { get; set; } = 30f;
     public bool finished;
     public string team;
     public healthbar_manager healthBar;
@@ -63,11 +63,13 @@ public class RTS_building : MonoBehaviour
         return true;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, GameObject attacker)
     {
+        // attacker argument need for future if I'll make buildings that would attack other units
+
         health -= damage;
         this.healthBar.updateHealthBar(this.health, this.maxHealth);
-        Debug.Log($"{this.name} was hit");
+        Debug.Log($"{this.name} was hit by {attacker.name}");
 
         if (health <= 0)
         {
