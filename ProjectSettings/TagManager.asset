@@ -23,8 +23,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - FogOfWarMain
+  - FogOfWarSecondary
   - 
   - 
   - 
@@ -64,4 +64,7 @@ TagManager:
     locked: 0
   - name: SortArea
     uniqueID: 3192416837
+    locked: 0
+  - name: FogOfWar
+    uniqueID: 1205834047
     locked: 0

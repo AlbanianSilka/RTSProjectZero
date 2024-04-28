@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Resource;
 
-public class UnitRTS : MonoBehaviour
+public class UnitRTS : MonoBehaviour, IAttackable
 {
     private Vector2 destination;
     private UnitRTS followTarget;
@@ -12,7 +12,6 @@ public class UnitRTS : MonoBehaviour
     protected virtual bool isAttacking { get; set; }
     protected virtual float moveSpeed { get; set; } = 5f; 
     protected virtual float maxHp => 10f;
-    protected virtual float health { get; set; } = 30f;
     protected virtual float attackSpeed { get; set; } = 1f;
     protected virtual float attackDamage { get; set; } = 1f;
     protected RTS_controller rtsController;
@@ -20,6 +19,7 @@ public class UnitRTS : MonoBehaviour
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
+    public virtual float health { get; set; } = 30f;
     [SerializeField] public string team;
     public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
     public healthbar_manager healthBar;
@@ -116,7 +116,7 @@ public class UnitRTS : MonoBehaviour
         return Vector2.Distance(transform.position, destination) < 0.1f;
     }
 
-    public void takeDamage(float damage, UnitRTS attacker)
+    public void TakeDamage(float damage, GameObject attacker)
     {
         // TODO: Need to think about making a following system when counter attack
         this.health -= damage;
@@ -126,8 +126,8 @@ public class UnitRTS : MonoBehaviour
         // if not moving - counter attack
         if (HasReachedDestination())
         {
-            GameObject counterAttackTarget = attacker.gameObject;
-            StartCoroutine(attackPath(counterAttackTarget));
+            GameObject counterAttackTarget = attacker;
+            StartCoroutine(attackPath(counterAttackTarget.GetComponent<IAttackable>()));
         }
 
         if(health <= 0)
@@ -151,14 +151,14 @@ public class UnitRTS : MonoBehaviour
                 {
                     followUnit(clickedUnit);
                     clickedUnit = this.followTarget;
-                    StartCoroutine(attackPath(clickedObject));
+                    StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>()));
                 }
             } else if (clickedObject.CompareTag("Building"))
             {
                 RTS_building clickedBuilding = clickedObject.GetComponent<RTS_building>();
                 if(clickedBuilding != null && clickedBuilding.team != this.team)
                 {
-                    StartCoroutine(attackPath(clickedObject));
+                    StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>()));
                 }
             } else
             {
@@ -195,59 +195,19 @@ public class UnitRTS : MonoBehaviour
         followTarget = newTarget;
     }
 
-    private IEnumerator attackPath(GameObject target)
+    private IEnumerator attackPath(IAttackable target)
     {
         if (isAttacking)
             yield break;
 
         isAttacking = true;
 
-        if(target.CompareTag("Unit"))
+        while(target.health > 0 && HasReachedDestination())
         {
-            UnitRTS attackedUnit = target.GetComponent<UnitRTS>();
-            while (attackedUnit.health > 0)
-            {
+            float attackDelay = 1 / attackSpeed;
+            yield return new WaitForSeconds(attackDelay);
 
-                while (!HasReachedDestination())
-                {
-                    yield return null;
-                }
-
-                float attackDelay = 1 / attackSpeed;
-                yield return new WaitForSeconds(attackDelay);
-
-                if (attackedUnit.health > 0)
-                {
-                    attackedUnit.takeDamage(attackDamage, this);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        } else if (target.CompareTag("Building"))
-        {
-            RTS_building attackedBuilding = target.GetComponent<RTS_building>();
-
-            while(attackedBuilding.health > 0)
-            {
-                while (!HasReachedDestination())
-                {
-                    yield return null;
-                }
-
-                float attackDelay = 1 / attackSpeed;
-                yield return new WaitForSeconds(attackDelay);
-
-                if (attackedBuilding.health > 0)
-                {
-                    attackedBuilding.TakeDamage(attackDamage);
-                }
-                else
-                {
-                    break;
-                }
-            }
+            target.TakeDamage(attackDamage, this.gameObject);
         }
 
         isAttacking = false; 
