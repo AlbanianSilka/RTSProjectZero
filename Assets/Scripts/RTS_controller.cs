@@ -5,9 +5,9 @@ using UnityEngine.EventSystems;
 
 public class RTS_controller : MonoBehaviour
 {
-    [SerializeField] private Transform selectionAreaTransform;
+    [SerializeField] private RectTransform selectionAreaTransform;
 
-    private Vector3 startPosition;
+    private Vector2 startPosition;
 
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
     public RTS_building selectedBuilding { get; private set; }
@@ -34,23 +34,26 @@ public class RTS_controller : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             selectionAreaTransform.gameObject.SetActive(true);
-            startPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            startPosition = Input.mousePosition;
             
         }
 
         if (Input.GetMouseButton(0))
         {
-            Vector3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 lowerLeft = new Vector3(
+            Vector2 currentMousePosition = Input.mousePosition;
+
+            Vector2 lowerLeft = new Vector2(
                 Mathf.Min(startPosition.x, currentMousePosition.x),
                 Mathf.Min(startPosition.y, currentMousePosition.y));
 
-            Vector3 upperRight = new Vector3(
+            Vector2 upperRight = new Vector2(
                 Mathf.Max(startPosition.x, currentMousePosition.x),
                 Mathf.Max(startPosition.y, currentMousePosition.y));
 
-            selectionAreaTransform.position = lowerLeft;
-            selectionAreaTransform.localScale = upperRight - lowerLeft;
+            selectionAreaTransform.offsetMin = lowerLeft;
+            selectionAreaTransform.offsetMax = upperRight;
+            //selectionAreaTransform.position = lowerLeft;
+            //selectionAreaTransform.localScale = upperRight - lowerLeft;
         }
 
         // Check if user unpressed left mouse button and if clicked object was not a UI element
@@ -59,7 +62,8 @@ public class RTS_controller : MonoBehaviour
             if (!BuildingManager.isPlacingBuilding)
             {
                 selectionAreaTransform.gameObject.SetActive(false);
-                Collider2D[] collArray = Physics2D.OverlapAreaAll(startPosition, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Collider2D[] collArray = Physics2D.OverlapAreaAll(Camera.main.ScreenToWorldPoint(startPosition),
+                    Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 selectedUnitRTSList.Clear();
                 selectedBuilding = null;
                 HideSpellButtons();
