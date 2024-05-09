@@ -56,9 +56,6 @@ TagManager:
   - name: Background
     uniqueID: 136455179
     locked: 0
-  - name: Building
-    uniqueID: 1911428863
-    locked: 0
   - name: Unit
     uniqueID: 483684667
     locked: 0
@@ -67,4 +64,7 @@ TagManager:
     locked: 0
   - name: FogOfWar
     uniqueID: 1205834047
+    locked: 0
+  - name: Building
+    uniqueID: 1911428863
     locked: 0
