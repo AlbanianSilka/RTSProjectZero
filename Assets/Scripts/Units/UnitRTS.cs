@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using static Resource;
 
 public class UnitRTS : MonoBehaviour, IAttackable
 {
-    private Vector2 destination;
+    private Vector3 destination;
     private UnitRTS followTarget;
+    NavMeshAgent agent;
 
     protected virtual bool isAttacking { get; set; }
     protected virtual float moveSpeed { get; set; } = 5f; 
@@ -60,40 +62,71 @@ public class UnitRTS : MonoBehaviour, IAttackable
         destination = transform.position;
     }
 
+    protected virtual void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
+    }
+
     protected virtual void Update()
     {
+        // TODO: Fix problem with agents 'slicing' like they are on the ice
+        SetTargetPosition();
+        SetAgentPosition();
+
         if(followTarget != null)
         {
-            Vector2 direction = (followTarget.transform.position - transform.position).normalized;
-
-            float distanceToTarget = Vector2.Distance(transform.position, followTarget.transform.position);
-
-            if(distanceToTarget <= 0.5f)
-            {
-                destination = transform.position;
-            }
-            else
-            {
-                Collider2D followTargetCollider = followTarget.GetComponent<Collider2D>();
-
-                float targetColliderSize = Mathf.Max(followTargetCollider.bounds.size.x, followTargetCollider.bounds.size.y);
-
-                // Calculate dynamic offset distance based on the collider size
-                float dynamicOffsetDistance = targetColliderSize * 0.5f;
-
-                destination = (Vector2)followTarget.transform.position - (direction * dynamicOffsetDistance);
-            }
+            handleFollowTarget();
         }
+    }
 
-        transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
-
-        if (Input.GetMouseButton(1))
+    private void SetTargetPosition()
+    {
+        if (Input.GetMouseButtonDown(1))
         {
             List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
             if (selectedUnits.Contains(this))
             {
-                Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                HandleRightClick(clickPosition);
+                destination = Camera.main.WorldToScreenPoint(Input.mousePosition);
+                Vector3 mousePosition = Input.mousePosition;
+                mousePosition.z = Mathf.Abs(Camera.main.transform.position.z); 
+
+                Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                HandleRightClick(worldPosition);
+            }
+        }
+    }
+
+    private void SetAgentPosition()
+    {
+        agent.SetDestination(new Vector3(destination.x, destination.y, transform.position.z));
+    }
+
+    private void handleFollowTarget()
+    {
+        Vector3 directoon = (followTarget.transform.position - transform.position).normalized;
+
+        float distanceToTarget = Vector3.Distance(transform.position, followTarget.transform.position);
+
+        if (distanceToTarget <= 0.5f)
+        {
+            destination = transform.position;
+        }
+        else
+        {
+            Collider followTargetCollider = followTarget.GetComponent<Collider>();
+
+            if (followTargetCollider != null)
+            {
+                float targetColliderSize = Mathf.Max(followTargetCollider.bounds.size.x, followTargetCollider.bounds.size.y);
+                float dynamicOffsetDistance = targetColliderSize * 0.5f;
+
+                destination = followTarget.transform.position - (directoon * dynamicOffsetDistance);
+            }
+            else
+            {
+                destination = followTarget.transform.position;
             }
         }
     }
@@ -138,7 +171,9 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     private void HandleRightClick(Vector3 clickPosition)
     {
-        RaycastHit2D hit = Physics2D.Raycast(clickPosition, Vector2.zero);
+        Vector2 raycastOrigin = new Vector2(clickPosition.x, clickPosition.y);
+
+        RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, Vector2.zero);
 
         if (hit.collider != null)
         {
@@ -147,11 +182,16 @@ public class UnitRTS : MonoBehaviour, IAttackable
             if (clickedObject.CompareTag("Unit"))
             {
                 UnitRTS clickedUnit = clickedObject.GetComponent<UnitRTS>();
-                if (clickedUnit != null && clickedUnit.team != this.team)
+                if (clickedUnit != null)
                 {
+                    // TODO: Fix problem with unit making circles around a follow leader
                     followUnit(clickedUnit);
                     clickedUnit = this.followTarget;
-                    StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>()));
+                    if(clickedUnit.team != this.team)
+                    {
+                        // TODO: Fix problem with units not attacking each other
+                        StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>()));
+                    }
                 }
             } else if (clickedObject.CompareTag("Building"))
             {
@@ -175,6 +215,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     public void followUnit(UnitRTS leader)
     {
+        Debug.Log("follow unit method has been called");
         Vector3 direction = (leader.transform.position - transform.position).normalized;
         transform.position += direction * Time.deltaTime * moveSpeed;
         setFollowTarget(leader);
