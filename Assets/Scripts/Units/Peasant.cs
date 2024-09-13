@@ -51,6 +51,7 @@ public class Peasant : UnitRTS
     {
         if (buildCouroutine == null)
         {
+       
             RTS_building buildingComponent = building.GetComponent<RTS_building>();
 
             if (buildingComponent.health < buildingComponent.maxHealth) {

@@ -229,6 +229,7 @@ public class buildings_manager : MonoBehaviour
         RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
         buildingObject.team = peasantUnits.First().team;
         buildingObject.owner = peasantUnits.First().owner;
+        buildingObject.health = 1;
         buildingObject.owner.ChangePlayerResources(buildingObject.GetRequiredResources(), "-");
 
         DestroyGhostBuilding();
