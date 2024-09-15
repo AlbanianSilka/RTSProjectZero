@@ -71,7 +71,6 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     protected virtual void Update()
     {
-        // TODO: Fix problem with agents 'slicing' like they are on the ice
         SetTargetPosition();
         SetAgentPosition();
 
@@ -109,7 +108,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
         float distanceToTarget = Vector3.Distance(transform.position, followTarget.transform.position);
 
-        if (distanceToTarget <= 0.5f)
+        if (distanceToTarget <= 3f)
         {
             destination = transform.position;
         }
@@ -145,8 +144,10 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     public bool HasReachedDestination()
     {
-        // Check if the distance between the current position and the destination is very small
-        return Vector2.Distance(transform.position, destination) < 0.1f;
+        // Calculate the distance between the unit and the target position
+        float distance = Vector3.Distance(transform.position, destination);
+
+        return distance <= 3f;
     }
 
     public void TakeDamage(float damage, GameObject attacker)
@@ -160,7 +161,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
         if (HasReachedDestination())
         {
             GameObject counterAttackTarget = attacker;
-            StartCoroutine(attackPath(counterAttackTarget.GetComponent<IAttackable>()));
+            StartCoroutine(attackPath(counterAttackTarget.GetComponent<IAttackable>(), counterAttackTarget));
         }
 
         if(health <= 0)
@@ -184,13 +185,11 @@ public class UnitRTS : MonoBehaviour, IAttackable
                 UnitRTS clickedUnit = clickedObject.GetComponent<UnitRTS>();
                 if (clickedUnit != null)
                 {
-                    // TODO: Fix problem with unit making circles around a follow leader
                     followUnit(clickedUnit);
                     clickedUnit = this.followTarget;
                     if(clickedUnit.team != this.team)
                     {
-                        // TODO: Fix problem with units not attacking each other
-                        StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>()));
+                        StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>(), clickedObject));
                     }
                 }
             } else if (clickedObject.CompareTag("Building"))
@@ -198,7 +197,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
                 RTS_building clickedBuilding = clickedObject.GetComponent<RTS_building>();
                 if(clickedBuilding != null && clickedBuilding.team != this.team)
                 {
-                    StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>()));
+                    StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>(), clickedObject));
                 }
             } else
             {
@@ -215,9 +214,16 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     public void followUnit(UnitRTS leader)
     {
-        Debug.Log("follow unit method has been called");
         Vector3 direction = (leader.transform.position - transform.position).normalized;
-        transform.position += direction * Time.deltaTime * moveSpeed;
+
+        float stopDistance = 3f;
+        float distanceToLeader = Vector3.Distance(transform.position, leader.transform.position);
+
+        if (distanceToLeader > stopDistance)
+        {
+            transform.position += direction * Time.deltaTime * moveSpeed;
+        }
+
         setFollowTarget(leader);
 
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
@@ -236,22 +242,36 @@ public class UnitRTS : MonoBehaviour, IAttackable
         followTarget = newTarget;
     }
 
-    private IEnumerator attackPath(IAttackable target)
+    private IEnumerator attackPath(IAttackable target, GameObject targetObject)
     {
         if (isAttacking)
             yield break;
 
         isAttacking = true;
 
-        while(target.health > 0 && HasReachedDestination())
-        {
-            float attackDelay = 1 / attackSpeed;
-            yield return new WaitForSeconds(attackDelay);
+        float attackRange = 3.0f;
 
-            target.TakeDamage(attackDamage, this.gameObject);
+        while (target.health > 0)
+        {
+            float distanceToTarget = Vector3.Distance(transform.position, targetObject.transform.position);
+
+            if (distanceToTarget <= attackRange)
+            {
+                float attackDelay = 1 / attackSpeed;
+                yield return new WaitForSeconds(attackDelay);
+
+                target.TakeDamage(attackDamage, this.gameObject);
+            }
+            else
+            {
+                agent.SetDestination(targetObject.transform.position);
+            }
+
+            // wait for the next frame to check the distance again
+            yield return null;
         }
 
-        isAttacking = false; 
+        isAttacking = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
