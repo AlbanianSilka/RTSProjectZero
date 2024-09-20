@@ -16,8 +16,10 @@ public class UnitRTS : MonoBehaviour, IAttackable
     protected virtual float maxHp => 10f;
     protected virtual float attackSpeed { get; set; } = 1f;
     protected virtual float attackDamage { get; set; } = 1f;
+    protected virtual float attackRange { get; set; } = 3f;
     protected RTS_controller rtsController;
     protected Dictionary<ResourceType, int> RequiredResources { get; set; }
+    protected AttackType attackType;
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
@@ -29,6 +31,10 @@ public class UnitRTS : MonoBehaviour, IAttackable
     public event Action<UnitRTS> OnDeath;
     public Sprite unitIcon;
     public Player owner;
+    public enum AttackType
+    {
+        Melee, Ranged
+    };
 
     public UnitRTS()
     {
@@ -102,13 +108,18 @@ public class UnitRTS : MonoBehaviour, IAttackable
         agent.SetDestination(new Vector3(destination.x, destination.y, transform.position.z));
     }
 
-    private void handleFollowTarget()
+    private void handleFollowTarget(float stopDistance = 3f)
     {
         Vector3 directoon = (followTarget.transform.position - transform.position).normalized;
 
         float distanceToTarget = Vector3.Distance(transform.position, followTarget.transform.position);
 
-        if (distanceToTarget <= 3f)
+        if(followTarget.team != team)
+        {
+            stopDistance = attackRange;
+        }
+
+        if (distanceToTarget <= stopDistance)
         {
             destination = transform.position;
         }
@@ -183,14 +194,11 @@ public class UnitRTS : MonoBehaviour, IAttackable
             if (clickedObject.CompareTag("Unit"))
             {
                 UnitRTS clickedUnit = clickedObject.GetComponent<UnitRTS>();
-                if (clickedUnit != null)
+                followTarget = clickedUnit;
+
+                if (clickedUnit.team != team)
                 {
-                    followUnit(clickedUnit);
-                    clickedUnit = this.followTarget;
-                    if(clickedUnit.team != this.team)
-                    {
-                        StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>(), clickedObject));
-                    }
+                    StartCoroutine(attackPath(clickedObject.GetComponent<IAttackable>(), clickedObject));
                 }
             } else if (clickedObject.CompareTag("Building"))
             {
@@ -212,31 +220,6 @@ public class UnitRTS : MonoBehaviour, IAttackable
         }
     }
 
-    public void followUnit(UnitRTS leader)
-    {
-        Vector3 direction = (leader.transform.position - transform.position).normalized;
-
-        float stopDistance = 3f;
-        float distanceToLeader = Vector3.Distance(transform.position, leader.transform.position);
-
-        if (distanceToLeader > stopDistance)
-        {
-            transform.position += direction * Time.deltaTime * moveSpeed;
-        }
-
-        setFollowTarget(leader);
-
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
-        foreach (Collider2D collider in colliders)
-        {
-            if (collider.gameObject != gameObject && collider.gameObject.GetComponent<UnitRTS>() != null)
-            {
-                Vector3 avoidDirection = (transform.position - collider.transform.position).normalized;
-                transform.position += avoidDirection * Time.deltaTime * moveSpeed;
-            }
-        }
-    }
-
     public void setFollowTarget(UnitRTS newTarget)
     {
         followTarget = newTarget;
@@ -249,22 +232,36 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
         isAttacking = true;
 
-        float attackRange = 3.0f;
 
         while (target.health > 0)
         {
             float distanceToTarget = Vector3.Distance(transform.position, targetObject.transform.position);
 
-            if (distanceToTarget <= attackRange)
+            if(this.attackType == AttackType.Melee)
             {
-                float attackDelay = 1 / attackSpeed;
-                yield return new WaitForSeconds(attackDelay);
+                if (distanceToTarget <= attackRange)
+                {
+                    float attackDelay = 1 / attackSpeed;
+                    yield return new WaitForSeconds(attackDelay);
 
-                target.TakeDamage(attackDamage, this.gameObject);
-            }
-            else
+                    target.TakeDamage(attackDamage, this.gameObject);
+                }
+                else
+                {
+                    agent.SetDestination(targetObject.transform.position);
+                }
+            } else if (this.attackType == AttackType.Ranged)
             {
-                agent.SetDestination(targetObject.transform.position);
+                float arrowSpeed = 20f;
+                float shootDelay = 2.0f;
+
+                if (distanceToTarget <= attackRange)
+                {
+                    agent.SetDestination(transform.position);
+                    StartCoroutine(ShootArrow(target, targetObject, arrowSpeed));
+
+                    yield return new WaitForSeconds(shootDelay);
+                }
             }
 
             // wait for the next frame to check the distance again
@@ -272,6 +269,48 @@ public class UnitRTS : MonoBehaviour, IAttackable
         }
 
         isAttacking = false;
+    }
+
+    private IEnumerator ShootArrow(IAttackable target, GameObject targetObject, float arrowSpeed)
+    {
+        GameObject arrow = new GameObject("Arrow");
+        LineRenderer lineRenderer = arrow.AddComponent<LineRenderer>();
+
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.1f;
+        lineRenderer.startColor = Color.black;
+        lineRenderer.endColor = Color.black;
+
+        Vector3 arrowStartPos = transform.position;
+        Vector3 arrowEndPos = targetObject.transform.position;
+
+        float distanceToTarget = Vector3.Distance(arrowStartPos, arrowEndPos);
+        float travelTime = distanceToTarget / arrowSpeed;
+        float elapsedTime = 0;
+
+        float arrowLength = 0.5f;
+
+        while (elapsedTime < travelTime)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / travelTime;
+
+            Vector3 currentPos = Vector3.Lerp(arrowStartPos, arrowEndPos, t);
+            Vector3 arrowDirection = (arrowEndPos - arrowStartPos).normalized;
+            Vector3 arrowTailPos = currentPos - (arrowDirection * arrowLength);
+
+            lineRenderer.SetPosition(0, arrowTailPos);
+            lineRenderer.SetPosition(1, currentPos);
+
+            yield return null;
+        }
+
+        if (target != null && target.health > 0)
+        {
+            target.TakeDamage(attackDamage, this.gameObject);
+        }
+
+        Destroy(arrow);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

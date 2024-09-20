@@ -52,8 +52,6 @@ public class RTS_controller : MonoBehaviour
 
             selectionAreaTransform.offsetMin = lowerLeft;
             selectionAreaTransform.offsetMax = upperRight;
-            //selectionAreaTransform.position = lowerLeft;
-            //selectionAreaTransform.localScale = upperRight - lowerLeft;
         }
 
         // Check if user unpressed left mouse button and if clicked object was not a UI element
@@ -111,7 +109,13 @@ public class RTS_controller : MonoBehaviour
         {
             Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            MoveSelectedUnits(clickPosition, selectedUnitRTSList);
+            Vector2 raycastOrigin = new Vector2(clickPosition.x, clickPosition.y);
+            RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, Vector2.zero);
+
+            if (hit.collider == null)
+            {
+                MoveSelectedUnits(clickPosition, selectedUnitRTSList);
+            }
         }
     }
 
