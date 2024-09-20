@@ -29,6 +29,7 @@ public class Peasant : UnitRTS
     protected override void Start()
     {
         base.Start();
+        attackType = AttackType.Melee;
         isBuilding = false;
     }
 

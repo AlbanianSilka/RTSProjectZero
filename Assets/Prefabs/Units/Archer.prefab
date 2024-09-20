@@ -406,10 +406,10 @@ GameObject:
   - component: {fileID: 9027396719785038604}
   - component: {fileID: 4683638446049877815}
   - component: {fileID: 5342732947368100148}
-  - component: {fileID: 4352249834916183926}
+  - component: {fileID: 8017498796053793878}
   - component: {fileID: -3204118048388068215}
   m_Layer: 0
-  m_Name: Peasant
+  m_Name: Archer
   m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -425,7 +425,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.11, y: -3.39, z: -0.006271995}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.2235056, y: 0.23448706, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3387888045501290306}
@@ -472,7 +472,7 @@ SpriteRenderer:
   m_SortingLayerID: 483684667
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e5ad5d51081ad45fba638ab586553544, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a6af1b8b6c0c245238dab26d40e71d1e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -546,7 +546,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.91, y: 2.96}
+    oldSize: {x: 18.9, y: 14.17}
     newSize: {x: 18.9, y: 14.17}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -555,7 +555,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.8146744, y: 3.1391346}
   m_EdgeRadius: 0
---- !u!114 &4352249834916183926
+--- !u!114 &8017498796053793878
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -564,20 +564,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6889906512761982694}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d722978e54d3444e28e7aa2bbce645e2, type: 3}
+  m_Script: {fileID: 11500000, guid: 257f75d9e140946be991a452f9f0159e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: A
+  team: 
   healthBar: {fileID: 1477923857568901151}
-  spellButtons:
-  - {fileID: 2162680222088217523, guid: 72ebc1b26330f458c984f618f9f2475e, type: 3}
-  - {fileID: 5628786965462785495, guid: 59778343e010e475690f5d899e2ac05f, type: 3}
-  unitIcon: {fileID: 21300000, guid: 16c907cfab7e549bdb3a947e455d7e10, type: 3}
+  spellButtons: []
+  unitIcon: {fileID: 21300000, guid: f295aba33d80d485fb0e4a38e0206fbb, type: 3}
   owner: {fileID: 0}
-  buildingButtons:
-  - {fileID: 2162680222088217523, guid: d3f474ec58d544b9ebda61368fb97aa4, type: 3}
-  - {fileID: 2162680222088217523, guid: 5861956934be34e1c8cc2091d360b278, type: 3}
-  - {fileID: 2162680222088217523, guid: 1153eae9f4e3447db96e2a0bb5991ccb, type: 3}
 --- !u!195 &-3204118048388068215
 NavMeshAgent:
   m_ObjectHideFlags: 0
