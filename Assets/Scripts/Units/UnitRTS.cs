@@ -114,6 +114,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
         float distanceToTarget = Vector3.Distance(transform.position, followTarget.transform.position);
 
+        Debug.Log(followTarget.name);
         if(followTarget.team != team)
         {
             stopDistance = attackRange;
@@ -252,6 +253,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
                 }
             } else if (this.attackType == AttackType.Ranged)
             {
+                // TODO: move ranged stats to ranged units
                 float arrowSpeed = 20f;
                 float shootDelay = 2.0f;
 
@@ -271,6 +273,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
         isAttacking = false;
     }
 
+    // TODO: probably move this method to some common class to avoid duplication with building
     private IEnumerator ShootArrow(IAttackable target, GameObject targetObject, float arrowSpeed)
     {
         GameObject arrow = new GameObject("Arrow");
