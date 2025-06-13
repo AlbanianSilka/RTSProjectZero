@@ -269,4 +269,44 @@ public class buildings_manager : MonoBehaviour
 
         return nearestCorner;
     }
+
+    // ######## A copy for bots, which does not need to include ghost building & other moments for player ########
+
+    public void botMoveBuilders(List<Peasant> builders, Vector3 buildingPosition, Vector3 targetPosition)
+    {
+        int unitCount = builders.Count;
+
+        for (int i = 0; i < unitCount; i++)
+        {
+            Peasant peasant = builders[i];
+            peasant.MoveTo(targetPosition);
+        }
+
+        StartCoroutine(botStartBuilding(buildingPosition, builders.Cast<UnitRTS>().ToList()));
+    }
+
+    public IEnumerator botStartBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
+    {
+        GameObject newBuilding;
+
+        while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
+        {
+            yield return null;
+        }
+
+        newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
+        RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
+        buildingObject.team = peasantUnits.First().team;
+        buildingObject.owner = peasantUnits.First().owner;
+        buildingObject.health = 1;
+        buildingObject.owner.ChangePlayerResources(buildingObject.GetRequiredResources(), "-");
+        buildingPrefab = null;
+
+        foreach (Peasant unit in peasantUnits)
+        {
+            unit.StartBuildingProcess(newBuilding);
+        }
+    }
+
+    // ################################################################
 }

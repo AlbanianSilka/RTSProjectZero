@@ -31,90 +31,94 @@ public class RTS_controller : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!(owner is BotPlayer))
         {
-            selectionAreaTransform.gameObject.SetActive(true);
-            startPosition = Input.mousePosition;
-            
-        }
-
-        if (Input.GetMouseButton(0))
-        {
-            Vector2 currentMousePosition = Input.mousePosition;
-
-            Vector2 lowerLeft = new Vector2(
-                Mathf.Min(startPosition.x, currentMousePosition.x),
-                Mathf.Min(startPosition.y, currentMousePosition.y));
-
-            Vector2 upperRight = new Vector2(
-                Mathf.Max(startPosition.x, currentMousePosition.x),
-                Mathf.Max(startPosition.y, currentMousePosition.y));
-
-            selectionAreaTransform.offsetMin = lowerLeft;
-            selectionAreaTransform.offsetMax = upperRight;
-        }
-
-        // Check if user unpressed left mouse button and if clicked object was not a UI element
-        if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
-        {
-            if (!BuildingManager.isPlacingBuilding)
+            if (Input.GetMouseButtonDown(0))
             {
-                selectionAreaTransform.gameObject.SetActive(false);
-                Collider2D[] collArray = Physics2D.OverlapAreaAll(Camera.main.ScreenToWorldPoint(startPosition),
-                    Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                selectedUnitRTSList.Clear();
-                selectedBuilding = null;
-                HideSpellButtons();
+                selectionAreaTransform.gameObject.SetActive(true);
+                startPosition = Input.mousePosition;
 
-                bool noUnits = true;
+            }
 
-                foreach (Collider2D obj in collArray)
-                {
-                    UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
-                    if (unitRTS != null)
-                    {
-                        noUnits = false;
-                        selectedUnitRTSList.Add(unitRTS);
-                    } else if (obj.CompareTag("Building"))
-                    {
-                        selectedBuilding = obj.GetComponent<RTS_building>();
-                    }
-                }
+            if (Input.GetMouseButton(0))
+            {
+                Vector2 currentMousePosition = Input.mousePosition;
 
-                if(noUnits && selectedBuilding != null)
+                Vector2 lowerLeft = new Vector2(
+                    Mathf.Min(startPosition.x, currentMousePosition.x),
+                    Mathf.Min(startPosition.y, currentMousePosition.y));
+
+                Vector2 upperRight = new Vector2(
+                    Mathf.Max(startPosition.x, currentMousePosition.x),
+                    Mathf.Max(startPosition.y, currentMousePosition.y));
+
+                selectionAreaTransform.offsetMin = lowerLeft;
+                selectionAreaTransform.offsetMax = upperRight;
+            }
+
+            // Check if user unpressed left mouse button and if clicked object was not a UI element
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonUp(0))
+            {
+                if (!BuildingManager.isPlacingBuilding)
                 {
-                    if (selectedBuilding.finished)
-                    {
-                        UI_controller.showBuildingButtons(selectedBuilding);
-                        middleSection.gameObject.SetActive(true);
-                        if(selectedBuilding.GetComponent<GoldenMine>() != null)
-                        {
-                            UI_controller.handleMineMiddle(selectedBuilding.GetComponent<GoldenMine>().workers, workerButtonPrefab);
-                        }
-                        else
-                        {
-                            UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, progressButtonPrefab);
-                        }
-                    }
-                }
-                else
-                {
+                    selectionAreaTransform.gameObject.SetActive(false);
+                    Collider2D[] collArray = Physics2D.OverlapAreaAll(Camera.main.ScreenToWorldPoint(startPosition),
+                        Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    selectedUnitRTSList.Clear();
                     selectedBuilding = null;
-                    UI_controller.showSpellButtons(selectedUnitRTSList);
+                    HideSpellButtons();
+
+                    bool noUnits = true;
+
+                    foreach (Collider2D obj in collArray)
+                    {
+                        UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
+                        if (unitRTS != null && unitRTS.owner.team == owner.team)
+                        {
+                            noUnits = false;
+                            selectedUnitRTSList.Add(unitRTS);
+                        }
+                        else if (obj.CompareTag("Building"))
+                        {
+                            selectedBuilding = obj.GetComponent<RTS_building>();
+                        }
+                    }
+
+                    if (noUnits && selectedBuilding != null)
+                    {
+                        if (selectedBuilding.finished)
+                        {
+                            UI_controller.showBuildingButtons(selectedBuilding);
+                            middleSection.gameObject.SetActive(true);
+                            if (selectedBuilding.GetComponent<GoldenMine>() != null)
+                            {
+                                UI_controller.handleMineMiddle(selectedBuilding.GetComponent<GoldenMine>().workers, workerButtonPrefab);
+                            }
+                            else
+                            {
+                                UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, progressButtonPrefab);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        selectedBuilding = null;
+                        UI_controller.showSpellButtons(selectedUnitRTSList);
+                    }
                 }
             }
-        }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            Vector2 raycastOrigin = new Vector2(clickPosition.x, clickPosition.y);
-            RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, Vector2.zero);
-
-            if (hit.collider == null)
+            if (Input.GetMouseButtonDown(1))
             {
-                MoveSelectedUnits(clickPosition, selectedUnitRTSList);
+                Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                Vector2 raycastOrigin = new Vector2(clickPosition.x, clickPosition.y);
+                RaycastHit2D hit = Physics2D.Raycast(raycastOrigin, Vector2.zero);
+
+                if (hit.collider == null)
+                {
+                    MoveSelectedUnits(clickPosition, selectedUnitRTSList);
+                }
             }
         }
     }

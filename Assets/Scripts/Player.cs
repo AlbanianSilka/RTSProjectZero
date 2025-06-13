@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] public string team;
     public RTS_controller rtsController;
+    // placed inside canvas
     public Text goldText;
     public Text woodText;
 
@@ -20,7 +21,7 @@ public class Player : MonoBehaviour
         resources.Add(Resource.ResourceType.Wood, 150); 
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         RTS_controller newController = Instantiate(rtsController, transform.position, Quaternion.identity);
         rtsController = newController.GetComponent<RTS_controller>();
@@ -48,7 +49,11 @@ public class Player : MonoBehaviour
                     Debug.LogError("Wrong sign used");
                 }
 
-                UpdateResourceUIText();
+                // Only update UI for non-bot players
+                if (!(this is BotPlayer))
+                {
+                    UpdateResourceUIText();
+                }
             }
             else
             {
