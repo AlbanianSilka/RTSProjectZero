@@ -134,7 +134,7 @@ public class Peasant : UnitRTS
         }
     }
 
-    private IEnumerator constructionPath(GameObject buildingObject)
+    public IEnumerator constructionPath(GameObject buildingObject)
     {
         while (!HasReachedDestination())
         {

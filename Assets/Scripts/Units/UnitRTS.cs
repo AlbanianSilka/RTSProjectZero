@@ -64,6 +64,13 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     protected virtual void Start()
     {
+        if (owner == null)
+        {
+            Debug.LogWarning($"{name} has no owner assigned at Start(), deferring init...");
+            StartCoroutine(WaitForOwner());
+            return;
+        }
+
         rtsController = owner.rtsController;
         destination = transform.position;
     }
@@ -324,4 +331,11 @@ public class UnitRTS : MonoBehaviour, IAttackable
         }
     }
 
+    private IEnumerator WaitForOwner()
+    {
+        yield return new WaitUntil(() => owner != null);
+
+        rtsController = owner.rtsController;
+        destination = transform.position;
+    }
 }
