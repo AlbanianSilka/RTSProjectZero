@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06d2b9fe96a484164a23b979b9ced546, type: 3}
   m_Name: CastleBuildingData
   m_EditorClassIdentifier: 
-  buildingID: 
-  displayName: 
-  prefab: {fileID: 0}
+  buildingID: castle
+  displayName: Castle
+  prefab: {fileID: 491780485271085513, guid: 3efde2f6efca74141a1ab09d11de4224, type: 3}
