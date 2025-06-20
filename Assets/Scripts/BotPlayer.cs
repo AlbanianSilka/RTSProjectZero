@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static Resource;
 
@@ -11,15 +13,16 @@ public class BotPlayer : Player
 
     private enum BotTask
     {
-        CheckForCastle,
-        BuildCastle
+        BuildCastle,
+        BuildBasicSquad
     }
 
-    private Queue<BotTask> taskQueue = new Queue<BotTask>();
+    private List<BotTask> availableTasks;
+    private HashSet<BotTask> tasksInProgress = new HashSet<BotTask>();
 
     public BotPlayer()
     {
-        resources.Add(Resource.ResourceType.Gold, 150);
+        resources.Add(Resource.ResourceType.Gold, 500);
         resources.Add(Resource.ResourceType.Wood, 150);
     }
 
@@ -45,8 +48,7 @@ public class BotPlayer : Player
             Debug.LogWarning("[BotPlayer] No builder (Peasant) found for team: " + team);
         }
 
-        taskQueue.Enqueue(BotTask.CheckForCastle);
-
+        availableTasks = Enum.GetValues(typeof(BotTask)).Cast<BotTask>().ToList();
         StartCoroutine(RunAITasks());
     }
 
@@ -66,6 +68,8 @@ public class BotPlayer : Player
 
     private void FindFriendlyBuildings()
     {
+        friendlyBuildings.Clear();
+
         RTS_building[] allBuildings = GameObject.FindObjectsOfType<RTS_building>();
 
         foreach (RTS_building building in allBuildings)
@@ -95,13 +99,15 @@ public class BotPlayer : Player
     {
         while (true)
         {
-            if (taskQueue.Count > 0)
+            foreach (var task in availableTasks)
             {
-                BotTask task = taskQueue.Dequeue();
-                ExecuteTask(task);
+                if (!tasksInProgress.Contains(task))
+                {
+                    ExecuteTask(task);
+                }
             }
 
-            yield return new WaitForSeconds(1f); // Delay between tasks
+            yield return new WaitForSeconds(1f);
         }
     }
 
@@ -109,65 +115,62 @@ public class BotPlayer : Player
     {
         switch (task)
         {
-            case BotTask.CheckForCastle:
-                bool hasCastle = HasCastle();
-                if (!hasCastle)
-                {
-                    Debug.Log("[BotPlayer] No Castle present — should build one.");
-                    taskQueue.Enqueue(BotTask.BuildCastle);
-                }
-                else
-                {
-                    Debug.Log("[BotPlayer] Castle is present.");
-                }
-                break;
-
             case BotTask.BuildCastle:
                 BuildCastleTask();
                 break;
 
-        // TODO: probably would need to move this part to a seperate class, might be too many cases
+            case BotTask.BuildBasicSquad:
+                BuildBasicSquadTask();
+                break;
         }
     }
 
-    private bool HasCastle()
+    private bool HasBuilding<T>() where T : RTS_building
     {
-        foreach (var building in friendlyBuildings)
-        {
-            if (building is Castle) return true;
-        }
-
-        return false;
+        FindFriendlyBuildings();
+        return friendlyBuildings.Any(b => b is T typed && typed.finished);
     }
 
     private void BuildCastleTask()
     {
-        Peasant builder = GetAvailableBuilder();
+        if (HasBuilding<Castle>())
+        {
+            Debug.Log("[BotPlayer] Castle already exists — skipping task.");
+            tasksInProgress.Remove(BotTask.BuildCastle);
+            return;
+        }
 
+        Peasant builder = GetAvailableBuilder();
         if (builder == null)
         {
             Debug.LogWarning("[BotPlayer] No available builder to construct the Castle.");
             return;
         }
+
         List<Peasant> singleBuilderList = new List<Peasant> { builder };
 
-        // Would search for castle prefab in our dictionary
         GameObject castlePrefab = BuildingRegistry.Instance.GetBuildingPrefab("castle");
+        if (castlePrefab == null)
+        {
+            Debug.LogError("[BotPlayer] Could not find castle prefab.");
+            return;
+        }
+
+        tasksInProgress.Add(BotTask.BuildCastle);
+
         rtsController.BuildingManager.buildingPrefab = castlePrefab;
 
-        // Would first decide a position of a builder and based on that bot would place his first building
         Vector3 builderPosition = builder.transform.position;
-
         Vector3? validPosition = FindValidBuildingPosition(builderPosition, castlePrefab, 6f, 1f);
+
         if (validPosition.HasValue)
         {
             Debug.Log("[BotPlayer] Found valid building position: " + validPosition.Value);
-
             rtsController.BuildingManager.botMoveBuilders(singleBuilderList, validPosition.Value, validPosition.Value);
         }
         else
         {
-            Debug.Log("[BotPlayer] Could not find a valid building position near builder.");
+            Debug.LogWarning("[BotPlayer] Could not find a valid building position near builder.");
         }
     }
 
@@ -208,5 +211,31 @@ public class BotPlayer : Player
         return null; // No valid position found
     }
 
+    private void BuildBasicSquadTask()
+    {
+        if (!HasBuilding<Castle>())
+        {
+            Debug.Log("[BotPlayer] Cannot build squad — no Castle.");
+            return;
+        }
+
+        int footmenCount = friendlyUnits.OfType<Footman>().Count();
+        if (footmenCount >= 3)
+        {
+            tasksInProgress.Remove(BotTask.BuildBasicSquad);
+            return;
+        }
+
+        if (tasksInProgress.Contains(BotTask.BuildBasicSquad))
+        {
+            Debug.Log("[BotPlayer] Already building a squad.");
+            return;
+        }
+
+        Debug.Log("[BotPlayer] Need to build an army.");
+        tasksInProgress.Add(BotTask.BuildBasicSquad);
+
+        // TODO: Trigger unit production
+    }
 }
 

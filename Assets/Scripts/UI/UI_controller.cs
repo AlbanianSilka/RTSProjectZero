@@ -183,6 +183,12 @@ public class UI_controller : MonoBehaviour
 
     private static void changeProgressIcon(UnitRTS unit, int buttonIndex, GameObject progressButton)
     {
+        // TODO: IMPORTANT!!! Fix ASAP, need to find solution and probably -->
+        // attach progress boxes to the MiddleSection
+        // TODO: additionally - for some reason the last icon does not -->
+        // dissapera unless I will not hide it
+        GameObject[] progressBoxObjects = GameObject.FindGameObjectsWithTag("ProgressBox");
+        progressBoxes.AddRange(progressBoxObjects);
         Sprite unitIcon = unit.unitIcon;
         Image newBtnImg = progressButton.GetComponent<Image>();
         newBtnImg.sprite = unitIcon;
