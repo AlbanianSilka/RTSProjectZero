@@ -93,7 +93,10 @@ public class RTS_building : MonoBehaviour, IAttackable
         {
             this.owner.ChangePlayerResources(unit.GetRequiredResources(), "-");
             unitsQueue.Add(unit);
-            UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
+            if (!(owner is BotPlayer))
+            {
+                UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
+            }
         }
     }
 
