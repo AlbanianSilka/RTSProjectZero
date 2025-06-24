@@ -5,19 +5,21 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-// TODO: need to think about rewriting it a bit, because looking for -->
-// an RTScontroller via FindGameObjectsWithTag is a bad approach
 public class UI_controller : MonoBehaviour
 {
-    private static List<GameObject> spellBoxes = new List<GameObject>();
-    private static List<GameObject> progressBoxes = new List<GameObject>();
+    private Canvas rightContainer;
+    private static List<spell_box> spellBoxes = new();
+    private Canvas progressBoxContainer;
+    private static List<progress_box> progressBoxes = new();
+    public RTS_controller rtsController;
 
     private void Awake()
     {
-        GameObject[] spellBoxObjects = GameObject.FindGameObjectsWithTag("SpellBox");
-        spellBoxes.AddRange(spellBoxObjects);
-        GameObject[] progressBoxObjects = GameObject.FindGameObjectsWithTag("ProgressBox");
-        progressBoxes.AddRange(progressBoxObjects);
+        progressBoxContainer = rtsController.middleSection;
+        progressBoxes = progressBoxContainer.GetComponentsInChildren<progress_box>(includeInactive: true).ToList();
+
+        rightContainer = rtsController.rightSection;
+        spellBoxes = rightContainer.GetComponentsInChildren<spell_box>(includeInactive: true).ToList();
     }
 
     public static void showSpellButtons(List<UnitRTS> selectedUnits)
@@ -62,7 +64,7 @@ public class UI_controller : MonoBehaviour
         }
     }
 
-    private static void SpellButtonInBox(GameObject spellButton, List<GameObject> spellBoxes)
+    private static void SpellButtonInBox(GameObject spellButton, List<spell_box> spellBoxes)
     {
         GameObject newSpellButton = Instantiate(spellButton); 
         GameObject spellCanvas = GameObject.FindGameObjectWithTag("SpellsCanvas");
@@ -76,7 +78,7 @@ public class UI_controller : MonoBehaviour
 
             if (spellButtonComponent != null)
             {
-                foreach (GameObject spellBox in spellBoxes)
+                foreach (spell_box spellBox in spellBoxes)
                 {
 
                     spell_box spellBoxComponent = spellBox.GetComponent<spell_box>();
@@ -183,16 +185,10 @@ public class UI_controller : MonoBehaviour
 
     private static void changeProgressIcon(UnitRTS unit, int buttonIndex, GameObject progressButton)
     {
-        // TODO: IMPORTANT!!! Fix ASAP, need to find solution and probably -->
-        // attach progress boxes to the MiddleSection
-        // TODO: additionally - for some reason the last icon does not -->
-        // dissapera unless I will not hide it
-        GameObject[] progressBoxObjects = GameObject.FindGameObjectsWithTag("ProgressBox");
-        progressBoxes.AddRange(progressBoxObjects);
         Sprite unitIcon = unit.unitIcon;
         Image newBtnImg = progressButton.GetComponent<Image>();
         newBtnImg.sprite = unitIcon;
-        foreach (GameObject progressBox in progressBoxes)
+        foreach (progress_box progressBox in progressBoxes)
         {
             progress_box progressBoxComponent = progressBox.GetComponent<progress_box>();
             if (progressBoxComponent != null && progressBoxComponent.boxIndex == buttonIndex)

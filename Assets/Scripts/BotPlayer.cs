@@ -7,6 +7,8 @@ using static Resource;
 
 public class BotPlayer : Player
 {
+    public UnitRegistry unitRegistry;
+
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
     private List<UnitRTS> friendlyUnits = new List<UnitRTS>();
     private List<RTS_building> friendlyBuildings = new List<RTS_building>();
@@ -232,10 +234,50 @@ public class BotPlayer : Player
             return;
         }
 
-        Debug.Log("[BotPlayer] Need to build an army.");
-        tasksInProgress.Add(BotTask.BuildBasicSquad);
+        if (!tasksInProgress.Contains(BotTask.BuildBasicSquad))
+        {
+            Debug.Log("[BotPlayer] Need to build an army.");
+            tasksInProgress.Add(BotTask.BuildBasicSquad);
+        }
 
-        // TODO: Trigger unit production
+        RTS_building castle = friendlyBuildings.FirstOrDefault(b => b is Castle && b.finished);
+        if (castle == null) return;
+
+
+        int unitsToTrain = 3 - footmenCount;
+        for (int i = 0; i < unitsToTrain; i++)
+        {
+            // Instantiate a Footman prefab (without spawning it immediately)
+            GameObject footmanPrefab = unitRegistry.GetPrefabByName("footman");
+            if (footmanPrefab == null)
+            {
+                Debug.LogError("[BotPlayer] Could not find Footman prefab.");
+                return;
+            }
+
+            UnitRTS unitToTrain = footmanPrefab.GetComponent<UnitRTS>();
+            TrainUnitAtBuilding(castle, unitToTrain);
+        }
     }
+
+    public void TrainUnitAtBuilding(RTS_building building, UnitRTS unit)
+    {
+        if (unit.CanBeTrained(this))
+        {
+            if (building != null)
+            {
+                building.AddUnitToQueue(unit);
+            }
+            else
+            {
+                Debug.LogError("Building is null in TrainUnitAtBuilding");
+            }
+        }
+        else
+        {
+            Debug.Log("[RTS_controller] Not enough resources to train unit.");
+        }
+    }
+
 }
 

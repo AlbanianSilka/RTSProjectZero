@@ -57,6 +57,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionAreaTransform: {fileID: 7692951975196701808}
   middleSection: {fileID: 3672935750692102961, guid: f45c0d7011cba40e49cd80b82035b71b, type: 3}
+  rightSection: {fileID: 734024251188648033, guid: c9fe48608faff48e5bbf806574e95208, type: 3}
   progressButtonPrefab: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
   workerButtonPrefab: {fileID: 3683051047648132817, guid: edbfc248fdd7248ce81c8decfe7d9867, type: 3}
   owner: {fileID: 0}
@@ -73,6 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098aee7bcebb84a6ba1392ba26907a9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rtsController: {fileID: 7714097321639357280}
 --- !u!114 &5137653825387941975
 MonoBehaviour:
   m_ObjectHideFlags: 0
