@@ -81,7 +81,7 @@ public class spell_manager : MonoBehaviour
         UnitRTS selectedUnit = rtsController.selectedUnitRTSList[0];
         Peasant selectedPeasant = selectedUnit.GetComponent<Peasant>();
 
-        UI_controller.showBuildingButtons(selectedPeasant);
+        UI_controller.showPeasantBuildingButtons(selectedPeasant);
     }
 
     public void ShowMainButtons()

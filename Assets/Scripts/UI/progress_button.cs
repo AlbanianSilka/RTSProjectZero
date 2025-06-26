@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class progress_button : MonoBehaviour
 {
-    protected RTS_controller rtsController;
+    public RTS_controller rtsController;
     protected RTS_building selectedBuilding;
     
     public int buttonIndex;
@@ -18,7 +18,6 @@ public class progress_button : MonoBehaviour
 
     private void Start()
     {
-        rtsController = FindObjectOfType<RTS_controller>();
         selectedBuilding = rtsController.selectedBuilding;
 
         if (buttonIndex == 0)

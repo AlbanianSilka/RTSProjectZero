@@ -69,6 +69,9 @@ public class RTS_building : MonoBehaviour, IAttackable
 
     public void TakeDamage(float damage, GameObject attacker)
     {
+        if (this == null || health <= 0)
+            return;
+
         health -= damage;
         this.healthBar.updateHealthBar(this.health, this.maxHealth);
         Debug.Log($"{this.name} was hit by {attacker.name}");

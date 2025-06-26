@@ -16,7 +16,6 @@ public class worker_button : MonoBehaviour
 
     private void Start()
     {
-        rtsController = FindObjectOfType<RTS_controller>();
         selectedMine = rtsController.selectedBuilding.GetComponent<GoldenMine>();
     }
 
