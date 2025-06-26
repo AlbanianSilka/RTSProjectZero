@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c45fd2c89e3fb406f9dc90e37756202d, type: 3}
   m_Name: BotUnitRegistry
   m_EditorClassIdentifier: 
-  footmanPrefab: {fileID: 0}
-  archerPrefab: {fileID: 0}
-  builderPrefab: {fileID: 0}
+  footmanPrefab: {fileID: 7991125324847638175, guid: cf6b01e29fb79405cbc625879db3a39f, type: 3}
+  archerPrefab: {fileID: 6889906512761982694, guid: 2b3a5c597755a4d75b3e4ed10096e5e3, type: 3}
+  builderPrefab: {fileID: 6889906512761982694, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}

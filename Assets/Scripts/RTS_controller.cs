@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,13 +21,21 @@ public class RTS_controller : MonoBehaviour
 
     private void Start()
     {
-        HideSpellButtons();
+        if (!(owner is BotPlayer))
+        {
+            rightSection = Instantiate(rightSection);
+            middleSection = Instantiate(middleSection);
+            UI_controller.rtsController = this;
+            UI_controller.rightContainer = rightSection;
+            UI_controller.spellBoxes = rightSection.GetComponentsInChildren<spell_box>(includeInactive: true).ToList();
+            UI_controller.progressBoxContainer = middleSection;
+            UI_controller.progressBoxes = middleSection.GetComponentsInChildren<progress_box>(includeInactive: true).ToList();
+            HideSpellButtons();
+        }
     }
 
     private void Awake()
     {
-        rightSection = Instantiate(rightSection);
-        middleSection = Instantiate(middleSection);
         selectedUnitRTSList = new List<UnitRTS>();
         selectionAreaTransform.gameObject.SetActive(false);
     }

@@ -11,7 +11,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
     private UnitRTS followTarget;
     NavMeshAgent agent;
 
-    protected virtual bool isAttacking { get; set; }
+    public virtual bool isAttacking { get; set; }
     protected virtual float moveSpeed { get; set; } = 5f; 
     protected virtual float maxHp => 10f;
     protected virtual float attackSpeed { get; set; } = 1f;
@@ -100,11 +100,12 @@ public class UnitRTS : MonoBehaviour, IAttackable
             List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
             if (selectedUnits.Contains(this))
             {
-                destination = Camera.main.WorldToScreenPoint(Input.mousePosition);
                 Vector3 mousePosition = Input.mousePosition;
-                mousePosition.z = Mathf.Abs(Camera.main.transform.position.z); 
+                mousePosition.z = Mathf.Abs(Camera.main.transform.position.z);
 
                 Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+                destination = new Vector3(worldPosition.x, worldPosition.y, transform.position.z);
                 HandleRightClick(worldPosition);
             }
         }
@@ -121,7 +122,6 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
         float distanceToTarget = Vector3.Distance(transform.position, followTarget.transform.position);
 
-        Debug.Log(followTarget.name);
         if(followTarget.team != team)
         {
             stopDistance = attackRange;
@@ -171,7 +171,10 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     public void TakeDamage(float damage, GameObject attacker)
     {
-        // TODO: Need to think about making a following system when counter attack
+        if (this == null || health <= 0)
+            return;
+
+        // TODO: Would probably need an update, because counter-attacked follows a bit strange
         this.health -= damage;
         this.healthBar.updateHealthBar(this.health, this.maxHp);
         Debug.Log($"{this.name} was hit by {attacker.name} on {damage} dmg and has {this.health} hp");
@@ -233,10 +236,17 @@ public class UnitRTS : MonoBehaviour, IAttackable
         followTarget = newTarget;
     }
 
-    private IEnumerator attackPath(IAttackable target, GameObject targetObject)
+    public IEnumerator attackPath(IAttackable target, GameObject targetObject)
     {
+        Debug.Log("CHECK!!!");
+
         if (isAttacking)
             yield break;
+
+        while (!agent.isActiveAndEnabled || !agent.isOnNavMesh)
+        {
+            yield return null;
+        }
 
         isAttacking = true;
 

@@ -7,20 +7,11 @@ using UnityEngine.UI;
 
 public class UI_controller : MonoBehaviour
 {
-    private Canvas rightContainer;
-    private static List<spell_box> spellBoxes = new();
-    private Canvas progressBoxContainer;
-    private static List<progress_box> progressBoxes = new();
-    public RTS_controller rtsController;
-
-    private void Awake()
-    {
-        progressBoxContainer = rtsController.middleSection;
-        progressBoxes = progressBoxContainer.GetComponentsInChildren<progress_box>(includeInactive: true).ToList();
-
-        rightContainer = rtsController.rightSection;
-        spellBoxes = rightContainer.GetComponentsInChildren<spell_box>(includeInactive: true).ToList();
-    }
+    public static Canvas rightContainer;
+    public static List<spell_box> spellBoxes = new();
+    public static Canvas progressBoxContainer;
+    public static List<progress_box> progressBoxes = new();
+    public static RTS_controller rtsController;
 
     public static void showSpellButtons(List<UnitRTS> selectedUnits)
     {
@@ -43,16 +34,16 @@ public class UI_controller : MonoBehaviour
 
             foreach (GameObject spellButton in unitWithHighestPriority.spellButtons)
             {
-                SpellButtonInBox(spellButton, spellBoxes);
+                SpellButtonInBox(spellButton);
             }
         }
     }
 
-    public static void showBuildingButtons(Peasant selectedUnit)
+    public static void showPeasantBuildingButtons(Peasant selectedUnit)
     {
         foreach (GameObject spellButton in selectedUnit.buildingButtons)
         {
-            SpellButtonInBox(spellButton, spellBoxes);
+            SpellButtonInBox(spellButton);
         }
     }
 
@@ -60,18 +51,17 @@ public class UI_controller : MonoBehaviour
     {
         foreach (GameObject spellButton in building.spellButtons)
         {
-            SpellButtonInBox(spellButton, spellBoxes);
+            SpellButtonInBox(spellButton);
         }
     }
 
-    private static void SpellButtonInBox(GameObject spellButton, List<spell_box> spellBoxes)
+    private static void SpellButtonInBox(GameObject spellButton)
     {
         GameObject newSpellButton = Instantiate(spellButton); 
-        GameObject spellCanvas = GameObject.FindGameObjectWithTag("SpellsCanvas");
 
-        if(spellCanvas != null)
+        if(rightContainer != null)
         {
-            newSpellButton.transform.SetParent(spellCanvas.transform, false);
+            newSpellButton.transform.SetParent(rightContainer.transform, false);
 
             spell_button spellButtonComponent = newSpellButton.GetComponent<spell_button>();
             int buttonIndex = spellButtonComponent.spellBoxIndex;
@@ -125,6 +115,7 @@ public class UI_controller : MonoBehaviour
                     UnitRTS unit = unitsQueue[index];
                     progressButton = Instantiate(progressButtonPrefab);
                     buttonComponent = progressButton.GetComponent<progress_button>();
+                    buttonComponent.rtsController = rtsController;
                     progressButton.transform.SetParent(middleCanvas.transform, false);
 
                     if (buttonComponent != null)
@@ -168,6 +159,7 @@ public class UI_controller : MonoBehaviour
                 if (workerButton.GetComponent<worker_button>() != null)
                 {
                     workerComponent = workerButton.GetComponent<worker_button>();
+                    workerComponent.rtsController = rtsController;
                     workerComponent.buttonIndex = index;
                     changeProgressIcon(unit, index, workerButton);
                 }

@@ -16,7 +16,8 @@ public class BotPlayer : Player
     private enum BotTask
     {
         BuildCastle,
-        BuildBasicSquad
+        BuildBasicSquad,
+        StartBasicAttack
     }
 
     private List<BotTask> availableTasks;
@@ -37,7 +38,7 @@ public class BotPlayer : Player
 
     void Start()
     {
-        FindFriendlyUnits();
+        StartCoroutine(UpdateFriendlyUnitsRoutine());
         FindFriendlyBuildings();
         Peasant builder = GetAvailableBuilder();
 
@@ -54,8 +55,18 @@ public class BotPlayer : Player
         StartCoroutine(RunAITasks());
     }
 
+    private IEnumerator UpdateFriendlyUnitsRoutine()
+    {
+        while (true)
+        {
+            FindFriendlyUnits();
+            yield return new WaitForSeconds(10f); // update every 10 seconds
+        }
+    }
+
     private void FindFriendlyUnits()
     {
+        friendlyUnits.Clear();
         UnitRTS[] allUnits = GameObject.FindObjectsOfType<UnitRTS>();
 
         foreach (UnitRTS unit in allUnits)
@@ -124,6 +135,10 @@ public class BotPlayer : Player
             case BotTask.BuildBasicSquad:
                 BuildBasicSquadTask();
                 break;
+
+            case BotTask.StartBasicAttack:
+                basicAttack();
+                break;
         }
     }
 
@@ -137,7 +152,6 @@ public class BotPlayer : Player
     {
         if (HasBuilding<Castle>())
         {
-            Debug.Log("[BotPlayer] Castle already exists — skipping task.");
             tasksInProgress.Remove(BotTask.BuildCastle);
             return;
         }
@@ -217,7 +231,6 @@ public class BotPlayer : Player
     {
         if (!HasBuilding<Castle>())
         {
-            Debug.Log("[BotPlayer] Cannot build squad — no Castle.");
             return;
         }
 
@@ -279,5 +292,123 @@ public class BotPlayer : Player
         }
     }
 
+    private void basicAttack()
+    {
+        List<Footman> attackingFootmen = new();
+        // for a basic attack bot would need some start army
+        List<Footman> availableFootmen = friendlyUnits.OfType<Footman>().ToList();
+        if (availableFootmen.Count < 3)
+        {
+            return;
+        }
+
+        if (tasksInProgress.Contains(BotTask.StartBasicAttack))
+        {
+            Debug.Log("[BotPlayer] Already trying to attack.");
+            return;
+        }
+
+        if (!tasksInProgress.Contains(BotTask.StartBasicAttack))
+        {
+            tasksInProgress.Add(BotTask.StartBasicAttack);
+        }
+
+        Debug.Log("[BotPlayer] Starting basic attack!");
+
+        GameObject targetObject = FindClosestEnemyTarget();
+        if (targetObject == null)
+        {
+            Debug.LogWarning("[BotPlayer] No enemy target found.");
+            return;
+        }
+
+        IAttackable targetAttackable = targetObject.GetComponent<IAttackable>();
+        if (targetAttackable == null)
+        {
+            Debug.LogWarning("[BotPlayer] Target does not implement IAttackable.");
+            return;
+        }
+
+        foreach (var footman in availableFootmen)
+        {
+            if (!attackingFootmen.Contains(footman))
+                attackingFootmen.Add(footman);
+
+            Debug.Log("Set new target");
+            footman.StartCoroutine(footman.attackPath(targetAttackable, targetObject));
+        }
+
+        StartCoroutine(MonitorAttackers(attackingFootmen));
+    }
+
+    private GameObject FindClosestEnemyTarget()
+    {
+        GameObject closestTarget = null;
+        float closestDistance = float.MaxValue;
+
+        // Find all UnitRTS in scene
+        UnitRTS[] allUnits = GameObject.FindObjectsOfType<UnitRTS>();
+        foreach (var unit in allUnits)
+        {
+            if (unit.team != this.team && unit.health > 0)
+            {
+                float dist = Vector3.Distance(transform.position, unit.transform.position);
+                if (dist < closestDistance)
+                {
+                    closestDistance = dist;
+                    closestTarget = unit.gameObject;
+                }
+            }
+        }
+
+        // If no enemy units found, look for buildings
+        if (closestTarget == null)
+        {
+            RTS_building[] allBuildings = GameObject.FindObjectsOfType<RTS_building>();
+            foreach (var building in allBuildings)
+            {
+                if (building.team != this.team && building.health > 0)
+                {
+                    float dist = Vector3.Distance(transform.position, building.transform.position);
+                    if (dist < closestDistance)
+                    {
+                        closestDistance = dist;
+                        closestTarget = building.gameObject;
+                    }
+                }
+            }
+        }
+
+        return closestTarget;
+    }
+
+    private IEnumerator MonitorAttackers(List<Footman> attackingFootmen)
+    {
+        while (true)
+        {
+            // Clean up dead/null footmen
+            attackingFootmen = attackingFootmen.Where(f => f != null).ToList();
+
+            foreach (var footman in attackingFootmen)
+            {
+                if (!footman.isAttacking)
+                {
+                    GameObject newTarget = FindClosestEnemyTarget();
+
+                    if (newTarget != null)
+                    {
+                        var attackable = newTarget.GetComponent<IAttackable>();
+                        if (attackable != null)
+                        {
+                            Debug.Log("[BotPlayer] Re-assigning target for idle footman.");
+                            footman.StartCoroutine(footman.attackPath(attackable, newTarget));
+                        }
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(1f);
+        }
+    }
 }
 
