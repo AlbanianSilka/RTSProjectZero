@@ -25,7 +25,7 @@ TagManager:
   - UI
   - FogOfWarMain
   - FogOfWarSecondary
-  - 
+  - Minimap
   - 
   - 
   - 
@@ -67,4 +67,7 @@ TagManager:
     locked: 0
   - name: Building
     uniqueID: 1911428863
+    locked: 0
+  - name: Minimap
+    uniqueID: 1861147139
     locked: 0

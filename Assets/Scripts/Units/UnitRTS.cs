@@ -9,6 +9,10 @@ public class UnitRTS : MonoBehaviour, IAttackable
 {
     private Vector3 destination;
     private UnitRTS followTarget;
+    [SerializeField] private GameObject minimapGFX;
+    [SerializeField] private GameObject visionCircleMain;
+    [SerializeField] private GameObject visionCircleSecondary;
+    private int visionCount = 0;
     NavMeshAgent agent;
 
     public virtual bool isAttacking { get; set; }
@@ -17,6 +21,7 @@ public class UnitRTS : MonoBehaviour, IAttackable
     protected virtual float attackSpeed { get; set; } = 1f;
     protected virtual float attackDamage { get; set; } = 1f;
     protected virtual float attackRange { get; set; } = 3f;
+    protected virtual float vision { get; set; } = 2f;
     protected RTS_controller rtsController;
     protected Dictionary<ResourceType, int> RequiredResources { get; set; }
     protected AttackType attackType;
@@ -71,8 +76,25 @@ public class UnitRTS : MonoBehaviour, IAttackable
             return;
         }
 
+        if (minimapGFX != null)
+        {
+            SpriteRenderer renderer = minimapGFX.GetComponent<SpriteRenderer>();
+            if (renderer != null)
+            {
+                renderer.color = owner.teamColor;
+            }
+        }
+
+        if (owner is BotPlayer)
+        {
+            if (visionCircleMain != null) visionCircleMain.SetActive(false);
+            if (visionCircleSecondary != null) visionCircleSecondary.SetActive(false);
+            if (minimapGFX != null) minimapGFX.SetActive(false);
+        }
+
         rtsController = owner.rtsController;
         destination = transform.position;
+        SetVisionScale();
     }
 
     protected virtual void Awake()
@@ -238,8 +260,6 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     public IEnumerator attackPath(IAttackable target, GameObject targetObject)
     {
-        Debug.Log("CHECK!!!");
-
         if (isAttacking)
             yield break;
 
@@ -347,5 +367,31 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
         rtsController = owner.rtsController;
         destination = transform.position;
+    }
+
+    public void SetVisible(bool visible)
+    {
+        if (minimapGFX == null) return;
+
+        if (visible)
+        {
+            if (visionCount == 0)
+                minimapGFX.SetActive(true);
+
+            visionCount++;
+        }
+        else
+        {
+            visionCount = Mathf.Max(visionCount - 1, 0);
+            if (visionCount == 0)
+                minimapGFX.SetActive(false);
+        }
+    }
+
+    private void SetVisionScale()
+    {
+        Vector3 scale = new Vector3(vision, vision, 1f);
+        if (visionCircleMain != null) visionCircleMain.transform.localScale = scale;
+        if (visionCircleSecondary != null) visionCircleSecondary.transform.localScale = scale;
     }
 }

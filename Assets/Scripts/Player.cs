@@ -7,12 +7,21 @@ using static Resource;
 public class Player : MonoBehaviour
 {
     [SerializeField] public string team;
+    [SerializeField] public Color teamColor = Color.white;
     public RTS_controller rtsController;
     // placed inside canvas
     public Text goldText;
     public Text woodText;
 
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
+    private static List<Color> availableColors = new()
+    {
+        Color.blue,
+        Color.red,
+        Color.green,
+        Color.magenta,
+        Color.cyan
+    };
 
     // starting resources for players
     public Player()
@@ -27,6 +36,11 @@ public class Player : MonoBehaviour
         rtsController = newController.GetComponent<RTS_controller>();
         newController.owner = this;
         UpdateResourceUIText();
+        if (teamColor == Color.white)
+        {
+            int index = Random.Range(0, availableColors.Count);
+            teamColor = availableColors[index];
+        }
     }
 
     public void ChangePlayerResources(Dictionary<ResourceType, int> resourceChanges, string sign)
