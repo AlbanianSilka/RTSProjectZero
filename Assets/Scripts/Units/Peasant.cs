@@ -122,7 +122,10 @@ public class Peasant : UnitRTS
             } else if (clickedObject.CompareTag("EnvironmentResource"))
             {
                 EnvironmentResource clickedResource = clickedObject.GetComponent<EnvironmentResource>();
-                StartCoroutine(gatherResource(clickedResource, clickedResource.GetProvidedResourceType()));
+                if(clickedResource != null)
+                {
+                    StartCoroutine(gatherResource(clickedResource, clickedResource.GetProvidedResourceType()));
+                }
             }
 
         } else
