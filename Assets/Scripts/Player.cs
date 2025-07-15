@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using static Resource;
 
 public class Player : MonoBehaviour
@@ -10,8 +11,8 @@ public class Player : MonoBehaviour
     [SerializeField] public Color teamColor = Color.white;
     public RTS_controller rtsController;
     // placed inside canvas
-    public Text goldText;
-    public Text woodText;
+    public TextMeshProUGUI goldText;
+    public TextMeshProUGUI woodText;
 
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
     private static List<Color> availableColors = new()
