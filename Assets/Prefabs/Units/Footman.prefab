@@ -653,6 +653,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minimapGFX: {fileID: 5755467965011434943}
+  visionCircleMain: {fileID: 0}
+  visionCircleSecondary: {fileID: 0}
+  assignedSpells:
+  - {fileID: 11400000, guid: 27a9fe62564d9482da86cccdb8e91a72, type: 2}
+  - {fileID: 11400000, guid: 9527edd36cc014573a63bbb7ed637c10, type: 2}
   team: A
   healthBar: {fileID: 1885988619391164155}
   spellButtons:

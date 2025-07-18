@@ -107,7 +107,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1911428863
-  m_SortingLayer: 2
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 296e175b8179b4fc78534ed203c6976a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -207,10 +207,12 @@ MonoBehaviour:
   canBuild: {fileID: 21300000, guid: 3e716d6b05e83447ab11a9e2f165402b, type: 3}
   cannotBuild: {fileID: 21300000, guid: fdb21c4daaa074159b2e4e3ed782418a, type: 3}
   maxHealth: 25
-  health: 1
   finished: 0
   team: 
   healthBar: {fileID: 6000223040772193758}
+  assignedSpells:
+  - {fileID: 11400000, guid: f173a04ad390e43a39b1d728a0f292bf, type: 2}
+  - {fileID: 11400000, guid: 3381176a1579847bc94aedb6abf2dc62, type: 2}
   spellButtons:
   - {fileID: 7709632872444937829, guid: f67e1b848670e4422a24fad19dc9fc19, type: 3}
   - {fileID: 4234927341760420990, guid: 7ea692b0c4fa54288a0a791879e3848c, type: 3}

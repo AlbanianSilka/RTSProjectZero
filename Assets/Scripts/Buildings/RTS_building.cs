@@ -14,6 +14,7 @@ public class RTS_building : MonoBehaviour, IAttackable
     public bool finished;
     public string team;
     public healthbar_manager healthBar;
+    public List<SpellSO> assignedSpells = new();
     public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
