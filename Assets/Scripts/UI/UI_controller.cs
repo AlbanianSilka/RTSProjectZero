@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,57 +14,109 @@ public class UI_controller : MonoBehaviour
     public static List<progress_box> progressBoxes = new();
     public static RTS_controller rtsController;
 
-    public static void showSpellButtons(List<UnitRTS> selectedUnits)
+    public static void showSpellButtons()
     {
-        // List to keep track of whether a child class has been encountered
-        List<System.Type> encounteredTypes = new List<System.Type>();
+        RTS_controller rts = UI_controller.rtsController;
+
+        // CASE 1: If a building is selected
+        if (rts.selectedBuilding != null)
+        {
+            RTS_building building = rts.selectedBuilding;
+
+            foreach (SpellSO spell in building.assignedSpells)
+            {
+                CreateSpellButton(spell, building);
+            }
+
+            return;
+        }
+
+        // CASE 2: If units are selected
+        List<System.Type> encounteredTypes = new();
+        List<UnitRTS> selectedUnits = rts.selectedUnitRTSList;
 
         foreach (UnitRTS unit in selectedUnits)
         {
-            System.Type unitType = unit.GetType();
-
+            Type unitType = unit.GetType();
             if (!encounteredTypes.Contains(unitType))
             {
                 encounteredTypes.Add(unitType);
-            } else
-            {
-                continue;
             }
+            else continue;
 
-            UnitRTS unitWithHighestPriority = selectedUnits.OrderByDescending(unit => unit.selectionPriority).FirstOrDefault();
+            UnitRTS unitWithHighestPriority = selectedUnits
+                .Where(u => u.GetType() == unitType)
+                .OrderByDescending(u => u.selectionPriority)
+                .FirstOrDefault();
 
-            foreach (GameObject spellButton in unitWithHighestPriority.spellButtons)
+            foreach (SpellSO spell in unitWithHighestPriority.assignedSpells)
             {
-                SpellButtonInBox(spellButton);
+                CreateSpellButton(spell, selectedUnits);
             }
         }
+    }
+
+    public static void CreateSpellButton(SpellSO spell, object context)
+    {
+        var prefab = UI_controller.rtsController.spellButtonPrefab;
+
+        if (prefab == null)
+        {
+            Debug.LogError("spellButtonPrefab is not assigned in RTS_controller.");
+            return;
+        }
+
+        spell_button newSpellButton = GameObject.Instantiate(prefab);
+        newSpellButton.assignedSpell = spell;
+        newSpellButton.spellBoxIndex = spell.boxIndex;
+
+        Button uiButton = newSpellButton.GetComponent<Button>();
+        if (uiButton != null)
+        {
+            if (context is List<UnitRTS> units)
+            {
+                uiButton.onClick.AddListener(() => spell.Cast(UI_controller.rtsController, units));
+            }
+            else if (context is RTS_building building)
+            {
+                uiButton.onClick.AddListener(() => spell.Cast(UI_controller.rtsController, building));
+            }
+            else
+            {
+                Debug.LogError("Unsupported spell context passed to CreateSpellButton.");
+            }
+        }
+
+        Image img = newSpellButton.GetComponent<Image>();
+        if (img != null && spell.icon != null)
+        {
+            img.sprite = spell.icon;
+        }
+        else
+        {
+            Debug.LogWarning("Spell button is missing an Image component or spell has no icon.");
+        }
+
+        SpellButtonInBox(newSpellButton.gameObject);
     }
 
     public static void showPeasantBuildingButtons(Peasant selectedUnit)
     {
-        foreach (GameObject spellButton in selectedUnit.buildingButtons)
-        {
-            SpellButtonInBox(spellButton);
-        }
-    }
+        var unitList = new List<UnitRTS> { selectedUnit };
 
-    public static void showBuildingButtons(RTS_building building)
-    {
-        foreach (GameObject spellButton in building.spellButtons)
+        foreach (SpellSO buildSpell in selectedUnit.buildingButtons)
         {
-            SpellButtonInBox(spellButton);
+            CreateSpellButton(buildSpell, unitList);
         }
     }
 
     private static void SpellButtonInBox(GameObject spellButton)
     {
-        GameObject newSpellButton = Instantiate(spellButton); 
-
         if(rightContainer != null)
         {
-            newSpellButton.transform.SetParent(rightContainer.transform, false);
+            spellButton.transform.SetParent(rightContainer.transform, false);
 
-            spell_button spellButtonComponent = newSpellButton.GetComponent<spell_button>();
+            spell_button spellButtonComponent = spellButton.GetComponent<spell_button>();
             int buttonIndex = spellButtonComponent.spellBoxIndex;
 
             if (spellButtonComponent != null)
@@ -74,9 +127,9 @@ public class UI_controller : MonoBehaviour
                     spell_box spellBoxComponent = spellBox.GetComponent<spell_box>();
                     if (spellBoxComponent != null && spellBoxComponent.boxIndex == buttonIndex)
                     {
-                        newSpellButton.transform.position = spellBox.transform.position;
-                        newSpellButton.transform.localScale = spellBox.transform.localScale;
-                        newSpellButton.SetActive(true);
+                        spellButton.transform.position = spellBox.transform.position;
+                        spellButton.transform.localScale = spellBox.transform.localScale;
+                        spellButton.SetActive(true);
 
                         // Exit the loop after finding the matching spell box
                         return;

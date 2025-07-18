@@ -15,7 +15,7 @@ public class Peasant : UnitRTS
     public virtual int maxCarryCapacity => 10;
     public override float spawnTime => 6f;
     public Resource carriedResource;
-    public List<GameObject> buildingButtons = new List<GameObject>();
+    public List<SpellSO> buildingButtons;
 
     public Peasant()
     {

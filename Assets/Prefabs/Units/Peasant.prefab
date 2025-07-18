@@ -875,18 +875,18 @@ MonoBehaviour:
   minimapGFX: {fileID: 951392792293597388}
   visionCircleMain: {fileID: 6674723852336787934}
   visionCircleSecondary: {fileID: 1571113945681341477}
+  assignedSpells:
+  - {fileID: 11400000, guid: 3352750df10d24cdc8e5c5e454bb24d1, type: 2}
+  - {fileID: 11400000, guid: 2026783812cb147bfb57f49a18827d2b, type: 2}
   team: A
   healthBar: {fileID: 1477923857568901151}
-  spellButtons:
-  - {fileID: 2162680222088217523, guid: 72ebc1b26330f458c984f618f9f2475e, type: 3}
-  - {fileID: 5628786965462785495, guid: 59778343e010e475690f5d899e2ac05f, type: 3}
   unitIcon: {fileID: 21300000, guid: 16c907cfab7e549bdb3a947e455d7e10, type: 3}
   owner: {fileID: 0}
   buildingButtons:
-  - {fileID: 2162680222088217523, guid: d3f474ec58d544b9ebda61368fb97aa4, type: 3}
-  - {fileID: 2162680222088217523, guid: 5861956934be34e1c8cc2091d360b278, type: 3}
-  - {fileID: 2162680222088217523, guid: 1153eae9f4e3447db96e2a0bb5991ccb, type: 3}
-  - {fileID: 2162680222088217523, guid: bb2cee7d97b3c4513b6b65da4d6a0dcd, type: 3}
+  - {fileID: 11400000, guid: f8ead84858b3c4687b373e6fc79cfc19, type: 2}
+  - {fileID: 11400000, guid: a790fd92da7a64bb792ffe808fdc3f3f, type: 2}
+  - {fileID: 11400000, guid: b89353f9a1e924b188761f6e00655c93, type: 2}
+  - {fileID: 11400000, guid: eb80a98b3c88549b08338978ac5e90fa, type: 2}
 --- !u!195 &-3204118048388068215
 NavMeshAgent:
   m_ObjectHideFlags: 0

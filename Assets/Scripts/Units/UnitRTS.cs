@@ -28,11 +28,11 @@ public class UnitRTS : MonoBehaviour, IAttackable
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
+    public List<SpellSO> assignedSpells = new();
     public virtual float health { get; set; } = 30f;
     [SerializeField] public string team;
     public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
     public healthbar_manager healthBar;
-    public List<GameObject> spellButtons = new List<GameObject>();
     public event Action<UnitRTS> OnDeath;
     public Sprite unitIcon;
     public Player owner;

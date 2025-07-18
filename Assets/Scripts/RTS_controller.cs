@@ -14,6 +14,7 @@ public class RTS_controller : MonoBehaviour
     public RTS_building selectedBuilding { get; private set; }
     public Canvas middleSection;
     public Canvas rightSection;
+    public spell_button spellButtonPrefab;
     public GameObject progressButtonPrefab;
     public GameObject workerButtonPrefab;
     public Player owner;
@@ -99,7 +100,7 @@ public class RTS_controller : MonoBehaviour
                     {
                         if (selectedBuilding.finished)
                         {
-                            UI_controller.showBuildingButtons(selectedBuilding);
+                            UI_controller.showSpellButtons();
                             middleSection.gameObject.SetActive(true);
                             if (selectedBuilding.GetComponent<GoldenMine>() != null)
                             {
@@ -114,7 +115,7 @@ public class RTS_controller : MonoBehaviour
                     else
                     {
                         selectedBuilding = null;
-                        UI_controller.showSpellButtons(selectedUnitRTSList);
+                        UI_controller.showSpellButtons();
                     }
                 }
             }
