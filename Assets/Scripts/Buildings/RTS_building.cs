@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static Resource;
+using ISelectable = Interfaces.ISelectable;
 
-public class RTS_building : MonoBehaviour, IAttackable
+public class RTS_building : MonoBehaviour, IAttackable, ISelectable
 {
     public Sprite canBuild;
     public Sprite cannotBuild;
@@ -244,5 +246,14 @@ public class RTS_building : MonoBehaviour, IAttackable
         }
 
         Destroy(arrow);
+    }
+
+    public SelectableData OnSelect()
+    {
+        SelectableData data = new SelectableData()
+        {
+            Spells = assignedSpells
+        };
+        return data;
     }
 }

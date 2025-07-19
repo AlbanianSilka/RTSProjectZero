@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1628,6 +1627,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1173715702}
   m_CullTransparentMesh: 1
+--- !u!1 &1272177272
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1272177274}
+  - component: {fileID: 1272177273}
+  m_Layer: 0
+  m_Name: MapTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!156049354 &1272177273
+Grid:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272177272}
+  m_Enabled: 1
+  m_CellSize: {x: 1, y: 1, z: 1}
+  m_CellGap: {x: 0, y: 0, z: 0}
+  m_CellLayout: 0
+  m_CellSwizzle: 0
+--- !u!4 &1272177274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272177272}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1383825492
 GameObject:
   m_ObjectHideFlags: 0
@@ -2229,27 +2272,27 @@ PrefabInstance:
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: assignedSpells.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 3352750df10d24cdc8e5c5e454bb24d1, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: assignedSpells.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 2026783812cb147bfb57f49a18827d2b, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: buildingButtons.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: f8ead84858b3c4687b373e6fc79cfc19, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: buildingButtons.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: a790fd92da7a64bb792ffe808fdc3f3f, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: buildingButtons.Array.data[2]
       value: 
-      objectReference: {fileID: 11400000, guid: b89353f9a1e924b188761f6e00655c93, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: buildingButtons.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: eb80a98b3c88549b08338978ac5e90fa, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 6398732490542131766, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2638,3 +2681,4 @@ SceneRoots:
   - {fileID: 431044256}
   - {fileID: 940580964}
   - {fileID: 999682847}
+  - {fileID: 1272177274}

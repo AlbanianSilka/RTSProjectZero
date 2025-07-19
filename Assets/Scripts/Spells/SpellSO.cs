@@ -10,6 +10,9 @@ public abstract class SpellSO : ScriptableObject
     [Tooltip("UI box this spell button should be placed in.")]
     public int boxIndex = 0;
 
-    public virtual void Cast(RTS_controller controller, List<UnitRTS> units) { }
-    public virtual void Cast(RTS_controller controller, RTS_building building) { }
+    public abstract void Cast(RTS_controller controller);
+
+    // public virtual void Cast(RTS_controller controller, List<UnitRTS> units) { }
+    //
+    // public virtual void Cast(RTS_controller controller, RTS_building building) { }
 }

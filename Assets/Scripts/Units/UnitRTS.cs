@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Data;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.AI;
 using static Resource;
 
-public class UnitRTS : MonoBehaviour, IAttackable
+public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
 {
     private Vector3 destination;
     private UnitRTS followTarget;
@@ -393,5 +395,14 @@ public class UnitRTS : MonoBehaviour, IAttackable
         Vector3 scale = new Vector3(vision, vision, 1f);
         if (visionCircleMain != null) visionCircleMain.transform.localScale = scale;
         if (visionCircleSecondary != null) visionCircleSecondary.transform.localScale = scale;
+    }
+
+    public SelectableData OnSelect()
+    {
+        SelectableData data = new SelectableData()
+        {
+            Spells = assignedSpells
+        };
+        return data;
     }
 }

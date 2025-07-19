@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,6 +10,17 @@ public class RTS_controller : MonoBehaviour
     [SerializeField] private RectTransform selectionAreaTransform;
 
     private Vector2 startPosition;
+
+    public ISelectable CurrentSelected
+    {
+        get => _currentSelected;
+        private set
+        {
+            _currentSelected = value;
+            UI_controller.ShowSpellButtons(_currentSelected);
+        }
+    }
+    public ISelectable _currentSelected;
 
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
     public RTS_building selectedBuilding { get; private set; }
@@ -76,14 +88,28 @@ public class RTS_controller : MonoBehaviour
                     selectionAreaTransform.gameObject.SetActive(false);
                     Collider2D[] collArray = Physics2D.OverlapAreaAll(Camera.main.ScreenToWorldPoint(startPosition),
                         Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                    CurrentSelected = null;
+                    
+                    selectedBuilding = null; //TODO
                     selectedUnitRTSList.Clear();
-                    selectedBuilding = null;
-                    HideSpellButtons();
+                    
+                    //HideSpellButtons();
 
                     bool noUnits = true;
 
+                    if (collArray.Length == 0)
+                    {
+                       CurrentSelected = null;
+                       return;
+                    }
+
                     foreach (Collider2D obj in collArray)
                     {
+                        if (CurrentSelected == null && obj.TryGetComponent<ISelectable>(out var selected))
+                        {
+                            CurrentSelected = selected;
+                        }
+
                         UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
                         if (unitRTS != null && unitRTS.owner.team == owner.team)
                         {
@@ -100,7 +126,7 @@ public class RTS_controller : MonoBehaviour
                     {
                         if (selectedBuilding.finished)
                         {
-                            UI_controller.showSpellButtons();
+                            //UI_controller.showSpellButtons();
                             middleSection.gameObject.SetActive(true);
                             if (selectedBuilding.GetComponent<GoldenMine>() != null)
                             {
@@ -115,7 +141,7 @@ public class RTS_controller : MonoBehaviour
                     else
                     {
                         selectedBuilding = null;
-                        UI_controller.showSpellButtons();
+                        //UI_controller.showSpellButtons();
                     }
                 }
             }
