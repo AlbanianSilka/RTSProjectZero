@@ -252,7 +252,8 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
     {
         SelectableData data = new SelectableData()
         {
-            Spells = assignedSpells
+            Spells = assignedSpells,
+            ShowBuildingUI = true
         };
         return data;
     }

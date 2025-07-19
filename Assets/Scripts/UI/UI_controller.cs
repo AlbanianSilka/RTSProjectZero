@@ -60,25 +60,49 @@ public class UI_controller : MonoBehaviour
         // }
     }
     
-    public static void ShowSpellButtons(ISelectable selected)
+    public static void UpdateUI(ISelectable selected)
     {
         RTS_controller rts = UI_controller.rtsController;
+        if(selected == null)
+            UpdateSkills(null);
+        else
+        {
+            var data = selected.OnSelect();
+            if (data.ShowBuildingUI)
+            {
+                //show building ui
+            }
+            else
+            {
+                //show unit ui
+            }
+            UpdateSkills(data.Spells);
+        }
+    }
 
-        if (selected == null)
+    public static void UpdateSkills(List<SpellSO> spells)
+    {
+        RTS_controller rts = UI_controller.rtsController;
+        if (spells == null || spells.Count == 0)
         {
             foreach (var box in spellBoxes)
             {
-                box.Setup(rtsController, null);
+                box.Setup(rts, null);
             }
         }
         else
         {
-            var data = selected.OnSelect();
             foreach (var box in spellBoxes)
             {
-                box.Setup(rtsController, data.Spells.FirstOrDefault(p => p.boxIndex == box.boxIndex));
+                box.Setup(rts, spells.FirstOrDefault(p => p.boxIndex == box.boxIndex));
             }
         }
+    }
+    
+    public static void UpdateSkills()
+    {
+        RTS_controller rts = UI_controller.rtsController;
+        UpdateUI(rts.CurrentSelected);
     }
 
     // public static void CreateSpellButton(SpellSO spell, object context)

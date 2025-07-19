@@ -2262,20 +2262,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 253224620}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
-      propertyPath: assignedSpells.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: buildingButtons.Array.size
       value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
-      propertyPath: assignedSpells.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
-      propertyPath: assignedSpells.Array.data[1]
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4352249834916183926, guid: cc6d1515440d6447c8df498bbc63d4c4, type: 3}
       propertyPath: buildingButtons.Array.data[0]

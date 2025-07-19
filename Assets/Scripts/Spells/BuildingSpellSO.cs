@@ -1,16 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Spells
 {
 	[CreateAssetMenu(fileName = "BuildingSpellSO", menuName = "Spells/BuildingSpellSO")]
 	public class BuildingSpellSO : SpellSO
 	{
-		public GameObject buildingPrefab;
-		
+		//public GameObject buildingPrefab;
+		[SerializeField] private List<CastBuildingSpellSO> _buildingSpells = new();
+
 		public override void Cast(RTS_controller controller)
 		{
-			controller.BuildingManager.buildingPrefab = buildingPrefab;
-			controller.BuildingManager.startBuilding();
+			UI_controller.UpdateSkills(_buildingSpells.ConvertAll(spell => (SpellSO)spell));
 		}
 	}
 }

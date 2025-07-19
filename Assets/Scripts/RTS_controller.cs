@@ -17,7 +17,7 @@ public class RTS_controller : MonoBehaviour
         private set
         {
             _currentSelected = value;
-            UI_controller.ShowSpellButtons(_currentSelected);
+            UI_controller.UpdateUI(_currentSelected);
         }
     }
     public ISelectable _currentSelected;
