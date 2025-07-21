@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HelloSpell", menuName = "Spells/Hello")]
 public class HelloSpellSO : SpellSO
 {
-    public override void Cast(RTS_controller controller, List<UnitRTS> units)
+    public override void Cast(RTS_controller controller)
     {
         foreach (UnitRTS unit in controller.selectedUnitRTSList)
         {

@@ -7,8 +7,10 @@ public class SpawnUnitSpellSO : SpellSO
 {
     public UnitRTS unitToTrain;
 
-    public override void Cast(RTS_controller controller, RTS_building building)
+    public override void Cast(RTS_controller controller)
     {
+        RTS_building building = controller.selectedBuilding;
+
         if (unitToTrain == null || building == null)
         {
             UnityEngine.Debug.LogError("Unit prefab or building is null in SpawnUnitSpell.");

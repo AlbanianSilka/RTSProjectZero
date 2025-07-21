@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using Interfaces;
 
 public class UI_controller : MonoBehaviour
 {
@@ -14,136 +15,38 @@ public class UI_controller : MonoBehaviour
     public static List<progress_box> progressBoxes = new();
     public static RTS_controller rtsController;
 
-    public static void showSpellButtons()
+    public static void showSpellButtons(ISelectable selected)
     {
         RTS_controller rts = UI_controller.rtsController;
 
-        // CASE 1: If a building is selected
-        if (rts.selectedBuilding != null)
+        if (selected == null)
         {
-            RTS_building building = rts.selectedBuilding;
-
-            foreach (SpellSO spell in building.assignedSpells)
-            {
-                CreateSpellButton(spell, building);
-            }
-
-            return;
-        }
-
-        // CASE 2: If units are selected
-        List<System.Type> encounteredTypes = new();
-        List<UnitRTS> selectedUnits = rts.selectedUnitRTSList;
-
-        foreach (UnitRTS unit in selectedUnits)
-        {
-            Type unitType = unit.GetType();
-            if (!encounteredTypes.Contains(unitType))
-            {
-                encounteredTypes.Add(unitType);
-            }
-            else continue;
-
-            UnitRTS unitWithHighestPriority = selectedUnits
-                .Where(u => u.GetType() == unitType)
-                .OrderByDescending(u => u.selectionPriority)
-                .FirstOrDefault();
-
-            foreach (SpellSO spell in unitWithHighestPriority.assignedSpells)
-            {
-                CreateSpellButton(spell, selectedUnits);
-            }
-        }
-    }
-
-    public static void CreateSpellButton(SpellSO spell, object context)
-    {
-        var prefab = UI_controller.rtsController.spellButtonPrefab;
-
-        if (prefab == null)
-        {
-            Debug.LogError("spellButtonPrefab is not assigned in RTS_controller.");
-            return;
-        }
-
-        spell_button newSpellButton = GameObject.Instantiate(prefab);
-        newSpellButton.assignedSpell = spell;
-        newSpellButton.spellBoxIndex = spell.boxIndex;
-
-        Button uiButton = newSpellButton.GetComponent<Button>();
-        if (uiButton != null)
-        {
-            if (context is List<UnitRTS> units)
-            {
-                uiButton.onClick.AddListener(() => spell.Cast(UI_controller.rtsController, units));
-            }
-            else if (context is RTS_building building)
-            {
-                uiButton.onClick.AddListener(() => spell.Cast(UI_controller.rtsController, building));
-            }
-            else
-            {
-                Debug.LogError("Unsupported spell context passed to CreateSpellButton.");
-            }
-        }
-
-        Image img = newSpellButton.GetComponent<Image>();
-        if (img != null && spell.icon != null)
-        {
-            img.sprite = spell.icon;
+            UpdateSkills(null);
         }
         else
         {
-            Debug.LogWarning("Spell button is missing an Image component or spell has no icon.");
-        }
-
-        SpellButtonInBox(newSpellButton.gameObject);
-    }
-
-    public static void showPeasantBuildingButtons(Peasant selectedUnit)
-    {
-        var unitList = new List<UnitRTS> { selectedUnit };
-
-        foreach (SpellSO buildSpell in selectedUnit.buildingButtons)
-        {
-            CreateSpellButton(buildSpell, unitList);
+            var data = selected.OnSelect();
+            UpdateSkills(data.Spells);
         }
     }
 
-    private static void SpellButtonInBox(GameObject spellButton)
+    public static void UpdateSkills(List<SpellSO> spells)
     {
-        if(rightContainer != null)
+        RTS_controller rts = UI_controller.rtsController;
+        if (spells == null || spells.Count == 0)
         {
-            spellButton.transform.SetParent(rightContainer.transform, false);
-
-            spell_button spellButtonComponent = spellButton.GetComponent<spell_button>();
-            int buttonIndex = spellButtonComponent.spellBoxIndex;
-
-            if (spellButtonComponent != null)
+            foreach (var box in spellBoxes)
             {
-                foreach (spell_box spellBox in spellBoxes)
-                {
-
-                    spell_box spellBoxComponent = spellBox.GetComponent<spell_box>();
-                    if (spellBoxComponent != null && spellBoxComponent.boxIndex == buttonIndex)
-                    {
-                        spellButton.transform.position = spellBox.transform.position;
-                        spellButton.transform.localScale = spellBox.transform.localScale;
-                        spellButton.SetActive(true);
-
-                        // Exit the loop after finding the matching spell box
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogError("Spell button component not found on the provided GameObject.");
+                box.Setup(rts, null);
             }
         }
         else
         {
-            Debug.LogError("Canvas for spells not found, don't forget to add it");
+
+            foreach (var box in spellBoxes)
+            {
+                box.Setup(rts, spells.FirstOrDefault(p => p.boxIndex == box.boxIndex));
+            }
         }
     }
 
@@ -152,11 +55,11 @@ public class UI_controller : MonoBehaviour
     {
         if(unitsQueue.Count > 0)
         {
-            GameObject middleCanvas = GameObject.FindGameObjectWithTag("MiddleSection");
+            Canvas middleCanvas = rtsController.middleSection;
 
             // Need to 'restart' canvas so we won't clone buttons each time
-            middleCanvas.SetActive(false);
-            middleCanvas.SetActive(true);
+            middleCanvas.enabled = false;
+            middleCanvas.enabled = true;
 
             if (middleCanvas != null)
             {
@@ -179,7 +82,7 @@ public class UI_controller : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogError("You forgot to attach 'spell_button' component to prefab");
+                        Debug.LogError("You forgot to attach 'progress_button' component to prefab");
                     }
                 }
             }
@@ -193,12 +96,12 @@ public class UI_controller : MonoBehaviour
     // TODO: figure out how to unite with function #1
     public static void handleMineMiddle(List<Peasant> unitsQueue, GameObject workerButtonPrefab)
     {
-        GameObject middleCanvas = GameObject.FindGameObjectWithTag("MiddleSection");
+        Canvas middleCanvas = rtsController.middleSection;
 
         if (middleCanvas != null)
         {
-            middleCanvas.SetActive(false);
-            middleCanvas.SetActive(true);
+            middleCanvas.enabled = false;
+            middleCanvas.enabled = true;
 
             GameObject workerButton;
             worker_button workerComponent;

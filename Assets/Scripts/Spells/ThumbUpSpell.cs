@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ThumbUpSpell", menuName = "Spells/ThumbUp")]
 public class ThumbUpSpell : SpellSO
 {
-    public override void Cast(RTS_controller controller, List<UnitRTS> units)
+    public override void Cast(RTS_controller controller)
     {
         foreach (UnitRTS unit in controller.selectedUnitRTSList)
         {

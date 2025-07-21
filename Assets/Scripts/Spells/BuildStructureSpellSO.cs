@@ -7,8 +7,14 @@ public class BuildStructureSpellSO : SpellSO
 {
     public GameObject buildingPrefab;
 
-    public override void Cast(RTS_controller controller, List<UnitRTS> units)
+    public override void Cast(RTS_controller controller)
     {
+        if (buildingPrefab == null)
+        {
+            UI_controller.showSpellButtons(controller._currentSelected);
+            return;
+        }
+
         controller.BuildingManager.buildingPrefab = buildingPrefab;
         controller.BuildingManager.startBuilding();
     }

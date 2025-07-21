@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Data;
+using ISelectable = Interfaces.ISelectable;
 using static Resource;
 
-public class RTS_building : MonoBehaviour, IAttackable
+public class RTS_building : MonoBehaviour, IAttackable, ISelectable
 {
     public Sprite canBuild;
     public Sprite cannotBuild;
@@ -15,7 +17,6 @@ public class RTS_building : MonoBehaviour, IAttackable
     public string team;
     public healthbar_manager healthBar;
     public List<SpellSO> assignedSpells = new();
-    public List<GameObject> spellButtons = new List<GameObject>();
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
     public float remainingSpawnTime = 0f;
@@ -29,6 +30,15 @@ public class RTS_building : MonoBehaviour, IAttackable
     protected RTS_controller rtsController;
 
     private bool makingUnit;
+
+    public SelectableData OnSelect()
+    {
+        SelectableData data = new SelectableData()
+        {
+            Spells = assignedSpells
+        };
+        return data;
+    }
 
     public RTS_building()
     {
