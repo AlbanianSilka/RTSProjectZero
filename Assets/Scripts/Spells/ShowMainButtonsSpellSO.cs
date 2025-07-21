@@ -5,10 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ShowMainButtons", menuName = "Spells/Show Main Buttons")]
 public class ShowMainButtonsSpellSO : SpellSO
 {
-    public override void Cast(RTS_controller controller, List<UnitRTS> units)
+    public override void Cast(RTS_controller controller)
     {
-        controller.HideSpellButtons();
-        UI_controller.showSpellButtons();
+        UI_controller.showSpellButtons(controller._currentSelected);
     }
 }
 

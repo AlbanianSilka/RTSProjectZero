@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Interfaces;
 
 public class RTS_controller : MonoBehaviour
 {
@@ -10,11 +11,21 @@ public class RTS_controller : MonoBehaviour
 
     private Vector2 startPosition;
 
+    public ISelectable CurrentSelected
+    {
+        get => _currentSelected;
+        private set
+        {
+            _currentSelected = value;
+            UI_controller.showSpellButtons(_currentSelected);
+        }
+    }
+    public ISelectable _currentSelected;
+
     public List<UnitRTS> selectedUnitRTSList { get; private set; }
     public RTS_building selectedBuilding { get; private set; }
     public Canvas middleSection;
     public Canvas rightSection;
-    public spell_button spellButtonPrefab;
     public GameObject progressButtonPrefab;
     public GameObject workerButtonPrefab;
     public Player owner;
@@ -31,7 +42,6 @@ public class RTS_controller : MonoBehaviour
             UI_controller.spellBoxes = rightSection.GetComponentsInChildren<spell_box>(includeInactive: true).ToList();
             UI_controller.progressBoxContainer = middleSection;
             UI_controller.progressBoxes = middleSection.GetComponentsInChildren<progress_box>(includeInactive: true).ToList();
-            HideSpellButtons();
         }
     }
 
@@ -76,14 +86,25 @@ public class RTS_controller : MonoBehaviour
                     selectionAreaTransform.gameObject.SetActive(false);
                     Collider2D[] collArray = Physics2D.OverlapAreaAll(Camera.main.ScreenToWorldPoint(startPosition),
                         Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    selectedUnitRTSList.Clear();
+                    CurrentSelected = null;
                     selectedBuilding = null;
-                    HideSpellButtons();
+                    selectedUnitRTSList.Clear();
 
                     bool noUnits = true;
 
+                    if (collArray.Length == 0)
+                    {
+                        CurrentSelected = null;
+                        return;
+                    }
+
                     foreach (Collider2D obj in collArray)
                     {
+                        if (CurrentSelected == null && obj.TryGetComponent<ISelectable>(out var selected))
+                        {
+                            CurrentSelected = selected;
+                        }
+
                         UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
                         if (unitRTS != null && unitRTS.owner.team == owner.team)
                         {
@@ -100,7 +121,6 @@ public class RTS_controller : MonoBehaviour
                     {
                         if (selectedBuilding.finished)
                         {
-                            UI_controller.showSpellButtons();
                             middleSection.gameObject.SetActive(true);
                             if (selectedBuilding.GetComponent<GoldenMine>() != null)
                             {
@@ -115,7 +135,7 @@ public class RTS_controller : MonoBehaviour
                     else
                     {
                         selectedBuilding = null;
-                        UI_controller.showSpellButtons();
+                        middleSection.enabled = false;
                     }
                 }
             }
@@ -177,17 +197,5 @@ public class RTS_controller : MonoBehaviour
     private Vector3 ApplyRotationToVector(Vector3 vec, float angle)
     {
         return Quaternion.Euler(0, 0, angle) * vec;
-    }
-
-    public void HideSpellButtons()
-    {
-        GameObject[] spellButtons = GameObject.FindGameObjectsWithTag("SpellBtn");
-        foreach (GameObject spellButton in spellButtons)
-        {
-            Destroy(spellButton);
-        }
-
-        // In case if middle section is active at the start of the game
-        middleSection.gameObject.SetActive(false);
     }
 }

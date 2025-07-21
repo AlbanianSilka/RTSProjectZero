@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Interfaces;
+using Data;
 using static Resource;
 
-public class UnitRTS : MonoBehaviour, IAttackable
+public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
 {
     private Vector3 destination;
     private UnitRTS followTarget;
@@ -40,6 +42,15 @@ public class UnitRTS : MonoBehaviour, IAttackable
     {
         Melee, Ranged
     };
+
+    public SelectableData OnSelect()
+    {
+        SelectableData data = new SelectableData()
+        {
+            Spells = assignedSpells
+        };
+        return data;
+    }
 
     public UnitRTS()
     {
