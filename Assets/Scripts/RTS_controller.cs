@@ -37,6 +37,7 @@ public class RTS_controller : MonoBehaviour
         {
             rightSection = Instantiate(rightSection);
             middleSection = Instantiate(middleSection);
+            middleSection.enabled = false;
             UI_controller.rtsController = this;
             UI_controller.rightContainer = rightSection;
             UI_controller.spellBoxes = rightSection.GetComponentsInChildren<spell_box>(includeInactive: true).ToList();
@@ -90,7 +91,7 @@ public class RTS_controller : MonoBehaviour
                     selectedBuilding = null;
                     selectedUnitRTSList.Clear();
 
-                    bool noUnits = true;
+                    //bool noUnits = true;
 
                     if (collArray.Length == 0)
                     {
@@ -108,34 +109,13 @@ public class RTS_controller : MonoBehaviour
                         UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
                         if (unitRTS != null && unitRTS.owner.team == owner.team)
                         {
-                            noUnits = false;
+                            //noUnits = false;
                             selectedUnitRTSList.Add(unitRTS);
                         }
                         else if (obj.CompareTag("Building"))
                         {
                             selectedBuilding = obj.GetComponent<RTS_building>();
                         }
-                    }
-
-                    if (noUnits && selectedBuilding != null)
-                    {
-                        if (selectedBuilding.finished)
-                        {
-                            middleSection.gameObject.SetActive(true);
-                            if (selectedBuilding.GetComponent<GoldenMine>() != null)
-                            {
-                                UI_controller.handleMineMiddle(selectedBuilding.GetComponent<GoldenMine>().workers, workerButtonPrefab);
-                            }
-                            else
-                            {
-                                UI_controller.handleMiddleSection(selectedBuilding.unitsQueue, progressButtonPrefab);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        selectedBuilding = null;
-                        middleSection.enabled = false;
                     }
                 }
             }

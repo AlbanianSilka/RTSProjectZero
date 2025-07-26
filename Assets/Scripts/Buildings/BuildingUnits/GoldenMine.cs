@@ -8,6 +8,7 @@ public class GoldenMine : RTS_building
     public Deposit attachedDeposit;
     public List<Peasant> workers;
     public override float health { get; set; } = 20f;
+    public SpellSO freeWorkerSpell;
 
     private Dictionary<Peasant, Coroutine> workTimers = new Dictionary<Peasant, Coroutine>();
 
@@ -60,7 +61,7 @@ public class GoldenMine : RTS_building
 
             if(owner.rtsController.selectedBuilding == this)
             {
-                UI_controller.handleMineMiddle(workers, rtsController.workerButtonPrefab);
+                UI_controller.handleMiddle(workers.ConvertAll(w => (UnitRTS)w));
             }
         }
     }
