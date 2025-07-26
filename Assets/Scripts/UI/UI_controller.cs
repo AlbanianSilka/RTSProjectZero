@@ -17,118 +17,83 @@ public class UI_controller : MonoBehaviour
 
     public static void showSpellButtons(ISelectable selected)
     {
-        RTS_controller rts = UI_controller.rtsController;
-
         if (selected == null)
         {
+            rtsController.middleSection.enabled = false;
+            foreach (var box in progressBoxes)
+            {
+                box.Setup(rtsController, null, 0);
+            }
             UpdateSkills(null);
         }
         else
         {
             var data = selected.OnSelect();
             UpdateSkills(data.Spells);
+
+            if(data.ShowBuildingUI)
+            {
+                RTS_building building = selected as RTS_building;
+                List<UnitRTS> unitsQueue = (building is GoldenMine mine)
+                    ? mine.workers.ConvertAll(w => (UnitRTS)w)
+                    : building.unitsQueue;
+                handleMiddle(unitsQueue);
+            }
         }
     }
 
     public static void UpdateSkills(List<SpellSO> spells)
     {
-        RTS_controller rts = UI_controller.rtsController;
         if (spells == null || spells.Count == 0)
         {
             foreach (var box in spellBoxes)
             {
-                box.Setup(rts, null);
+                box.Setup(rtsController, null);
             }
         }
         else
         {
-
             foreach (var box in spellBoxes)
             {
-                box.Setup(rts, spells.FirstOrDefault(p => p.boxIndex == box.boxIndex));
+                box.Setup(rtsController, spells.FirstOrDefault(p => p.boxIndex == box.boxIndex));
             }
         }
     }
 
-    // TODO: figure out how to unite with function #2
-    public static void handleMiddleSection(List<UnitRTS> unitsQueue, GameObject progressButtonPrefab)
+    public static void handleMiddle(List<UnitRTS> unitsQueue)
     {
-        if(unitsQueue.Count > 0)
+        foreach (var box in progressBoxes)
         {
-            Canvas middleCanvas = rtsController.middleSection;
-
-            // Need to 'restart' canvas so we won't clone buttons each time
-            middleCanvas.enabled = false;
-            middleCanvas.enabled = true;
-
-            if (middleCanvas != null)
-            {
-                GameObject progressButton;
-                progress_button buttonComponent;
-
-                for( int index = 0; index < unitsQueue.Count; index++)
-                {
-                    UnitRTS unit = unitsQueue[index];
-                    progressButton = Instantiate(progressButtonPrefab);
-                    buttonComponent = progressButton.GetComponent<progress_button>();
-                    buttonComponent.rtsController = rtsController;
-                    progressButton.transform.SetParent(middleCanvas.transform, false);
-
-                    if (buttonComponent != null)
-                    {
-                        buttonComponent.buttonIndex = index;
-                        buttonComponent.maxTrainingTime = unit.spawnTime;
-                        changeProgressIcon(unit, index, progressButton);
-                    }
-                    else
-                    {
-                        Debug.LogError("You forgot to attach 'progress_button' component to prefab");
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogError("You forgot to add middle canvas to the scene");
-            };
+            box.Setup(rtsController, null, 0);
         }
-    }
 
-    // TODO: figure out how to unite with function #1
-    public static void handleMineMiddle(List<Peasant> unitsQueue, GameObject workerButtonPrefab)
-    {
-        Canvas middleCanvas = rtsController.middleSection;
-
-        if (middleCanvas != null)
+        if (unitsQueue.Count == 0)
         {
-            middleCanvas.enabled = false;
-            middleCanvas.enabled = true;
+            return;
+        }
 
-            GameObject workerButton;
-            worker_button workerComponent;
+        RTS_building building = rtsController._currentSelected as RTS_building;
+        rtsController.middleSection.enabled = true;
 
-            for (int index = 0; index < unitsQueue.Count; index++)
+        if (rtsController.middleSection != null)
+        {
+            SpellSO spell = building is GoldenMine mine
+                ? mine.freeWorkerSpell
+                : building.cancelSpell;
+
+            for (int i = 0; i < unitsQueue.Count; i++)
             {
-                UnitRTS unit = unitsQueue[index];
-                workerButton = Instantiate(workerButtonPrefab);
-                workerButton.transform.SetParent(middleCanvas.transform, false);
-
-                if (workerButton.GetComponent<worker_button>() != null)
+                if (i < unitsQueue.Count)
                 {
-                    workerComponent = workerButton.GetComponent<worker_button>();
-                    workerComponent.rtsController = rtsController;
-                    workerComponent.buttonIndex = index;
-                    changeProgressIcon(unit, index, workerButton);
+                    UnitRTS unit = unitsQueue[i];
+                    progressBoxes[i].Setup(rtsController, spell, i);
                 }
                 else
                 {
-                    Debug.LogError("You forgot to attach 'worker_button' component to prefab");
+                    progressBoxes[i].Setup(rtsController, null, i);
                 }
             }
         }
-        else
-        {
-            Debug.LogError("You forgot to add middle canvas to the scene");
-        };
     }
 
     private static void changeProgressIcon(UnitRTS unit, int buttonIndex, GameObject progressButton)

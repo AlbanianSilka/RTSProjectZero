@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91457822bf0114c4fa4dfa6192f03c27, type: 3}
   m_Name: ShowBuildingButtonsSpellSO
   m_EditorClassIdentifier: 
-  spellId: 6
   spellName: ShowBuildingButtons
   icon: {fileID: 21300000, guid: 3436f2a9a25994d9dbae05ccb0541d64, type: 3}
   boxIndex: 1
+  _buildingSpells:
+  - {fileID: 11400000, guid: f8ead84858b3c4687b373e6fc79cfc19, type: 2}
+  - {fileID: 11400000, guid: a790fd92da7a64bb792ffe808fdc3f3f, type: 2}
+  - {fileID: 11400000, guid: b89353f9a1e924b188761f6e00655c93, type: 2}
+  - {fileID: 11400000, guid: 710cadb9b1f914abaaa533495feb4c86, type: 2}

@@ -213,9 +213,7 @@ MonoBehaviour:
   assignedSpells:
   - {fileID: 11400000, guid: f173a04ad390e43a39b1d728a0f292bf, type: 2}
   - {fileID: 11400000, guid: 3381176a1579847bc94aedb6abf2dc62, type: 2}
-  spellButtons:
-  - {fileID: 7709632872444937829, guid: f67e1b848670e4422a24fad19dc9fc19, type: 3}
-  - {fileID: 4234927341760420990, guid: 7ea692b0c4fa54288a0a791879e3848c, type: 3}
+  cancelSpell: {fileID: 11400000, guid: 3377c18c7a63c4068814080ec3aa93b1, type: 2}
   unitsQueue: []
   remainingSpawnTime: 0
   owner: {fileID: 0}

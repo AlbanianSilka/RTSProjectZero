@@ -17,6 +17,7 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
     public string team;
     public healthbar_manager healthBar;
     public List<SpellSO> assignedSpells = new();
+    public SpellSO cancelSpell;
     public List<UnitRTS> unitsQueue;
     public event Action<RTS_building> OnDeath;
     public float remainingSpawnTime = 0f;
@@ -35,10 +36,12 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
     {
         SelectableData data = new SelectableData()
         {
-            Spells = assignedSpells
+            Spells = assignedSpells,
+            ShowBuildingUI = true
         };
         return data;
     }
+
 
     public RTS_building()
     {
@@ -109,7 +112,7 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
             unitsQueue.Add(unit);
             if (!(owner is BotPlayer))
             {
-                UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
+                UI_controller.handleMiddle(unitsQueue);
             }
         }
     }
@@ -164,13 +167,7 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
 
             if (rtsController.selectedBuilding == this)
             {
-                if(this.GetComponent<GoldenMine>() != null)
-                {
-                    UI_controller.handleMiddleSection(unitsQueue, rtsController.workerButtonPrefab);
-                }
-                else {
-                    UI_controller.handleMiddleSection(unitsQueue, rtsController.progressButtonPrefab);
-                }
+                UI_controller.handleMiddle(unitsQueue);
             }
         } else
         {

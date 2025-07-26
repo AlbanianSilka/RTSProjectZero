@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 886a17daefc6843a5b59d7e9ca20f236, type: 3}
-  m_Name: ShowMainButtonsSpellSO
+  m_Script: {fileID: 11500000, guid: 6669e30348469447589f7c3f3d313e7d, type: 3}
+  m_Name: FreeWorkerSpell
   m_EditorClassIdentifier: 
-  spellName: Return
-  icon: {fileID: 21300000, guid: 9a3328eb922444f7899f59eb78232680, type: 3}
-  boxIndex: 3
-  buildingPrefab: {fileID: 0}
+  spellName: Free worker
+  icon: {fileID: 21300000, guid: 16c907cfab7e549bdb3a947e455d7e10, type: 3}
+  boxIndex: 0

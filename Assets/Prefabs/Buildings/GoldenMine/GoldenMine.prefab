@@ -433,7 +433,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1911428863
-  m_SortingLayer: 2
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 026cb2a6c1ed2450bbe9cb82165fc511, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -533,14 +533,17 @@ MonoBehaviour:
   canBuild: {fileID: 21300000, guid: 052c2f023604a468699c32101aefef80, type: 3}
   cannotBuild: {fileID: 21300000, guid: b955ce449cadb4c10b8522dfb7b6ff08, type: 3}
   maxHealth: 15
-  health: 1
   finished: 0
   team: 
   healthBar: {fileID: 0}
-  spellButtons: []
+  assignedSpells: []
+  cancelSpell: {fileID: 0}
   unitsQueue: []
   remainingSpawnTime: 0
   owner: {fileID: 0}
+  attachedDeposit: {fileID: 0}
+  workers: []
+  freeWorkerSpell: {fileID: 11400000, guid: a211b3034525140d68712a5f6a1a90ae, type: 2}
 --- !u!1 &5966642371436490081
 GameObject:
   m_ObjectHideFlags: 0
