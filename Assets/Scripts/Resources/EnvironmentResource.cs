@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnvironmentResource : MonoBehaviour
+public class EnvironmentResource : EnvironmentObject
 {
     public virtual float maxHp { get; set; } = 10f;
     public virtual float health { get; set; } = 30f;

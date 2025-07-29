@@ -28,6 +28,10 @@ public class GoldenMine : RTS_building
         {
             workers.Add(addedWorker);
             StartWorkTimer(addedWorker);
+            if (owner.rtsController.selectedBuilding == this)
+            {
+                UI_controller.handleMiddle(workers.ConvertAll(w => (UnitRTS)w));
+            }
         }
     }
 
@@ -76,6 +80,7 @@ public class GoldenMine : RTS_building
             if (peasant.carriedResource.amount >= peasant.maxCarryCapacity)
             {
                 RemoveWorker(peasant);
+                peasant.StartCoroutine(peasant.DeliverAndResume());
                 yield break; 
             }
         }

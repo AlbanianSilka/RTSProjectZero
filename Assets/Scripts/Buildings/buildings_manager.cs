@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System;
 using UnityEngine.UIElements;
+using Interfaces;
 
 public class buildings_manager : MonoBehaviour
 {
@@ -153,7 +154,7 @@ public class buildings_manager : MonoBehaviour
         {
             foreach (Collider2D collider in colliders)
             {
-                if (collider.tag != "Ground" && collider.tag != "Ghost")
+                if (collider.TryGetComponent<IBlocksBuildingPlacement>(out var blocker) && blocker.BlocksPlacement())
                 {
                     canPlaceBuilding = false;
                 }
@@ -185,6 +186,7 @@ public class buildings_manager : MonoBehaviour
     private void moveBuilders()
     {
         Vector3 buildingPosition = ghostBuildingInstance.transform.position;
+        DestroyGhostBuilding();
         List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
         List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
 
@@ -200,6 +202,7 @@ public class buildings_manager : MonoBehaviour
 
     private IEnumerator startBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
     {
+        Debug.Log(selectedDeposit);
         GameObject newBuilding;
 
         while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
@@ -232,7 +235,6 @@ public class buildings_manager : MonoBehaviour
         buildingObject.health = 1;
         buildingObject.owner.ChangePlayerResources(buildingObject.GetRequiredResources(), "-");
 
-        DestroyGhostBuilding();
         isPlacingBuilding = false;
         buildingPrefab = null;
 

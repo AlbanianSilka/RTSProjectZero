@@ -7,24 +7,22 @@ using Data;
 using ISelectable = Interfaces.ISelectable;
 using static Resource;
 
-public class RTS_building : MonoBehaviour, IAttackable, ISelectable
+public class RTS_building : CombatEntity, IAttackable, ISelectable
 {
     public Sprite canBuild;
     public Sprite cannotBuild;
     public float maxHealth;
     public virtual float health { get; set; } = 30f;
     public bool finished;
-    public string team;
     public healthbar_manager healthBar;
     public List<SpellSO> assignedSpells = new();
     public SpellSO cancelSpell;
     public List<UnitRTS> unitsQueue;
-    public event Action<RTS_building> OnDeath;
     public float remainingSpawnTime = 0f;
-    public Player owner;
 
     protected virtual float attackSpeed { get; set; } = 0f;
-    protected virtual float attackDamage { get; set; } = 0f;
+    protected override float attackDamage => 0f;
+    protected override float arrowSpeed => 0f;
     protected virtual float attackRange { get; set; } = 0f;
     protected virtual bool isAttacking { get; set; }
     protected Dictionary<ResourceType, int> RequiredResources { get; set; }
@@ -175,13 +173,6 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
         }
     }
 
-    protected virtual void Die()
-    {
-        OnDeath?.Invoke(this);
-
-        Destroy(gameObject);
-    }
-
     private IEnumerator buildingFight(IAttackable target, GameObject targetObject)
     {
         if (isAttacking)
@@ -192,9 +183,6 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
         while (target.health > 0) {
             float distanceToTarget = Vector3.Distance(transform.position, targetObject.transform.position);
 
-            float arrowSpeed = 20f;
-            float shootDelay = 2.0f;
-
             if (distanceToTarget > attackRange)
             {
                 isAttacking = false;
@@ -203,53 +191,10 @@ public class RTS_building : MonoBehaviour, IAttackable, ISelectable
 
             if (distanceToTarget <= attackRange)
             {
-                StartCoroutine(ShootArrow(target, targetObject, arrowSpeed));
+                StartCoroutine(ShootArrow(target, targetObject));
 
-                yield return new WaitForSeconds(shootDelay);
+                yield return new WaitForSeconds(attackSpeed);
             }
         }
-    }
-
-    // TODO: probably move this method to some common class to avoid duplication with units
-    private IEnumerator ShootArrow(IAttackable target, GameObject targetObject, float arrowSpeed)
-    {
-        GameObject arrow = new GameObject("Arrow");
-        LineRenderer lineRenderer = arrow.AddComponent<LineRenderer>();
-
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
-        lineRenderer.startColor = Color.black;
-        lineRenderer.endColor = Color.black;
-
-        Vector3 arrowStartPos = transform.position;
-        Vector3 arrowEndPos = targetObject.transform.position;
-
-        float distanceToTarget = Vector3.Distance(arrowStartPos, arrowEndPos);
-        float travelTime = distanceToTarget / arrowSpeed;
-        float elapsedTime = 0;
-
-        float arrowLength = 0.5f;
-
-        while (elapsedTime < travelTime)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / travelTime;
-
-            Vector3 currentPos = Vector3.Lerp(arrowStartPos, arrowEndPos, t);
-            Vector3 arrowDirection = (arrowEndPos - arrowStartPos).normalized;
-            Vector3 arrowTailPos = currentPos - (arrowDirection * arrowLength);
-
-            lineRenderer.SetPosition(0, arrowTailPos);
-            lineRenderer.SetPosition(1, currentPos);
-
-            yield return null;
-        }
-
-        if (target != null && target.health > 0)
-        {
-            target.TakeDamage(attackDamage, this.gameObject);
-        }
-
-        Destroy(arrow);
     }
 }
