@@ -58,9 +58,11 @@ public class RTS_controller : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                if (EventSystem.current.IsPointerOverGameObject())
+                    return;
+
                 selectionAreaTransform.gameObject.SetActive(true);
                 startPosition = Input.mousePosition;
-
             }
 
             if (Input.GetMouseButton(0))
@@ -91,8 +93,6 @@ public class RTS_controller : MonoBehaviour
                     selectedBuilding = null;
                     selectedUnitRTSList.Clear();
 
-                    //bool noUnits = true;
-
                     if (collArray.Length == 0)
                     {
                         CurrentSelected = null;
@@ -101,20 +101,25 @@ public class RTS_controller : MonoBehaviour
 
                     foreach (Collider2D obj in collArray)
                     {
-                        if (CurrentSelected == null && obj.TryGetComponent<ISelectable>(out var selected))
+                        if (obj.TryGetComponent<ISelectable>(out var selectable))
                         {
-                            CurrentSelected = selected;
-                        }
+                            // Check team
+                            if (obj.TryGetComponent<CombatEntity>(out var entity) && entity.team == owner.team)
+                            {
+                                if (CurrentSelected == null)
+                                {
+                                    CurrentSelected = selectable;
+                                }
 
-                        UnitRTS unitRTS = obj.GetComponent<UnitRTS>();
-                        if (unitRTS != null && unitRTS.owner.team == owner.team)
-                        {
-                            //noUnits = false;
-                            selectedUnitRTSList.Add(unitRTS);
-                        }
-                        else if (obj.CompareTag("Building"))
-                        {
-                            selectedBuilding = obj.GetComponent<RTS_building>();
+                                if (entity is UnitRTS unitRTS)
+                                {
+                                    selectedUnitRTSList.Add(unitRTS);
+                                }
+                                else if (entity is RTS_building building)
+                                {
+                                    selectedBuilding = building;
+                                }
+                            }
                         }
                     }
                 }

@@ -10,6 +10,8 @@ public class Peasant : UnitRTS
 
     private Coroutine buildCouroutine;
     private bool isBuilding;
+    private EnvironmentResource lastGatheredResource;
+    private Resource.ResourceType lastGatheredType;
 
     public override float health { get; set; } = 7f;
     public virtual int maxCarryCapacity => 10;
@@ -39,6 +41,7 @@ public class Peasant : UnitRTS
 
         if (Input.GetMouseButton(1))
         {
+            StopBuildingProcess();
             List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
             if (selectedUnits.Contains(this))
             {
@@ -52,7 +55,6 @@ public class Peasant : UnitRTS
     {
         if (buildCouroutine == null)
         {
-       
             RTS_building buildingComponent = building.GetComponent<RTS_building>();
 
             if (buildingComponent.health < buildingComponent.maxHealth) {
@@ -99,13 +101,17 @@ public class Peasant : UnitRTS
 
     private void StopBuildingProcess()
     {
-        StopCoroutine(buildCouroutine);
-        isBuilding = false;
-        buildCouroutine = null;
+        if(buildCouroutine != null)
+        {
+            StopCoroutine(buildCouroutine);
+            isBuilding = false;
+            buildCouroutine = null;
+        }
     }
 
     private void peasantRightClick(Vector3 clickPosition)
     {
+        lastGatheredResource = null;
         RaycastHit2D hit = Physics2D.Raycast(clickPosition, Vector2.zero);
         if (hit.collider != null)
         {
@@ -147,20 +153,13 @@ public class Peasant : UnitRTS
 
         if (buildingObject.GetComponent<Castle>() != null && carriedResource != null)
         {
-            Dictionary<Resource.ResourceType, int> transferredResource = new Dictionary<Resource.ResourceType, int>
-            {
-                { carriedResource.type, carriedResource.amount }
-            };
-
-            this.owner.ChangePlayerResources(transferredResource, "+");
-            ClearCarriedResource();
-        } else if(buildingObject.GetComponent<GoldenMine>() != null && buildingObject.GetComponent<RTS_building>().finished)
+            peasantTransferResource();
+        }
+        else if(buildingObject.GetComponent<GoldenMine>() != null && buildingObject.GetComponent<RTS_building>().finished)
         {
             if(carriedResource == null || carriedResource.amount < maxCarryCapacity)
             {
-                SetCarriedResource(ResourceType.Gold, 0);
-                buildingObject.GetComponent<GoldenMine>().AddWorkerToMine(this);
-                this.gameObject.SetActive(false);
+                peasantSendToMine(buildingObject);
             }
         }
 
@@ -173,6 +172,10 @@ public class Peasant : UnitRTS
             yield break;
 
         isAttacking = true;
+
+        lastGatheredResource = target;
+        lastGatheredType = gatheredResource;
+
         while (target.health > 0)
         {
             while (!HasReachedDestination())
@@ -182,8 +185,8 @@ public class Peasant : UnitRTS
 
             if (IsAtMaxCarryCapacity())
             {
-                Debug.Log("Reached max carrying capacity");
-                break; 
+                StartCoroutine(DeliverAndResume());
+                yield break; 
             }
 
             float attackDelay = 1 / attackSpeed;
@@ -204,8 +207,86 @@ public class Peasant : UnitRTS
         isAttacking = false;
     }
 
+    private void peasantTransferResource()
+    {
+        Dictionary<Resource.ResourceType, int> transferredResource = new Dictionary<Resource.ResourceType, int>
+            {
+                { carriedResource.type, carriedResource.amount }
+            };
+
+        this.owner.ChangePlayerResources(transferredResource, "+");
+        ClearCarriedResource();
+    }
+
+    private void peasantSendToMine(GameObject buildingObject)
+    {
+        SetCarriedResource(ResourceType.Gold, 0);
+        buildingObject.GetComponent<GoldenMine>().AddWorkerToMine(this);
+        this.gameObject.SetActive(false);
+        lastGatheredResource = buildingObject.GetComponent<EnvironmentResource>();
+        lastGatheredType = ResourceType.Gold;
+    }
+
     private bool IsAtMaxCarryCapacity()
     {
         return carriedResource != null && carriedResource.amount >= maxCarryCapacity;
+    }
+
+    public IEnumerator DeliverAndResume()
+    {
+        GameObject nearestCastle = FindNearestBuilding<Castle>();
+        if (nearestCastle == null)
+        {
+            Debug.LogWarning("No castle found to deliver resource.");
+            yield break;
+        }
+
+        isAttacking = false;
+        MoveTo(nearestCastle.transform.position);
+
+        while (!HasReachedDestination())
+            yield return null;
+
+        peasantTransferResource();
+
+        if (lastGatheredResource != null)
+        {
+            Debug.Log("Returning to gather after delivery");
+            MoveTo(lastGatheredResource.transform.position);
+
+            while (!HasReachedDestination())
+                yield return null;
+
+            // Restart gathering
+            if(lastGatheredType == ResourceType.Gold)
+            {
+                peasantSendToMine(lastGatheredResource.gameObject);
+            }
+            else
+            {
+                StartCoroutine(gatherResource(lastGatheredResource, lastGatheredType));
+            }
+        }
+    }
+
+    private GameObject FindNearestBuilding<T>() where T : RTS_building
+    {
+        T[] allBuildings = FindObjectsOfType<T>();
+        GameObject nearest = null;
+        float minDist = float.MaxValue;
+
+        foreach (T building in allBuildings)
+        {
+            if (building.team != this.team) continue;
+
+            float dist = Vector3.Distance(transform.position, building.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = building.gameObject;
+            }
+        }
+
+        return nearest;
     }
 }

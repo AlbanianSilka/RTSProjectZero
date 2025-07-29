@@ -7,7 +7,7 @@ using Interfaces;
 using Data;
 using static Resource;
 
-public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
+public class UnitRTS : CombatEntity, IAttackable, ISelectable
 {
     private Vector3 destination;
     private UnitRTS followTarget;
@@ -21,7 +21,8 @@ public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
     protected virtual float moveSpeed { get; set; } = 5f; 
     protected virtual float maxHp => 10f;
     protected virtual float attackSpeed { get; set; } = 1f;
-    protected virtual float attackDamage { get; set; } = 1f;
+    protected override float arrowSpeed => 0f;
+    protected override float attackDamage => 1f;
     protected virtual float attackRange { get; set; } = 3f;
     protected virtual float vision { get; set; } = 2f;
     protected RTS_controller rtsController;
@@ -32,12 +33,9 @@ public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
 
     public List<SpellSO> assignedSpells = new();
     public virtual float health { get; set; } = 30f;
-    [SerializeField] public string team;
     public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
     public healthbar_manager healthBar;
-    public event Action<UnitRTS> OnDeath;
     public Sprite unitIcon;
-    public Player owner;
     public enum AttackType
     {
         Melee, Ranged
@@ -182,13 +180,6 @@ public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
         }
     }
 
-    protected virtual void Die()
-    {
-        OnDeath?.Invoke(this);
-
-        Destroy(gameObject);
-    }
-
     public void MoveTo(Vector2 targetPosition)
     {
         destination = targetPosition;
@@ -301,16 +292,12 @@ public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
                 }
             } else if (this.attackType == AttackType.Ranged)
             {
-                // TODO: move ranged stats to ranged units
-                float arrowSpeed = 20f;
-                float shootDelay = 2.0f;
-
                 if (distanceToTarget <= attackRange)
                 {
                     agent.SetDestination(transform.position);
-                    StartCoroutine(ShootArrow(target, targetObject, arrowSpeed));
+                    StartCoroutine(ShootArrow(target, targetObject));
 
-                    yield return new WaitForSeconds(shootDelay);
+                    yield return new WaitForSeconds(attackSpeed);
                 }
             }
 
@@ -319,49 +306,6 @@ public class UnitRTS : MonoBehaviour, IAttackable, ISelectable
         }
 
         isAttacking = false;
-    }
-
-    // TODO: probably move this method to some common class to avoid duplication with building
-    private IEnumerator ShootArrow(IAttackable target, GameObject targetObject, float arrowSpeed)
-    {
-        GameObject arrow = new GameObject("Arrow");
-        LineRenderer lineRenderer = arrow.AddComponent<LineRenderer>();
-
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
-        lineRenderer.startColor = Color.black;
-        lineRenderer.endColor = Color.black;
-
-        Vector3 arrowStartPos = transform.position;
-        Vector3 arrowEndPos = targetObject.transform.position;
-
-        float distanceToTarget = Vector3.Distance(arrowStartPos, arrowEndPos);
-        float travelTime = distanceToTarget / arrowSpeed;
-        float elapsedTime = 0;
-
-        float arrowLength = 0.5f;
-
-        while (elapsedTime < travelTime)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / travelTime;
-
-            Vector3 currentPos = Vector3.Lerp(arrowStartPos, arrowEndPos, t);
-            Vector3 arrowDirection = (arrowEndPos - arrowStartPos).normalized;
-            Vector3 arrowTailPos = currentPos - (arrowDirection * arrowLength);
-
-            lineRenderer.SetPosition(0, arrowTailPos);
-            lineRenderer.SetPosition(1, currentPos);
-
-            yield return null;
-        }
-
-        if (target != null && target.health > 0)
-        {
-            target.TakeDamage(attackDamage, this.gameObject);
-        }
-
-        Destroy(arrow);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

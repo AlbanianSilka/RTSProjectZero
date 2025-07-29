@@ -10,6 +10,7 @@ public class Tower : RTS_building
     protected override float attackSpeed => 1f;
     protected override float attackRange => 15f;
     protected override float attackDamage => 1f;
+    protected override float arrowSpeed => 20f;
 
     public Tower()
     {
