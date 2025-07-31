@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI goldText;
     public TextMeshProUGUI woodText;
 
+    [SerializeField] private MainMenuUI mainMenuUI;
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
     private static List<Color> availableColors = new()
     {
@@ -41,6 +42,20 @@ public class Player : MonoBehaviour
         {
             int index = Random.Range(0, availableColors.Count);
             teamColor = availableColors[index];
+        }
+    }
+
+    protected virtual void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            KeybindingsUI keybindingsUI = FindObjectOfType<KeybindingsUI>();
+            if (keybindingsUI != null && keybindingsUI.waitingForInput || keybindingsUI.IsSuppressingEscape)
+            {
+                return;
+            }
+
+            mainMenuUI.ToggleMenu();
         }
     }
 
@@ -74,12 +89,6 @@ public class Player : MonoBehaviour
             {
                 Debug.LogError($"There is no such resource as {type}");
             }
-        }
-
-        // I'll delete it a bit later, now it just for detecting changes in player resources
-        foreach (var kvp in resources)
-        {
-            Debug.Log("Resource: " + kvp.Key + ", Amount: " + kvp.Value);
         }
     }
 
