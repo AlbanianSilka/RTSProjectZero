@@ -55,6 +55,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionAreaTransform: {fileID: 7692951975196701808}
+  mainMenuUI: {fileID: 5363174782152208576, guid: 309a42bb5b9624acea8f68088a252a66, type: 3}
   middleSection: {fileID: 3672935750692102961, guid: f45c0d7011cba40e49cd80b82035b71b, type: 3}
   rightSection: {fileID: 734024251188648033, guid: c9fe48608faff48e5bbf806574e95208, type: 3}
   progressButtonPrefab: {fileID: 3683051047648132817, guid: 3984c9513b30a4206bd5708c2fdd49bb, type: 3}
