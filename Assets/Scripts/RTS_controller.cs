@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Interfaces;
+using static UnityEditor.Progress;
 
 public class RTS_controller : MonoBehaviour
 {
@@ -91,6 +92,10 @@ public class RTS_controller : MonoBehaviour
                         Camera.main.ScreenToWorldPoint(Input.mousePosition));
                     CurrentSelected = null;
                     selectedBuilding = null;
+                    foreach (UnitRTS unit in selectedUnitRTSList)
+                    {
+                        unit.SetSelected(false);
+                    }
                     selectedUnitRTSList.Clear();
 
                     if (collArray.Length == 0)
@@ -106,14 +111,10 @@ public class RTS_controller : MonoBehaviour
                             // Check team
                             if (obj.TryGetComponent<CombatEntity>(out var entity) && entity.team == owner.team)
                             {
-                                if (CurrentSelected == null)
-                                {
-                                    CurrentSelected = selectable;
-                                }
-
                                 if (entity is UnitRTS unitRTS)
                                 {
                                     selectedUnitRTSList.Add(unitRTS);
+                                    unitRTS.SetSelected(true);
                                 }
                                 else if (entity is RTS_building building)
                                 {
@@ -121,6 +122,16 @@ public class RTS_controller : MonoBehaviour
                                 }
                             }
                         }
+                    }
+
+                    GroupSelectedUnitsByPriority();
+                    if (selectedUnitRTSList.Count > 0)
+                    {
+                        CurrentSelected = selectedUnitRTSList[0];
+                    }
+                    else if (selectedBuilding != null)
+                    {
+                        CurrentSelected = selectedBuilding;
                     }
                 }
             }
@@ -138,6 +149,13 @@ public class RTS_controller : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void GroupSelectedUnitsByPriority()
+    {
+        selectedUnitRTSList = selectedUnitRTSList
+            .OrderByDescending(unit => unit.selectionPriority)
+            .ToList();
     }
 
     public void MoveSelectedUnits(Vector3 clickPosition, List<UnitRTS> selectedUnits)
