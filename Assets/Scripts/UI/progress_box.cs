@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Interfaces;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,12 +24,7 @@ public class progress_box : MonoBehaviour
     public void Setup(RTS_controller controller, SpellSO spell, int boxIndex)
     {
         _button.onClick.RemoveAllListeners();
-        RTS_building building = controller._currentSelected as RTS_building;
-        if(building is null)
-        {
-            return;
-        }
-
+        UnitRTS selectedUnit;
         this.boxIndex = boxIndex;
 
         // Stop any old progress coroutine
@@ -38,27 +34,51 @@ public class progress_box : MonoBehaviour
             progressRoutine = null;
         }
 
-        List<UnitRTS> unitsQueue = (building is GoldenMine mine)
-                    ? mine.workers.ConvertAll(w => (UnitRTS)w)
-                    : building.unitsQueue;
+        if (controller._currentSelected is RTS_building building)
+        {
+            buildingSetup(controller, spell, boxIndex);
+            return;
+        }
+        else if (controller._currentSelected is UnitRTS unit)
+        {
+            selectedUnit = unit;
+        }
 
-        if (spell == null || building == null || boxIndex >= unitsQueue.Count)
+        List<UnitRTS> unitsQueue = controller.selectedUnitRTSList;
+
+
+        if (spell == null || boxIndex >= unitsQueue.Count)
         {
             Clear();
             return;
         }
 
-        if (spell is IIndexedSpell indexedSpell)
+        commonSetup(spell, unitsQueue, controller);
+    }
+
+    private void buildingSetup(RTS_controller controller, SpellSO spell, int boxIndex)
+    {
+        RTS_building building = controller._currentSelected as RTS_building;
+
+        if (building is null)
         {
-            indexedSpell.buttonIndex = boxIndex;
+            return;
         }
 
-        spell.icon = unitsQueue[boxIndex].unitIcon;
-        _icon.color = Color.white;
-        _icon.sprite = spell.icon;
-        _button.onClick.AddListener(() => spell.Cast(controller));
+        List<UnitRTS> unitsQueue = (building is GoldenMine mine)
+                    ? mine.workers.ConvertAll(w => (UnitRTS)w)
+                    : building.unitsQueue;
 
-        if(building is GoldenMine)
+
+        if (spell == null || boxIndex >= unitsQueue.Count)
+        {
+            Clear();
+            return;
+        }
+
+        commonSetup(spell, unitsQueue, controller);
+
+        if (building is GoldenMine)
         {
             return;
         }
@@ -73,6 +93,16 @@ public class progress_box : MonoBehaviour
         {
             _progressBar.gameObject.SetActive(false);
         }
+    }
+
+    private void commonSetup(SpellSO spell, List<UnitRTS> unitsQueue, RTS_controller controller)
+    {
+        SpellSO runtimeSpell = SpellFactory.CreateClonedSpell(spell, boxIndex);
+
+        spell.icon = unitsQueue[boxIndex].unitIcon;
+        _icon.color = Color.white;
+        _icon.sprite = spell.icon;
+        _button.onClick.AddListener(() => runtimeSpell.Cast(controller));
     }
 
     private void Clear()

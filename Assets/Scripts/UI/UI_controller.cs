@@ -39,6 +39,10 @@ public class UI_controller : MonoBehaviour
                     : building.unitsQueue;
                 handleMiddle(unitsQueue);
             }
+            else
+            {
+                handleMiddle(rtsController.selectedUnitRTSList);
+            }
         }
     }
 
@@ -72,14 +76,17 @@ public class UI_controller : MonoBehaviour
             return;
         }
 
-        RTS_building building = rtsController._currentSelected as RTS_building;
         rtsController.middleSection.enabled = true;
 
         if (rtsController.middleSection != null)
         {
-            SpellSO spell = building is GoldenMine mine
-                ? mine.freeWorkerSpell
-                : building.cancelSpell;
+            SpellSO spell = rtsController._currentSelected switch
+            {
+                GoldenMine mine => mine.freeWorkerSpell,
+                RTS_building building => building.cancelSpell,
+                UnitRTS unit => unit.selectUnitSpell,
+                _ => null
+            };
 
             for (int i = 0; i < unitsQueue.Count; i++)
             {

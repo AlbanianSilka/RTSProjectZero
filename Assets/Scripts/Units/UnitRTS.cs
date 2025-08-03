@@ -14,6 +14,8 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
     [SerializeField] private GameObject minimapGFX;
     [SerializeField] private GameObject visionCircleMain;
     [SerializeField] private GameObject visionCircleSecondary;
+    [SerializeField] private GameObject selectedCircle;
+    [SerializeField] public SpellSO selectUnitSpell;
     private int visionCount = 0;
     NavMeshAgent agent;
 
@@ -40,6 +42,14 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
     {
         Melee, Ranged
     };
+
+    public void SetSelected(bool isSelected)
+    {
+        if (selectedCircle != null)
+        {
+            selectedCircle.SetActive(isSelected);
+        }
+    }
 
     public SelectableData OnSelect()
     {
