@@ -371,6 +371,7 @@ GameObject:
   - component: {fileID: 3269352035549573832}
   - component: {fileID: 3475471123474523052}
   - component: {fileID: 8704254727366849517}
+  - component: {fileID: 6070406290892748359}
   m_Layer: 0
   m_Name: GoldenMine
   m_TagString: Building
@@ -530,20 +531,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 647b3d2e047c14d329505f6866da8268, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  team: 
   canBuild: {fileID: 21300000, guid: 052c2f023604a468699c32101aefef80, type: 3}
   cannotBuild: {fileID: 21300000, guid: b955ce449cadb4c10b8522dfb7b6ff08, type: 3}
   maxHealth: 15
   finished: 0
-  team: 
   healthBar: {fileID: 0}
   assignedSpells: []
   cancelSpell: {fileID: 0}
   unitsQueue: []
   remainingSpawnTime: 0
-  owner: {fileID: 0}
   attachedDeposit: {fileID: 0}
   workers: []
   freeWorkerSpell: {fileID: 11400000, guid: a211b3034525140d68712a5f6a1a90ae, type: 2}
+--- !u!114 &6070406290892748359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4913503776023470425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd0015a372cf5453792629efeb004e98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  providedResourceType: 0
 --- !u!1 &5966642371436490081
 GameObject:
   m_ObjectHideFlags: 0

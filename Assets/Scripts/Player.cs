@@ -49,12 +49,6 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            KeybindingsUI keybindingsUI = FindObjectOfType<KeybindingsUI>();
-            if (keybindingsUI != null && keybindingsUI.waitingForInput || keybindingsUI.IsSuppressingEscape)
-            {
-                return;
-            }
-
             mainMenuUI.ToggleMenu();
         }
     }

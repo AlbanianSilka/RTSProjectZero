@@ -16,9 +16,6 @@ public class KeybindingsUI : MonoBehaviour
     private int waitingForIndex = -1;
     public bool waitingForInput = false;
 
-    private float escapeSuppressTime = 0f;
-    public bool IsSuppressingEscape => Time.time < escapeSuppressTime;
-
     private void Start()
     {
         UpdateKeyLabels();
@@ -42,7 +39,6 @@ public class KeybindingsUI : MonoBehaviour
             {
                 if (key == KeyCode.Escape)
                 {
-                    CancelRebind();
                     return;
                 }
 
@@ -63,14 +59,11 @@ public class KeybindingsUI : MonoBehaviour
         popupPanel.SetActive(true);
     }
 
-    private void CancelRebind()
+    public void CancelRebind()
     {
         waitingForInput = false;
         waitingForIndex = -1;
         popupPanel.SetActive(false);
-
-        // short delay so escape won't close the whole settings menu
-        escapeSuppressTime = Time.time + 0.1f;
     }
 
     private void UpdateKeyLabels()

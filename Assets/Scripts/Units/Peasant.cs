@@ -9,10 +9,10 @@ public class Peasant : UnitRTS
     protected override float maxHp => 5f;
 
     private Coroutine buildCouroutine;
-    private bool isBuilding;
     private EnvironmentResource lastGatheredResource;
     private Resource.ResourceType lastGatheredType;
 
+    public bool isBuilding;
     public override float health { get; set; } = 7f;
     public virtual int maxCarryCapacity => 10;
     public override float spawnTime => 6f;
@@ -112,7 +112,10 @@ public class Peasant : UnitRTS
     private void peasantRightClick(Vector3 clickPosition)
     {
         lastGatheredResource = null;
+        isBuilding = false;
         RaycastHit2D hit = Physics2D.Raycast(clickPosition, Vector2.zero);
+        StopAllCoroutines();
+
         if (hit.collider != null)
         {
             GameObject clickedObject = hit.collider.gameObject;
@@ -132,13 +135,6 @@ public class Peasant : UnitRTS
                 {
                     StartCoroutine(gatherResource(clickedResource, clickedResource.GetProvidedResourceType()));
                 }
-            }
-
-        } else
-        {
-            if (isBuilding)
-            {
-                StopBuildingProcess();
             }
         }
     }
@@ -166,15 +162,12 @@ public class Peasant : UnitRTS
         StartBuildingProcess(buildingObject);
     }
 
-    private IEnumerator gatherResource(EnvironmentResource target, Resource.ResourceType gatheredResource)
+    public IEnumerator gatherResource(EnvironmentResource target, Resource.ResourceType gatheredResource)
     {
         if (isAttacking)
             yield break;
 
         isAttacking = true;
-
-        lastGatheredResource = target;
-        lastGatheredType = gatheredResource;
 
         while (target.health > 0)
         {
@@ -185,6 +178,8 @@ public class Peasant : UnitRTS
 
             if (IsAtMaxCarryCapacity())
             {
+                lastGatheredResource = target;
+                lastGatheredType = gatheredResource;
                 StartCoroutine(DeliverAndResume());
                 yield break; 
             }

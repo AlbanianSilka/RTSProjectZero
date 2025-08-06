@@ -29,7 +29,6 @@ public class BuildingRegistry : MonoBehaviour
 
     public GameObject GetBuildingPrefab(string buildingID)
     {
-        Debug.Log("We entered here");
         if (buildingLookup.TryGetValue(buildingID, out var data))
         {
             return data.prefab;
