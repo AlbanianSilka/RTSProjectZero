@@ -282,7 +282,6 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
 
         isAttacking = true;
 
-
         while (target.health > 0)
         {
             float distanceToTarget = Vector3.Distance(transform.position, targetObject.transform.position);

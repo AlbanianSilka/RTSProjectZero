@@ -9,13 +9,13 @@ using Interfaces;
 public class buildings_manager : MonoBehaviour
 {
     public GameObject buildingPrefab;
+    public Deposit selectedDeposit;
 
     protected internal bool isPlacingBuilding { get; set; } = false;
 
     private RTS_controller rtsController;
     private static GameObject ghostBuildingInstance;
     private static bool canPlaceBuilding = false;
-    private Deposit selectedDeposit;
 
     private void Start()
     {
@@ -31,7 +31,7 @@ public class buildings_manager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0) && canPlaceBuilding)
             {
-                moveBuilders();
+                MoveBuilders();
             }
             else if (Input.GetMouseButtonDown(1))
             {
@@ -183,26 +183,36 @@ public class buildings_manager : MonoBehaviour
         }
     }
 
-    private void moveBuilders()
+    public void MoveBuilders(List<Peasant> builders = null,
+        Vector3? customBuildingPosition = null)
     {
-        Vector3 buildingPosition = ghostBuildingInstance.transform.position;
-        DestroyGhostBuilding();
-        List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
-        List<UnitRTS> peasantUnits = selectedUnits.Where(unit => unit is Peasant).ToList();
+        Vector3 buildingPosition =
+            customBuildingPosition ?? ghostBuildingInstance.transform.position;
 
-        int unitCount = peasantUnits.Count;
+        if (builders == null)
+        {
+            DestroyGhostBuilding();
+            List<UnitRTS> selectedUnits = rtsController.selectedUnitRTSList;
+            builders = selectedUnits
+                .Where(unit => unit is Peasant)
+                .Cast<Peasant>()
+                .ToList();
+        }
+
+        int unitCount = builders.Count;
+
         for (int i = 0; i < unitCount; i++)
         {
-            UnitRTS unitRTS = selectedUnits[i];
-            Vector3 targetPosition = CalculateTargetPosition(unitRTS.transform.position, buildingPosition);
-            unitRTS.MoveTo(targetPosition);
+            Peasant peasant = builders[i];
+            peasant.MoveTo(buildingPosition);
         }
-        StartCoroutine(startBuilding(buildingPosition, peasantUnits));
+
+        StartCoroutine(startBuilding(buildingPosition, builders.Cast<UnitRTS>().ToList()));
     }
+
 
     private IEnumerator startBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
     {
-        Debug.Log(selectedDeposit);
         GameObject newBuilding;
 
         while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
@@ -213,7 +223,7 @@ public class buildings_manager : MonoBehaviour
         if (buildingPrefab.GetComponent<GoldenMine>() != null)
         {
             // probably not the best way to handle it
-            // need to rethink handling this coroutine in case if it got a weong building position
+            // need to rethink handling this coroutine in case if it got a wrong building position
             if (selectedDeposit == null)
             {
                 yield break;
@@ -271,44 +281,4 @@ public class buildings_manager : MonoBehaviour
 
         return nearestCorner;
     }
-
-    // ######## A copy for bots, which does not need to include ghost building & other moments for player ########
-
-    public void botMoveBuilders(List<Peasant> builders, Vector3 buildingPosition, Vector3 targetPosition)
-    {
-        int unitCount = builders.Count;
-
-        for (int i = 0; i < unitCount; i++)
-        {
-            Peasant peasant = builders[i];
-            peasant.MoveTo(targetPosition);
-        }
-
-        StartCoroutine(botStartBuilding(buildingPosition, builders.Cast<UnitRTS>().ToList()));
-    }
-
-    public IEnumerator botStartBuilding(Vector3 buildingPosition, List<UnitRTS> peasantUnits)
-    {
-        GameObject newBuilding;
-
-        while (peasantUnits.Any(unit => !unit.HasReachedDestination()))
-        {
-            yield return null;
-        }
-
-        newBuilding = Instantiate(buildingPrefab, buildingPosition, Quaternion.identity);
-        RTS_building buildingObject = newBuilding.GetComponent<RTS_building>();
-        buildingObject.team = peasantUnits.First().team;
-        buildingObject.owner = peasantUnits.First().owner;
-        buildingObject.health = 1;
-        buildingObject.owner.ChangePlayerResources(buildingObject.GetRequiredResources(), "-");
-        buildingPrefab = null;
-
-        foreach (Peasant unit in peasantUnits)
-        {
-            unit.StartBuildingProcess(newBuilding);
-        }
-    }
-
-    // ################################################################
 }

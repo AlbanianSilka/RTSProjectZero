@@ -14,6 +14,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button exitButton;
 
     [Header("Settings Menu Buttons")]
+    [SerializeField] private KeybindingsUI keybindingsManager;
     [SerializeField] private Button keybindingsButton;
     [SerializeField] private Button backButton;
 
@@ -36,6 +37,12 @@ public class MainMenuUI : MonoBehaviour
 
     public void ToggleMenu()
     {
+        if (keybindingsManager.waitingForInput)
+        {
+            keybindingsManager.CancelRebind();
+            return;
+        }
+
         bool anyOpen = menuPanel.activeSelf || settingsPanel.activeSelf || keybindingsPanel.activeSelf;
 
         if (anyOpen)
