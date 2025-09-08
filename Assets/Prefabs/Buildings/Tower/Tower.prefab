@@ -204,16 +204,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d25e8f1891ea34524a5652891bdf3264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canBuild: {fileID: 21300000, guid: f28d3b8dd1cb04009a4c2d6a1343cf6f, type: 3}
-  cannotBuild: {fileID: 21300000, guid: dd306d5f78406464f820f935b6e76be8, type: 3}
-  maxHealth: 15
-  finished: 0
+  owner: {fileID: 0}
   team: 
   healthBar: {fileID: 6000223040772193758}
-  spellButtons: []
+  assignedSpells: []
+  canBuild: {fileID: 21300000, guid: f28d3b8dd1cb04009a4c2d6a1343cf6f, type: 3}
+  cannotBuild: {fileID: 21300000, guid: dd306d5f78406464f820f935b6e76be8, type: 3}
+  finished: 0
+  cancelSpell: {fileID: 0}
   unitsQueue: []
   remainingSpawnTime: 0
-  owner: {fileID: 0}
 --- !u!1 &2620352148868916904
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ public class progress_box : MonoBehaviour
 
     public int boxIndex;
     public float maxTrainingTime;
-    public healthbar_manager _progressBar;
+    public ValueBarManager _progressBar;
 
     [SerializeField] private Image _icon;
     [SerializeField] private Button _button;

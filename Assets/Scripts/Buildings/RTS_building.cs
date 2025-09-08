@@ -11,93 +11,40 @@ public class RTS_building : CombatEntity, IAttackable, ISelectable
 {
     public Sprite canBuild;
     public Sprite cannotBuild;
-    public float maxHealth;
-    public virtual float health { get; set; } = 30f;
     public bool finished;
-    public healthbar_manager healthBar;
-    public List<SpellSO> assignedSpells = new();
     public SpellSO cancelSpell;
     public List<UnitRTS> unitsQueue;
     public float remainingSpawnTime = 0f;
 
-    protected virtual float attackSpeed { get; set; } = 0f;
+    protected override float attackSpeed { get; set; } = 0f;
     protected override float attackDamage => 0f;
     protected override float arrowSpeed => 0f;
-    protected virtual float attackRange { get; set; } = 0f;
-    protected virtual bool isAttacking { get; set; }
-    protected Dictionary<ResourceType, int> RequiredResources { get; set; }
-    protected RTS_controller rtsController;
+    protected override float attackRange { get; set; } = 0f;
 
     private bool makingUnit;
 
-    public SelectableData OnSelect()
+    public override SelectableData OnSelect()
     {
-        SelectableData data = new SelectableData()
-        {
-            Spells = assignedSpells,
-            ShowBuildingUI = true
-        };
+        SelectableData data = base.OnSelect();
+        data.ShowBuildingUI = true;
         return data;
-    }
-
-
-    public RTS_building()
-    {
-        RequiredResources = new Dictionary<ResourceType, int>
-        {
-            { ResourceType.Gold, 0 },
-            { ResourceType.Wood, 0 }
-        };
-    }
-
-    public Dictionary<ResourceType, int> GetRequiredResources()
-    {
-        return RequiredResources;
-    }
-
-    private void Awake()
-    {
-        healthBar = GetComponentInChildren<healthbar_manager>();
-        makingUnit = false;
-        InvokeRepeating("CheckAndSpawnUnits", 0f, 1f);
-    }
-
-    private void Start()
-    {
-        rtsController = owner.rtsController;
     }
 
     public bool CanBuild(Player owner)
     {
-        foreach (var kvp in RequiredResources)
-        {
-            if (!owner.HasEnoughResources(kvp.Key, kvp.Value))
-            {
-                return false;
-            }
-        }
-        return true;
+        return CanAffordResources(owner);
     }
 
-    public void TakeDamage(float damage, GameObject attacker)
+    protected override void Awake()
     {
-        if (this == null || health <= 0)
-            return;
+        base.Awake();
+        makingUnit = false;
+        InvokeRepeating("CheckAndSpawnUnits", 0f, 1f);
+    }
 
-        health -= damage;
-        this.healthBar.updateHealthBar(this.health, this.maxHealth);
-        Debug.Log($"{this.name} was hit by {attacker.name}");
-
-        if(attackDamage > 0)
-        {
-            GameObject counterAttackTarget = attacker;
-            StartCoroutine(buildingFight(counterAttackTarget.GetComponent<IAttackable>(), counterAttackTarget));
-        }
-
-        if (health <= 0)
-        {
-            Die();
-        }
+    protected override void Start()
+    {
+        base.Start();
     }
 
     public void AddUnitToQueue(UnitRTS unit)
@@ -170,31 +117,6 @@ public class RTS_building : CombatEntity, IAttackable, ISelectable
         } else
         {
             Debug.LogError("SpawnMarker not found!");
-        }
-    }
-
-    private IEnumerator buildingFight(IAttackable target, GameObject targetObject)
-    {
-        if (isAttacking)
-            yield break;
-
-        isAttacking = true;
-
-        while (target.health > 0) {
-            float distanceToTarget = Vector3.Distance(transform.position, targetObject.transform.position);
-
-            if (distanceToTarget > attackRange)
-            {
-                isAttacking = false;
-                yield break;
-            }
-
-            if (distanceToTarget <= attackRange)
-            {
-                StartCoroutine(ShootArrow(target, targetObject));
-
-                yield return new WaitForSeconds(attackSpeed);
-            }
         }
     }
 }

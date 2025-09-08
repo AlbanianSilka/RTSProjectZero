@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EnvironmentResource : EnvironmentObject
 {
-    public virtual float maxHp { get; set; } = 10f;
+    public virtual float maxHealth { get; set; } = 10f;
     public virtual float health { get; set; } = 30f;
 
     public event Action<EnvironmentResource> OnDeath;

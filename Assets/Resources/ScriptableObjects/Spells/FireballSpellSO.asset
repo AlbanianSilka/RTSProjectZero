@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e63f34179e2d4798a3cdb41b9e035b3, type: 3}
+  m_Name: FireballSpellSO
+  m_EditorClassIdentifier: 
+  spellName: Fireball
+  icon: {fileID: 21300000, guid: 0cdf80109bd544ea993d3a1bf44ce7ca, type: 3}
+  boxIndex: 0
+  manaCost: 30
+  radius: 3
+  targetCirclePrefab: {fileID: 2650531601769268637, guid: 22712da8a15324c3da4ffcac3f626593, type: 3}
+  explosionSound: {fileID: 8300000, guid: a14906766b2f74d6db779b1b03427655, type: 3}
+  explosionPrefab: {fileID: 7061619213130168724, guid: d98c1830e5df046f7af5235f67a77b49, type: 3}
+  explosionDuration: 1
+  damage: 30
