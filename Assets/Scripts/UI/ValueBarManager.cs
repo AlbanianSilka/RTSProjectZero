@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class healthbar_manager : MonoBehaviour
+public class ValueBarManager : MonoBehaviour
 {
     [SerializeField] private Slider slider;
     [SerializeField] private Camera camera_follow;

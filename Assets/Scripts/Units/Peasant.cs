@@ -6,13 +6,13 @@ using static Resource;
 public class Peasant : UnitRTS
 {
     protected override float moveSpeed { get; set; } = 9f;
-    protected override float maxHp => 5f;
 
     private Coroutine buildCouroutine;
     private EnvironmentResource lastGatheredResource;
     private Resource.ResourceType lastGatheredType;
 
     public bool isBuilding;
+    public override float maxHealth => 5f;
     public override float health { get; set; } = 7f;
     public virtual int maxCarryCapacity => 10;
     public override float spawnTime => 6f;

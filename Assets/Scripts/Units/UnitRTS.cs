@@ -19,25 +19,20 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
     private int visionCount = 0;
     NavMeshAgent agent;
 
-    public virtual bool isAttacking { get; set; }
     protected virtual float moveSpeed { get; set; } = 5f; 
-    protected virtual float maxHp => 10f;
-    protected virtual float attackSpeed { get; set; } = 1f;
+    protected virtual float maxMana { get; set; }
+    // By default, unit have no mana
+    public virtual float mana { get; set; }
     protected override float arrowSpeed => 0f;
     protected override float attackDamage => 1f;
-    protected virtual float attackRange { get; set; } = 3f;
     protected virtual float vision { get; set; } = 2f;
-    protected RTS_controller rtsController;
-    protected Dictionary<ResourceType, int> RequiredResources { get; set; }
     protected AttackType attackType;
 
     internal virtual int selectionPriority => 0; // default selection priority for units
 
-    public List<SpellSO> assignedSpells = new();
-    public virtual float health { get; set; } = 30f;
     public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
-    public healthbar_manager healthBar;
     public Sprite unitIcon;
+    
     public enum AttackType
     {
         Melee, Ranged
@@ -51,43 +46,21 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
         }
     }
 
-    public SelectableData OnSelect()
+    public override SelectableData OnSelect()
     {
-        SelectableData data = new SelectableData()
-        {
-            Spells = assignedSpells
-        };
+        SelectableData data = base.OnSelect();
         return data;
-    }
-
-    public UnitRTS()
-    {
-        RequiredResources = new Dictionary<ResourceType, int>
-        {
-            { ResourceType.Gold, 0 },
-            { ResourceType.Wood, 0 }
-        };
-    }
-
-    public Dictionary<ResourceType, int> GetRequiredResources()
-    {
-        return RequiredResources;
     }
 
     public bool CanBeTrained(Player owner)
     {
-        foreach (var kvp in RequiredResources)
-        {
-            if (!owner.HasEnoughResources(kvp.Key, kvp.Value))
-            {
-                return false;
-            }
-        }
-        return true;
+        return CanAffordResources(owner);
     }
 
-    protected virtual void Start()
+    protected override void Start()
     {
+        base.Start();
+        
         if (owner == null)
         {
             Debug.LogWarning($"{name} has no owner assigned at Start(), deferring init...");
@@ -111,13 +84,13 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
             if (minimapGFX != null) minimapGFX.SetActive(false);
         }
 
-        rtsController = owner.rtsController;
         destination = transform.position;
         SetVisionScale();
     }
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -203,26 +176,19 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
         return distance <= 3f;
     }
 
-    public void TakeDamage(float damage, GameObject attacker)
+    public override void TakeDamage(float damage, GameObject attacker)
     {
         if (this == null || health <= 0)
             return;
 
-        // TODO: Would probably need an update, because counter-attacked follows a bit strange
-        this.health -= damage;
-        this.healthBar.updateHealthBar(this.health, this.maxHp);
-        Debug.Log($"{this.name} was hit by {attacker.name} on {damage} dmg and has {this.health} hp");
+        // Call parent implementation for basic damage handling
+        base.TakeDamage(damage, attacker);
 
-        // if not moving - counter attack
-        if (HasReachedDestination())
+        // Unit-specific counter-attack logic - only if not moving
+        if (HasReachedDestination() && attackDamage > 0)
         {
             GameObject counterAttackTarget = attacker;
             StartCoroutine(attackPath(counterAttackTarget.GetComponent<IAttackable>(), counterAttackTarget));
-        }
-
-        if(health <= 0)
-        {
-            Die();
         }
     }
 
