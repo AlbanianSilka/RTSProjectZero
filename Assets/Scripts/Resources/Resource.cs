@@ -5,7 +5,7 @@ public class Resource
 	// Later I'll add more resource types, currently just wood and gold
 	public enum ResourceType
 	{
-		Gold, Wood
+		Gold, Wood, Food
 	}
 
 	public ResourceType type;

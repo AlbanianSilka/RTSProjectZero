@@ -62,6 +62,28 @@ public class RTS_building : CombatEntity, IAttackable, ISelectable
         }
     }
 
+    private void RemoveUnitFromQueue(int index)
+    {
+        if (index >= 0 && index < unitsQueue.Count)
+        {
+            UnitRTS unit = unitsQueue[index];
+            
+            // Refund resources
+            owner.ChangePlayerResources(unit.GetRequiredResources(), "+");
+            
+            // Remove from queue
+            unitsQueue.RemoveAt(index);
+            
+            // Update UI if this building is selected
+            if (rtsController.selectedBuilding == this)
+            {
+                UI_controller.handleMiddle(unitsQueue);
+            }
+            
+            Debug.Log($"Removed {unit.name} from training queue due to insufficient food. Resources refunded.");
+        }
+    }
+
     public void restartSpawnCoroutine()
     {
         if (makingUnit)
@@ -85,8 +107,17 @@ public class RTS_building : CombatEntity, IAttackable, ISelectable
         {
             UnitRTS unit = unitsQueue[0];
 
-            makingUnit = true;
-            StartCoroutine(SpawnUnitAfterDelay(unit));
+            // Check if we can afford the food for this unit
+            if (owner.CanAffordFood(unit.foodCost))
+            {
+                makingUnit = true;
+                StartCoroutine(SpawnUnitAfterDelay(unit));
+            }
+            else
+            {
+                // Remove unit from queue and refund resources
+                RemoveUnitFromQueue(0);
+            }
         }
     }
 
