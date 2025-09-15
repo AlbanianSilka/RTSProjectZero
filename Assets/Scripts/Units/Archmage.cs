@@ -16,6 +16,7 @@ public class Archmage : Hero {
     public override float mana { get; set; } = 100f;
     public override float maxHealth { get; set; } = 100f;
     public override float health { get; set; } = 100f;
+    public override int foodCost => 6;
 
     internal override int selectionPriority => 2;
 

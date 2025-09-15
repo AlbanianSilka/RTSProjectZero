@@ -16,6 +16,7 @@ public class Peasant : UnitRTS
     public override float health { get; set; } = 7f;
     public virtual int maxCarryCapacity => 10;
     public override float spawnTime => 6f;
+    public override int foodCost => 2;
     public Resource carriedResource;
     public List<SpellSO> buildingButtons;
 

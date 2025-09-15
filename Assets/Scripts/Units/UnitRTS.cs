@@ -31,6 +31,7 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
     internal virtual int selectionPriority => 0; // default selection priority for units
 
     public virtual float spawnTime => 10f; // default time in seconds to create a new unit via "SpawnUnit"
+    public virtual int foodCost => 1; // default food cost for units
     public Sprite unitIcon;
     
     public enum AttackType
@@ -54,7 +55,7 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
 
     public bool CanBeTrained(Player owner)
     {
-        return CanAffordResources(owner);
+        return CanAffordResources(owner) && owner.CanAffordFood(foodCost);
     }
 
     protected override void Start()
@@ -86,6 +87,18 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
 
         destination = transform.position;
         SetVisionScale();
+        
+        // Add food usage when unit is spawned
+        if (owner != null)
+        {
+            owner.AddFoodUsage(foodCost);
+            
+            // Add hero count if this is a hero
+            if (this is Hero)
+            {
+                owner.AddHeroCount();
+            }
+        }
     }
 
     protected override void Awake()
@@ -323,5 +336,21 @@ public class UnitRTS : CombatEntity, IAttackable, ISelectable
         Vector3 scale = new Vector3(vision, vision, 1f);
         if (visionCircleMain != null) visionCircleMain.transform.localScale = scale;
         if (visionCircleSecondary != null) visionCircleSecondary.transform.localScale = scale;
+    }
+
+    protected override void Die()
+    {
+        // Remove food usage when unit dies
+        if (owner != null)
+        {
+            owner.RemoveFoodUsage(foodCost);
+            
+            if (this is Hero)
+            {
+                owner.RemoveHeroCount();
+            }
+        }
+        
+        base.Die();
     }
 }

@@ -9,6 +9,7 @@ public class Footman : UnitRTS
     protected override float attackDamage => 2f;
     protected override float attackRange => 3.5f;
     public override float spawnTime => 12f;
+    public override int foodCost => 5;
     internal override int selectionPriority => 2;
 
     public override float maxHealth => 15f;

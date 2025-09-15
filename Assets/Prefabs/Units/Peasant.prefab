@@ -976,6 +976,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b89353f9a1e924b188761f6e00655c93, type: 2}
   - {fileID: 11400000, guid: eb80a98b3c88549b08338978ac5e90fa, type: 2}
   - {fileID: 11400000, guid: 4c4291637f39b435485c6e90a98a2088, type: 2}
+  - {fileID: 11400000, guid: 46ebcecb909444fa5b03b4d1fb7e1e38, type: 2}
 --- !u!195 &-3204118048388068215
 NavMeshAgent:
   m_ObjectHideFlags: 0

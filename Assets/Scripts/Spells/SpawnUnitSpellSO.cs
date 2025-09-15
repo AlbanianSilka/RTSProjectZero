@@ -17,13 +17,27 @@ public class SpawnUnitSpellSO : SpellSO
             return;
         }
 
+        // Check if trying to train a hero and if hero limit is reached
+        if (unitToTrain is Hero && !controller.owner.CanAffordHero())
+        {
+            UnityEngine.Debug.Log("Cannot train " + unitToTrain.name + ". Hero limit reached (" + controller.owner.GetCurrentHeroCount() + "/" + controller.owner.GetMaxHeroCount() + ").");
+            return;
+        }
+
         if (unitToTrain.CanBeTrained(controller.owner))
         {
             building.AddUnitToQueue(unitToTrain);
         }
         else
         {
-            UnityEngine.Debug.Log("Not enough resources to train " + unitToTrain);
+            if (!controller.owner.CanAffordFood(unitToTrain.foodCost))
+            {
+                UnityEngine.Debug.Log("Not enough food to train " + unitToTrain.name + ". Need " + unitToTrain.foodCost + " food, have " + controller.owner.GetAvailableFood() + " available.");
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Not enough resources to train " + unitToTrain.name);
+            }
         }
     }
 }

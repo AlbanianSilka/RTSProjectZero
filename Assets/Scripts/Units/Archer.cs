@@ -10,6 +10,7 @@ public class Archer : UnitRTS
     protected override float arrowSpeed => 20f;
     protected override float attackRange => 20f;
     public override float spawnTime => 9f;
+    public override int foodCost => 4;
     internal override int selectionPriority => 1;
 
     public override float maxHealth => 10f;

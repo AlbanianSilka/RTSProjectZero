@@ -13,9 +13,13 @@ public class Player : MonoBehaviour
     // placed inside canvas
     public TextMeshProUGUI goldText;
     public TextMeshProUGUI woodText;
+    public TextMeshProUGUI foodText;
 
     [SerializeField] private MainMenuUI mainMenuUI;
     private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
+    protected int currentFoodUsage = 0;
+    protected int currentHeroCount = 0;
+    protected int maxHeroCount = 1;
     private static List<Color> availableColors = new()
     {
         Color.blue,
@@ -30,6 +34,7 @@ public class Player : MonoBehaviour
     {
         resources.Add(Resource.ResourceType.Gold, 150); 
         resources.Add(Resource.ResourceType.Wood, 150); 
+        resources.Add(Resource.ResourceType.Food, 15);
     }
 
     protected virtual void Awake()
@@ -68,6 +73,12 @@ public class Player : MonoBehaviour
                 } else if (sign == "+")
                 {
                     resources[type] += amount;
+                    
+                    // Cap food at maximum of 100
+                    if (type == ResourceType.Food)
+                    {
+                        resources[type] = Mathf.Min(resources[type], 100);
+                    }
                 } else
                 {
                     Debug.LogError("Wrong sign used");
@@ -99,5 +110,64 @@ public class Player : MonoBehaviour
     {
         goldText.text = "Gold: " + resources[Resource.ResourceType.Gold];
         woodText.text = "Wood: " + resources[Resource.ResourceType.Wood];
+        foodText.text = "Food: " + currentFoodUsage + "/" + resources[Resource.ResourceType.Food];
+    }
+
+    public void AddFoodUsage(int foodCost)
+    {
+        currentFoodUsage += foodCost;
+        if (!(this is BotPlayer))
+        {
+            UpdateResourceUIText();
+        }
+    }
+
+    public void RemoveFoodUsage(int foodCost)
+    {
+        currentFoodUsage = Mathf.Max(0, currentFoodUsage - foodCost);
+        if (!(this is BotPlayer))
+        {
+            UpdateResourceUIText();
+        }
+    }
+
+    public bool CanAffordFood(int foodCost)
+    {
+        return (currentFoodUsage + foodCost) <= resources[Resource.ResourceType.Food];
+    }
+
+    public int GetAvailableFood()
+    {
+        return resources[Resource.ResourceType.Food] - currentFoodUsage;
+    }
+
+    public int GetCurrentFoodUsage()
+    {
+        return currentFoodUsage;
+    }
+
+    public void AddHeroCount()
+    {
+        currentHeroCount++;
+    }
+
+    public void RemoveHeroCount()
+    {
+        currentHeroCount = Mathf.Max(0, currentHeroCount - 1);
+    }
+
+    public bool CanAffordHero()
+    {
+        return currentHeroCount < maxHeroCount;
+    }
+
+    public int GetCurrentHeroCount()
+    {
+        return currentHeroCount;
+    }
+
+    public int GetMaxHeroCount()
+    {
+        return maxHeroCount;
     }
 }
