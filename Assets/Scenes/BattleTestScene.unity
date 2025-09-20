@@ -4376,7 +4376,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ef66326f10eec4069a6018d3070fc880, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 037cd35d76c0147e39ebb9d21a65e7ff, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5057,6 +5057,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5154818836327805843, guid: 9da5a636aa71e4e51a69a42f2d7feb29, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ae92f6d314df2409abbac6366ae84672, type: 3}
     - target: {fileID: 5427987695800363181, guid: 9da5a636aa71e4e51a69a42f2d7feb29, type: 3}
       propertyPath: m_Name
       value: TopCanvas
@@ -5140,6 +5144,14 @@ PrefabInstance:
     - target: {fileID: 6562443505596714256, guid: 9da5a636aa71e4e51a69a42f2d7feb29, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7777590824822394559, guid: 9da5a636aa71e4e51a69a42f2d7feb29, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7777590824822394559, guid: 9da5a636aa71e4e51a69a42f2d7feb29, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 9059818394194202136, guid: 9da5a636aa71e4e51a69a42f2d7feb29, type: 3}
       propertyPath: m_SizeDelta.x
