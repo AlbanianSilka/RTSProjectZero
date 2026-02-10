@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,31 +9,17 @@ public class BotPlayer : Player
 {
     public UnitRegistry unitRegistry;
 
-    private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
     private List<UnitRTS> friendlyUnits = new List<UnitRTS>();
     private List<RTS_building> friendlyBuildings = new List<RTS_building>();
     private List<Peasant> GoldGatherers = new();
     private List<Peasant> WoodGatherers = new();
 
-    private enum BotTask
-    {
-        BuildCastle,
-        BuildBasicSquad,
-        StartBasicAttack,
-        BuildBasicPeasantSquad,
-        BuildGoldenMine,
-        GatherWood,
-        GatherGold
-    }
+    [SerializeField] private int desiredPeasantCount = 4;
+    [SerializeField] private int desiredFootmanCount = 5;
+    [SerializeField] private int workersPerResourceType = 2;
+    [SerializeField] private int minimumAttackFootmen = 3;
 
-    private List<BotTask> availableTasks;
-    private HashSet<BotTask> tasksInProgress = new HashSet<BotTask>();
-
-    public BotPlayer()
-    {
-        resources.Add(Resource.ResourceType.Gold, 500);
-        resources.Add(Resource.ResourceType.Wood, 150);
-    }
+    private bool isAttacking;
 
     protected override void Awake()
     {
@@ -57,7 +43,6 @@ public class BotPlayer : Player
             Debug.LogWarning("[BotPlayer] No builder (Peasant) found for team: " + team);
         }
 
-        availableTasks = Enum.GetValues(typeof(BotTask)).Cast<BotTask>().ToList();
         StartCoroutine(RunAITasks());
     }
 
@@ -118,44 +103,57 @@ public class BotPlayer : Player
     {
         while (true)
         {
-            foreach (var task in availableTasks)
-            {
-                if (!tasksInProgress.Contains(task))
-                {
-                    ExecuteTask(task);
-                }
-            }
+            // Keep cached lists reasonably fresh for decision making
+            FindFriendlyUnits();
+            FindFriendlyBuildings();
+
+            EnsureEconomy();
+            EnsureArmy();
+            TryBasicAttack();
 
             yield return new WaitForSeconds(1f);
         }
     }
 
-    private void ExecuteTask(BotTask task)
+    private void EnsureEconomy()
     {
-        switch (task)
+        // 1. Always ensure we have a Castle first
+        if (!HasBuilding<Castle>())
         {
-            case BotTask.BuildCastle:
-                BuildingTask<Castle>("castle", BotTask.BuildCastle);
-                break;
-            case BotTask.BuildGoldenMine:
-                BuildingTask<GoldenMine>("GoldenMine", BotTask.BuildGoldenMine);
-                break;
-            case BotTask.BuildBasicPeasantSquad:
-                BuildUnitSquadTask<Peasant>("builder", 2, BotTask.BuildBasicPeasantSquad);
-                break;
-            case BotTask.GatherWood:
-                GatheringTask(Resource.ResourceType.Wood, 1, BotTask.GatherWood);
-                break;
-            case BotTask.GatherGold:
-                GatheringTask(Resource.ResourceType.Gold, 1, BotTask.GatherGold);
-                break;
-            case BotTask.BuildBasicSquad:
-                BuildUnitSquadTask<Footman>("footman", 3, BotTask.BuildBasicSquad);
-                break;
-            case BotTask.StartBasicAttack:
-                basicAttack();
-                break;
+            BuildingTask<Castle>("castle");
+            return;
         }
+
+        // 2. Then ensure a Gold Mine
+        if (!HasBuilding<GoldenMine>())
+        {
+            BuildingTask<GoldenMine>("GoldenMine");
+        }
+
+        // 3. Keep a small pool of peasants and send them to gather resources
+        BuildUnitSquadTask<Peasant>("builder", desiredPeasantCount);
+        GatheringTask(Resource.ResourceType.Gold, workersPerResourceType);
+        GatheringTask(Resource.ResourceType.Wood, workersPerResourceType);
+    }
+
+    private void EnsureArmy()
+    {
+        if (!HasBuilding<Castle>())
+            return;
+
+        BuildUnitSquadTask<Footman>("footman", desiredFootmanCount);
+    }
+
+    private void TryBasicAttack()
+    {
+        if (isAttacking)
+            return;
+
+        List<Footman> availableFootmen = friendlyUnits.OfType<Footman>().ToList();
+        if (availableFootmen.Count < minimumAttackFootmen)
+            return;
+
+        basicAttack(availableFootmen);
     }
 
     private bool HasBuilding<T>() where T : RTS_building
@@ -164,12 +162,11 @@ public class BotPlayer : Player
         return friendlyBuildings.Any(b => b is T typed && typed.finished);
     }
 
-    private void BuildingTask<T>(string buildingName, BotTask taskToTrack, float searchRadius = 6f, float step = 1f)
+    private void BuildingTask<T>(string buildingName, float searchRadius = 6f, float step = 1f)
         where T : RTS_building
     {
         if (HasBuilding<T>())
         {
-            tasksInProgress.Remove(taskToTrack);
             return;
         }
 
@@ -187,7 +184,6 @@ public class BotPlayer : Player
             return;
         }
 
-        tasksInProgress.Add(taskToTrack);
         rtsController.BuildingManager.buildingPrefab = prefab;
 
         Vector3 builderPosition = builder.transform.position;
@@ -278,7 +274,7 @@ public class BotPlayer : Player
         return null; // No valid position found for general building
     }
 
-    private void GatheringTask(Resource.ResourceType resourceType, int numberOfWorkers, BotTask taskToTrack)
+    private void GatheringTask(Resource.ResourceType resourceType, int numberOfWorkers)
     {
         List<Peasant> idlePeasants = GetIdlePeasants();
         if (idlePeasants.Count == 0) return;
@@ -295,7 +291,6 @@ public class BotPlayer : Player
                 GoldenMine goldMine = FindNearestFriendlyBuilding<GoldenMine>(assignedPeasants[0].transform.position);
                 if (goldMine == null) return;
 
-                tasksInProgress.Add(taskToTrack);
                 foreach (Peasant peasant in assignedPeasants)
                 {
                     peasant.MoveTo(goldMine.transform.position);
@@ -308,7 +303,6 @@ public class BotPlayer : Player
                 EnvironmentResource woodResource = GetNearestWoodResource(assignedPeasants[0].transform.position);
                 if (woodResource == null) return;
 
-                tasksInProgress.Add(taskToTrack);
                 foreach (Peasant peasant in assignedPeasants)
                 {
                     peasant.MoveTo(woodResource.transform.position);
@@ -354,7 +348,7 @@ public class BotPlayer : Player
             .FirstOrDefault();
     }
 
-    private void BuildUnitSquadTask<T>(string unitName, int requiredCount, BotTask taskType) where T : UnitRTS
+    private void BuildUnitSquadTask<T>(string unitName, int requiredCount) where T : UnitRTS
     {
         if (!HasBuilding<Castle>())
             return;
@@ -362,18 +356,10 @@ public class BotPlayer : Player
         int currentCount = friendlyUnits.OfType<T>().Count();
         if (currentCount >= requiredCount)
         {
-            tasksInProgress.Remove(taskType);
-            return;
-        }
-
-        if (tasksInProgress.Contains(taskType))
-        {
-            Debug.Log($"[BotPlayer] Already building a squad of {typeof(T).Name}s.");
             return;
         }
 
         Debug.Log($"[BotPlayer] Need to build {requiredCount} {typeof(T).Name}(s).");
-        tasksInProgress.Add(taskType);
 
         RTS_building castle = friendlyBuildings.FirstOrDefault(b => b is Castle && b.finished);
         if (castle == null) return;
@@ -412,26 +398,10 @@ public class BotPlayer : Player
         }
     }
 
-    private void basicAttack()
+    private void basicAttack(List<Footman> availableFootmen)
     {
         List<Footman> attackingFootmen = new();
-        // for a basic attack bot would need some start army
-        List<Footman> availableFootmen = friendlyUnits.OfType<Footman>().ToList();
-        if (availableFootmen.Count < 3)
-        {
-            return;
-        }
-
-        if (tasksInProgress.Contains(BotTask.StartBasicAttack))
-        {
-            Debug.Log("[BotPlayer] Already trying to attack.");
-            return;
-        }
-
-        if (!tasksInProgress.Contains(BotTask.StartBasicAttack))
-        {
-            tasksInProgress.Add(BotTask.StartBasicAttack);
-        }
+        isAttacking = true;
 
         Debug.Log("[BotPlayer] Starting basic attack!");
 
@@ -508,6 +478,12 @@ public class BotPlayer : Player
         {
             // Clean up dead/null footmen
             attackingFootmen = attackingFootmen.Where(f => f != null).ToList();
+
+            if (attackingFootmen.Count == 0)
+            {
+                isAttacking = false;
+                yield break;
+            }
 
             foreach (var footman in attackingFootmen)
             {
